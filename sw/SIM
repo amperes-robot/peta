@@ -1,0 +1,4 @@
+/**
+ * SIM backend. Do not modify io.cpp, modify SIM instead! This is
+ * a hack for arduino/wiring to allow plugging in different backends.
+ */

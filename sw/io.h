@@ -7,7 +7,7 @@
 	#include <stdexcept>
 	#define LOG_THRESHOLD TRACE
 #else
-	#include <phys253.h>
+	#include <LiquidCrystal.h>
 	#define LOG_THRESHOLD INFO
 	typedef String string;
 #endif

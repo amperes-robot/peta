@@ -1,1 +1,4 @@
 *.swp
+sw/simulator/obj
+sw/simulator/bin
+sw/bin

@@ -17,8 +17,11 @@ upload: unsim
 	$(ARDUINO) --upload $(MAIN)
 
 sim:
+	mkdir bin -p
 	for x in *_SIM; do cp $$x $$x.cpp; done
-	g++ *.cpp -Os -g -D"IO_SIM" -o sw --std=c++0x -Wall -Wextra -Wshadow -Wstrict-aliasing -Werror
+	g++ *.cpp -Os -g -D"IO_SIM" -o bin/sw --std=c++0x -Wall -Wextra -Wshadow -Wstrict-aliasing -Werror
+	cd simulator && xbuild simulator.sln
+	cp simulator/bin/Debug/simulator.exe bin/simulator
 
 unsim:
 	rm -f *_SIM.cpp

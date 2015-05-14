@@ -1,4 +1,16 @@
-/**
- * TINAH backend. Do not modify io.cpp, modify TINAH instead! This is
- * a hack for arduino/wiring to allow plugging in different backends.
- */
+#include "io.h"
+
+namespace io
+{
+	template<typename T>
+	string to_string(T t)
+	{
+#ifdef IO_SIM
+		std::ostringstream os;
+		os << t;
+		return os.str();
+#else
+		return string(t);
+#endif
+	}
+}

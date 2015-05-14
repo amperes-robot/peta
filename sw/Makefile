@@ -1,16 +1,19 @@
-BACKEND=TINAH
 ARDUINO?=arduino
 MAIN=sw.pde
 
-.PHONY: all verify upload move unmove
+.PHONY: all verify upload sim unsim
 
-all: move
+all: verify
+
+verify: unsim
 	$(ARDUINO) --verify $(MAIN)
 
-verify: move
-
-upload: move
+upload: unsim
 	$(ARDUINO) --upload $(MAIN)
 
-move:
-	cp $(BACKEND) io.cpp
+sim:
+	for x in *_SIM; do cp $$x $$x.cpp; done
+	g++ *.cpp -Os -g -D"IO_SIM" -o sw --std=c++0x -Wall -Wextra -Wshadow -Wstrict-aliasing -Werror
+
+unsim:
+	rm -f *_SIM.cpp

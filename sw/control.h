@@ -1,29 +1,27 @@
 #pragma once
 
+#ifndef IO_SIM
+#define nullptr ((void*) 0)
+#endif
+
 namespace control
 {
 	/**
-	 * Interface that controls the robot.
-	 * All functions must be overriden.
+	 * Interface that controls the robot at any given point in time.
 	 */
-	class Mode
+	struct Mode
 	{
 		public:
-			virtual void begin() = 0;
-			virtual void tick() = 0;
-			virtual void end() = 0;
+			void (*begin)();
+			void (*tick)();
+			void (*end)();
+			void *data;
 	};
 
-	class IdleMode : public Mode
-	{
-		public:
-			void begin();
-			void tick();
-			void end();
-			IdleMode() { }
-	};
+	extern const Mode idle_mode;
+
+	void set_mode(const Mode* mode);
 
 	void init();
-
 	void loop();
 }

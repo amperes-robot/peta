@@ -1,5 +1,10 @@
 ARDUINO?=arduino
-MAIN=sw.pde
+MAIN="sw.pde"
+
+ifneq (, $(findstring CYGWIN, $(shell uname)))
+	MAIN:="$(shell cygpath -wa $(MAIN))"
+else
+endif
 
 .PHONY: all verify upload sim unsim
 

@@ -1,9 +1,4 @@
 #!/bin/sh
 
-rm bin/boardout -f
-rm bin/boardin -f
-mkfifo bin/boardout
-mkfifo bin/boardin
-
-bin/simulator & > boardin < boardout
-bin/sw > boardout < boardin
+bin/simulator > bin/boardin < bin/boardout &
+bin/sw > bin/boardout < bin/boardin

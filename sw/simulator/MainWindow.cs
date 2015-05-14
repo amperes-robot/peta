@@ -26,6 +26,10 @@ public partial class MainWindow: Gtk.Window
 						{
 							Gtk.Application.Invoke((se, a) => OnReceived(s));
 						}
+						if (s.StartsWith("QUIT"))
+						{
+							return;
+						}
 					}
 				}
 			}));
@@ -35,10 +39,9 @@ public partial class MainWindow: Gtk.Window
 
 	void MainWindow_OnReceived (string s)
 	{
-		if (s == null)
+		if (s.StartsWith("QUIT"))
 		{
-			_log.Buffer.Text += "null string recieved\n";
-			return;
+			Application.Quit();
 		}
 
 		if (s.StartsWith("LOG"))
@@ -50,9 +53,6 @@ public partial class MainWindow: Gtk.Window
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
 	{
 		Application.Quit();
-		try{
-			Console.OpenStandardInput().Write(new byte[] { 0xA }, 0, 1 );} catch (AddEmbeddedXid) {
-		}
 		_stop = true;
 		a.RetVal = true;
 	}

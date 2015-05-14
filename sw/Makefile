@@ -1,5 +1,5 @@
 ARDUINO?=arduino
-MAIN="sw.pde"
+MAIN="sw.ino"
 
 ifneq (, $(findstring CYGWIN, $(shell uname)))
 	MAIN:="$(shell cygpath -wa $(MAIN))"

@@ -22,13 +22,15 @@ public partial class MainWindow: Gtk.Window
 					if (OnReceived != null)
 					{
 						string s = Console.ReadLine();
+
 						if (s != null) 
 						{
 							Gtk.Application.Invoke((se, a) => OnReceived(s));
-						}
-						if (s.StartsWith("QUIT"))
-						{
-							return;
+
+							if (s.StartsWith("QUIT"))
+							{
+								return;
+							}
 						}
 					}
 				}
@@ -44,9 +46,9 @@ public partial class MainWindow: Gtk.Window
 			Application.Quit();
 		}
 
-		if (s.StartsWith("LOG"))
+		if (s.StartsWith("LCD"))
 		{
-			_log.Buffer.Text += s + "\n";
+			_log.Buffer.Text += s.Substring(4, s.Length - 4) + "\n";
 		}
 	}
 

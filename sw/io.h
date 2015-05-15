@@ -12,6 +12,8 @@
 	typedef String string;
 #endif
 
+#define N_PINS 16
+
 namespace io
 {
 #ifdef IO_SIM
@@ -34,7 +36,12 @@ namespace io
 		if (Level >= LOG_THRESHOLD)
 		{
 #ifdef IO_SIM
-			std::cout << "LCD " << msg << std::endl;
+			std::string level = 
+				(Level == TRACE ? "TRACE" :
+				(Level == INFO ? "INFO" :
+				(Level == CRITICAL ? "CRITICAL" :
+				(Level == FATAL ? "FATAL" : ""))));
+			std::cout << "LCD " << level << " " << msg << std::endl;
 #else
 			//LCD.clear();
 			//LCD.home();
@@ -52,4 +59,8 @@ namespace io
 
 	template<typename T>
 	string to_string(T t);
+
+#ifdef IO_SIM
+	void set_input(int pin, int value);
+#endif
 }

@@ -3,9 +3,9 @@
 trap ctrl_c INT
 
 function ctrl_c() {
-	echo "QUIT\n" > bin/boardout
+	echo "QUIT" >> bin/boardout
 }
 
-bin/simulator > bin/boardin < bin/boardout &
-echo "ACTIVATE" > bin/boardout
+echo "ACTIVATE" >> bin/boardout
+bin/simulator > bin/boardin < bin/boardout
 bin/sw > bin/boardout < bin/boardin

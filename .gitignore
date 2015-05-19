@@ -1,4 +1,3 @@
 *.swp
-sw/simulator/obj
-sw/simulator/bin
-sw/bin
+sw/simulator
+sw/test

@@ -12,6 +12,10 @@
 	typedef String string;
 #endif
 
+#ifdef IO_TST
+	#include "test.h"
+#endif
+
 #define N_PINS 16
 
 namespace io
@@ -62,5 +66,9 @@ namespace io
 
 #ifdef IO_SIM
 	void set_input(int pin, int value);
+#endif
+
+#ifdef IO_TST
+	extern TestCallback test_suite[];
 #endif
 }

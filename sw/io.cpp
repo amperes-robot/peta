@@ -42,4 +42,17 @@ namespace io
 		pins[pin] = value;
 	}
 #endif
+
+#ifdef IO_TST
+	void test_test()
+	{
+		ASSERT(1 == 0);
+	}
+
+	TestCallback test_suite[] =
+	{
+		&test_test,
+		nullptr
+	};
+#endif
 }

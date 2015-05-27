@@ -44,15 +44,15 @@ namespace io
 #endif
 
 #ifdef IO_TST
-	void test_test()
+	static void test_test()
 	{
 		ASSERT(1 == 0);
 	}
 
 	TestCallback test_suite[] =
 	{
-		&test_test,
-		nullptr
+		SUITE_ENTRY(test_test),
+		SUITE_END()
 	};
 #endif
 }

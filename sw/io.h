@@ -19,20 +19,13 @@
 	#include "test.h"
 #endif
 
-#define N_ANALOG_PINS 8
+#define N_ANALOG 8
 
 extern LiquidCrystal LCD;
 extern motorClass motor;
 
 namespace io
 {
-	struct Digital final
-	{
-		Digital() = delete;
-		Digital(int id);
-		bool value() const;
-	};
-
 #ifdef IO_SIM
 	typedef std::string string;
 #else
@@ -88,8 +81,10 @@ namespace io
 #endif
 	}
 
+	void start_adc(uint8_t pin);
+
 #ifdef IO_SIM
-	void set_input(int pin, int value);
+	void set_input(uint8_t pin, bool value);
 #endif
 
 #ifdef IO_TST

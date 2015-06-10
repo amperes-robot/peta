@@ -7,19 +7,32 @@
 	#include <stdexcept>
 	#define LOG_THRESHOLD TRACE
 #else
+	#include <Arduino.h>
+	#include <motor.h>
+	#include <phys253pins.h>
+	#include <ServoTimer2.h>
 	#include <LiquidCrystal.h>
 	#define LOG_THRESHOLD INFO
-	typedef String string;
 #endif
 
 #ifdef IO_TST
 	#include "test.h"
 #endif
 
-#define N_PINS 16
+#define N_ANALOG_PINS 8
+
+extern LiquidCrystal LCD;
+extern motorClass motor;
 
 namespace io
 {
+	struct Digital final
+	{
+		Digital() = delete;
+		Digital(int id);
+		bool value() const;
+	};
+
 #ifdef IO_SIM
 	typedef std::string string;
 #else
@@ -47,9 +60,11 @@ namespace io
 				(Level == FATAL ? "FATAL" : ""))));
 			std::cout << "LCD " << level << " " << msg << std::endl;
 #else
-			//LCD.clear();
-			//LCD.home();
-			//LCD.print(msg);
+			/*
+			LCD.clear();
+			LCD.home();
+			LCD.print(msg);
+			*/
 #endif
 		}
 
@@ -62,7 +77,16 @@ namespace io
 	}
 
 	template<typename T>
-	string to_string(T t);
+	string to_string(T t)
+	{
+#ifdef IO_SIM
+		std::ostringstream os;
+		os << t;
+		return os.str();
+#else
+		return string(t);
+#endif
+	}
 
 #ifdef IO_SIM
 	void set_input(int pin, int value);

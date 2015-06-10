@@ -8,8 +8,8 @@
  */
 inline void init_c()
 {
-	io::log<io::INFO>("begin");
 	control::init();
+	io::log<io::TRACE>("BEGIN");
 }
 
 inline void loop_c()

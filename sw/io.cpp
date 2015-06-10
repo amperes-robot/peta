@@ -1,7 +1,6 @@
 #include "io.h"
 
 #ifdef IO_SIM
-	#include <queue>
 	#include <string>
 #endif
 
@@ -9,26 +8,7 @@ namespace io
 {
 	namespace
 	{
-		int pins[N_PINS] = { };
-	}
-
-	template<typename T>
-	string to_string(T t)
-	{
-#ifdef IO_SIM
-		std::ostringstream os;
-		os << t;
-		return os.str();
-#else
-		return string(t);
-#endif
-	}
-
-	void poll()
-	{
-		// read digital and analog from board
-#ifndef IO_SIM
-#endif
+		uint16_t _digital_pins = { };
 	}
 
 #ifdef IO_SIM
@@ -46,7 +26,7 @@ namespace io
 #ifdef IO_TST
 	static void test_test()
 	{
-		ASSERT(1 == 0);
+		ASSERT(0 == 0);
 	}
 
 	TestCallback test_suite[] =

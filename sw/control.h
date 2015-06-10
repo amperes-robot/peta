@@ -9,7 +9,7 @@ namespace control
 	/**
 	 * Interface that controls the robot at any given point in time.
 	 */
-	struct Mode
+	struct Mode final
 	{
 		public:
 			void (*begin)();

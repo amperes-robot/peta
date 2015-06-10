@@ -3,7 +3,7 @@
 
 namespace pid
 {
-	struct Controller
+	struct Controller final
 	{
 		public:
 			typedef int16_t Entry;

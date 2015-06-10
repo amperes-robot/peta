@@ -1,5 +1,6 @@
 #include "control.h"
 #include "io.h"
+#include "isr.h"
 
 namespace control
 {

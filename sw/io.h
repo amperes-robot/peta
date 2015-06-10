@@ -1,28 +1,16 @@
 #pragma once
 
-#ifdef IO_SIM
-	#include <string>
-	#include <sstream>
-	#include <iostream>
-	#include <stdexcept>
-	#define LOG_THRESHOLD TRACE
-#else
-	#include <Arduino.h>
-	#include <motor.h>
-	#include <phys253pins.h>
-	#include <ServoTimer2.h>
-	#include <LiquidCrystal.h>
-	#define LOG_THRESHOLD INFO
-#endif
-
-#ifdef IO_TST
-	#include "test.h"
-#endif
-
-#define N_ANALOG 8
+#include <Arduino.h>
+#include <motor.h>
+#include <phys253pins.h>
+#include <ServoTimer2.h>
+#include <LiquidCrystal.h>
+#define LOG_THRESHOLD INFO
 
 extern LiquidCrystal LCD;
 extern motorClass motor;
+
+#define N_ANALOG 8
 
 namespace io
 {
@@ -85,9 +73,7 @@ namespace io
 
 #ifdef IO_SIM
 	void set_input(uint8_t pin, bool value);
-#endif
 
-#ifdef IO_TST
 	extern TestCallback test_suite[];
 #endif
 }

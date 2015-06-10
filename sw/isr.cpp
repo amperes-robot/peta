@@ -1,5 +1,7 @@
 #include "isr.h"
+
 #include <avr/interrupt.h>
+
 #define TIMSK1 TIMSK
 
 namespace isr
@@ -53,7 +55,10 @@ namespace isr
 	}
 }
 
-ISR(TIMER1_COMPA_vect) { }
+ISR(TIMER1_COMPA_vect)
+{
+	// TODO poll ADCs here
+}
 ISR(INT0_vect) { }
 ISR(INT1_vect) { }
 ISR(INT2_vect) { }

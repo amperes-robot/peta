@@ -1,33 +1,11 @@
 #include "io.h"
+
 #include <wiring_private.h>
 
-#ifdef IO_SIM
-	#include <string>
-#endif
-
-namespace i
+namespace io
 {
 	uint16_t digital_pins = 0;
 	uint16_t analog_pins[N_ANALOG] = { };
-
-#ifdef IO_SIM
-	void set_input(uint8_t pin, bool value)
-	{
-		if (pin >= 16)
-		{
-			log<FATAL>("imposible pin");
-		}
-
-		if (value)
-		{
-			digital_pins |= 1 << pin;
-		}
-		else
-		{
-			digital_pins &= ~(1 << pin);
-		}
-	}
-#endif
 
 	void start_adc(uint8_t pin)
 	{
@@ -62,18 +40,4 @@ namespace i
 		// start the conversion
 		sbi(ADCSRA, ADSC);
 	}
-
-
-#ifdef IO_TST
-	static void test_test()
-	{
-		ASSERT(0 == 0);
-	}
-
-	TestCallback test_suite[] =
-	{
-		SUITE_ENTRY(test_test),
-		SUITE_END()
-	};
-#endif
 }

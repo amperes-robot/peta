@@ -41,7 +41,7 @@ namespace pid
 			}
 	};
 
-#ifdef IO_TST
+#ifdef IO_SIM
 	extern TestCallback test_suite[];
 #endif
 }

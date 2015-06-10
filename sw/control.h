@@ -1,8 +1,6 @@
 #pragma once
 
-#ifndef IO_SIM
 #define nullptr ((void*) 0)
-#endif
 
 namespace control
 {

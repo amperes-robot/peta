@@ -57,7 +57,10 @@ namespace isr
 
 ISR(TIMER1_COMPA_vect)
 {
-	// TODO poll ADCs here
+	static int i;
+	LCD.clear();
+	LCD.home();
+	LCD.print(i++);
 }
 ISR(INT0_vect) { }
 ISR(INT1_vect) { }

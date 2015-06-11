@@ -1,5 +1,6 @@
 #include "control.h"
 #include "io.h"
+#include "menu.h"
 #include "isr.h"
 
 namespace control
@@ -25,7 +26,8 @@ namespace control
 	{
 		if (!mode)
 		{
-			io::log<io::FATAL>("Null mode set");
+			io::log<io::CRITICAL>("Null mode set");
+			mode = &idle_mode;
 		}
 
 		current_mode->end();
@@ -36,6 +38,8 @@ namespace control
 	void init()
 	{
 		current_mode = &idle_mode;
+		set_mode(&menu::main_mode);
+		isr::attach_timer1(1);
 	}
 
 	void loop()

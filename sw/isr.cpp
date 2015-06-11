@@ -34,6 +34,16 @@ namespace isr
 		TIMSK1 &= ~(1 << OCIE1A);
 	}
 
+	void attach_adc()
+	{
+		ADCSRA |= (1 << ADIE);
+	}
+
+	void detach_adc()
+	{
+		ADCSRA &= ~(1 << ADIE);
+	}
+
 	void attach_pin(uint8_t pin, uint8_t mode)
 	{
 		if (pin > 3 || mode > 3 || mode == 1) return;
@@ -55,14 +65,15 @@ namespace isr
 	}
 }
 
-ISR(TIMER1_COMPA_vect)
+ISR(TIMER1_COMPA_vect) { }
+ISR(INT0_vect) { }
+ISR(INT1_vect) { }
+ISR(INT2_vect) { }
+ISR(INT3_vect) { }
+ISR(ADC_vect)
 {
 	static int i;
 	LCD.clear();
 	LCD.home();
 	LCD.print(i++);
 }
-ISR(INT0_vect) { }
-ISR(INT1_vect) { }
-ISR(INT2_vect) { }
-ISR(INT3_vect) { }

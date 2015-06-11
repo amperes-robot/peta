@@ -39,11 +39,12 @@ namespace control
 	{
 		current_mode = &idle_mode;
 		set_mode(&menu::main_mode);
-		isr::attach_timer1(1);
+		isr::attach_adc();
 	}
 
 	void loop()
 	{
 		current_mode->tick();
+		analogRead(0);
 	}
 }

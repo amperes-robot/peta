@@ -1,22 +1,16 @@
 #pragma once
 
-#ifdef IO_SIM
-	#include <string>
-	#include <sstream>
-	#include <iostream>
-	#include <stdexcept>
-	#define LOG_THRESHOLD TRACE
-#else
-	#include <LiquidCrystal.h>
-	#define LOG_THRESHOLD INFO
-	typedef String string;
-#endif
+#include <Arduino.h>
+#include <motor.h>
+#include <phys253pins.h>
+#include <ServoTimer2.h>
+#include <LiquidCrystal.h>
+#define LOG_THRESHOLD INFO
 
-#ifdef IO_TST
-	#include "test.h"
-#endif
+extern LiquidCrystal LCD;
+extern motorClass motor;
 
-#define N_PINS 16
+#define N_ANALOG 8
 
 namespace io
 {
@@ -47,9 +41,11 @@ namespace io
 				(Level == FATAL ? "FATAL" : ""))));
 			std::cout << "LCD " << level << " " << msg << std::endl;
 #else
-			//LCD.clear();
-			//LCD.home();
-			//LCD.print(msg);
+			/*
+			LCD.clear();
+			LCD.home();
+			LCD.print(msg);
+			*/
 #endif
 		}
 
@@ -62,13 +58,22 @@ namespace io
 	}
 
 	template<typename T>
-	string to_string(T t);
+	string to_string(T t)
+	{
+#ifdef IO_SIM
+		std::ostringstream os;
+		os << t;
+		return os.str();
+#else
+		return string(t);
+#endif
+	}
+
+	void start_adc(uint8_t pin);
 
 #ifdef IO_SIM
-	void set_input(int pin, int value);
-#endif
+	void set_input(uint8_t pin, bool value);
 
-#ifdef IO_TST
 	extern TestCallback test_suite[];
 #endif
 }

@@ -40,19 +40,4 @@ namespace pid
 
 		return -(fp + fi + fd);
 	}
-
-#ifdef IO_TST
-	static void test_controller_p()
-	{
-		Controller c(1, 0, 0);
-		c.update(1);
-		ASSERT(c.output() == -1);
-	}
-
-	TestCallback test_suite[] =
-	{
-		SUITE_ENTRY(test_controller_p),
-		SUITE_END()
-	};
-#endif
 }

@@ -1,15 +1,13 @@
 #pragma once
 
-#ifndef IO_SIM
 #define nullptr ((void*) 0)
-#endif
 
 namespace control
 {
 	/**
 	 * Interface that controls the robot at any given point in time.
 	 */
-	struct Mode
+	struct Mode final
 	{
 		public:
 			void (*begin)();

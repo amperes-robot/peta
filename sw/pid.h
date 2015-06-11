@@ -3,7 +3,7 @@
 
 namespace pid
 {
-	struct Controller
+	struct Controller final
 	{
 		public:
 			typedef int16_t Entry;
@@ -41,7 +41,7 @@ namespace pid
 			}
 	};
 
-#ifdef IO_TST
+#ifdef IO_SIM
 	extern TestCallback test_suite[];
 #endif
 }

@@ -1,6 +1,7 @@
 #include "control.h"
 #include "io.h"
 #include "menu.h"
+#include "pid.h"
 #include "isr.h"
 
 namespace control
@@ -10,23 +11,22 @@ namespace control
 		const Mode* current_mode;
 
 		void idle_mode_begin() { }
-		void idle_mode_end() { }
 		void idle_mode_tick() { }
+		void idle_mode_end() { }
 	}
 
 	const Mode idle_mode
 	{
 		idle_mode_begin,
-		idle_mode_end,
 		idle_mode_tick,
-		nullptr
+		idle_mode_end,
 	};
 
 	void set_mode(const Mode* mode)
 	{
 		if (!mode)
 		{
-			io::log<io::CRITICAL>("Null mode set");
+			io::log("Null mode set!");
 			mode = &idle_mode;
 		}
 
@@ -37,14 +37,13 @@ namespace control
 
 	void init()
 	{
+		Serial.begin(9600);
 		current_mode = &idle_mode;
 		set_mode(&menu::main_mode);
-		isr::attach_adc();
 	}
 
 	void loop()
 	{
 		current_mode->tick();
-		analogRead(0);
 	}
 }

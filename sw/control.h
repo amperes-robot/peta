@@ -15,7 +15,6 @@ namespace control
 			void (*begin)();
 			void (*tick)();
 			void (*end)();
-			void *data;
 	};
 
 	extern const Mode idle_mode;

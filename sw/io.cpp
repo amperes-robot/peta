@@ -7,6 +7,22 @@ namespace io
 	uint16_t digital_pins = 0;
 	uint16_t analog_pins[N_ANALOG] = { };
 
+	bool digital_in(uint8_t pin)
+	{
+		// TODO
+		digitalRead(pin);
+	}
+
+	void digital_out(uint8_t pin, bool value)
+	{
+		digitalWrite(pin, value);
+	}
+
+	uint16_t analog_in(uint8_t pin)
+	{
+		return analogRead(pin);
+	}
+
 	void start_adc(uint8_t pin)
 	{
 #if defined(analogPinToChannel)

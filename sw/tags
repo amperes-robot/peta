@@ -1,0 +1,86 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ARDUINO	Makefile	/^ARDUINO?=arduino$/;"	m
+Controller	pid.cpp	/^	Controller::Controller(uint16_t gain_p, uint16_t gain_i, uint16_t gain_d)$/;"	f	class:pid::Controller
+ISR	isr.cpp	/^ISR(ADC_vect)$/;"	f
+ISR	isr.cpp	/^ISR(INT0_vect) { }$/;"	f
+ISR	isr.cpp	/^ISR(INT1_vect) { }$/;"	f
+ISR	isr.cpp	/^ISR(INT2_vect) { }$/;"	f
+ISR	isr.cpp	/^ISR(INT3_vect) { }$/;"	f
+ISR	isr.cpp	/^ISR(TIMER1_COMPA_vect) { }$/;"	f
+MAIN	Makefile	/^	MAIN:="$(shell cygpath -wa $(MAIN))" else$/;"	m
+MAIN	Makefile	/^MAIN="sw.ino"$/;"	m
+N_ANALOG	io.h	10;"	d
+TIMSK1	isr.cpp	5;"	d	file:
+_gain_d	pid.h	/^			uint16_t _gain_p, _gain_i, _gain_d;$/;"	m	struct:pid::final
+_gain_i	pid.h	/^			uint16_t _gain_p, _gain_i, _gain_d;$/;"	m	struct:pid::final
+_gain_p	pid.h	/^			uint16_t _gain_p, _gain_i, _gain_d;$/;"	m	struct:pid::final
+_int	pid.h	/^			int16_t _int, _prev, _now;$/;"	m	struct:pid::final
+_int_lim	pid.h	/^			const int16_t _int_lim = 4086;$/;"	m	struct:pid::final
+_now	pid.h	/^			int16_t _int, _prev, _now;$/;"	m	struct:pid::final
+_prev	pid.h	/^			int16_t _int, _prev, _now;$/;"	m	struct:pid::final
+analog_pins	io.cpp	/^	uint16_t analog_pins[N_ANALOG] = { };$/;"	m	namespace:io	file:
+attach_adc	isr.cpp	/^	void attach_adc()$/;"	f	namespace:isr
+attach_pin	isr.cpp	/^	void attach_pin(uint8_t pin, uint8_t mode)$/;"	f	namespace:isr
+attach_timer1	isr.cpp	/^	void attach_timer1(uint16_t freq)$/;"	f	namespace:isr
+begin	control.h	/^			void (*begin)();$/;"	m	struct:control::final
+control	control.cpp	/^namespace control$/;"	n	file:
+control	control.h	/^namespace control$/;"	n
+current_mode	control.cpp	/^		const Mode* current_mode;$/;"	m	namespace:control::__anon3	file:
+data	control.h	/^			void *data;$/;"	m	struct:control::final
+detach_adc	isr.cpp	/^	void detach_adc()$/;"	f	namespace:isr
+detach_pin	isr.cpp	/^	void detach_pin(uint8_t pin)$/;"	f	namespace:isr
+detach_timer1	isr.cpp	/^	void detach_timer1()$/;"	f	namespace:isr
+digital_pins	io.cpp	/^	uint16_t digital_pins = 0;$/;"	m	namespace:io	file:
+dir	motion.cpp	/^	void dir(int16_t x)$/;"	f	namespace:motion
+direction	motion.cpp	/^		int16_t direction, velocity;$/;"	m	namespace:motion::__anon2	file:
+end	control.h	/^			void (*end)();$/;"	m	struct:control::final
+final	control.h	/^	struct Mode final$/;"	s	namespace:control
+final	pid.h	/^	struct Controller final$/;"	s	namespace:pid
+follow_mode_begin	pid.cpp	/^		void follow_mode_begin() { }$/;"	f	namespace:pid::__anon4
+follow_mode_end	pid.cpp	/^		void follow_mode_end()$/;"	f	namespace:pid::__anon4
+follow_mode_tick	pid.cpp	/^		void follow_mode_tick()$/;"	f	namespace:pid::__anon4
+idle_mode_begin	control.cpp	/^		void idle_mode_begin() { }$/;"	f	namespace:control::__anon3
+idle_mode_end	control.cpp	/^		void idle_mode_end() { }$/;"	f	namespace:control::__anon3
+idle_mode_tick	control.cpp	/^		void idle_mode_tick() { }$/;"	f	namespace:control::__anon3
+in	pid.cpp	/^	void Controller::in(int16_t entry)$/;"	f	class:pid::Controller
+init	control.cpp	/^	void init()$/;"	f	namespace:control
+init_c	loop.cpp	/^inline void init_c()$/;"	f
+io	io.cpp	/^namespace io$/;"	n	file:
+io	io.h	/^namespace io$/;"	n
+isr	isr.cpp	/^namespace isr$/;"	n	file:
+isr	isr.h	/^namespace isr$/;"	n
+log	io.h	/^	inline void log(T msg)$/;"	f	namespace:io
+loop	control.cpp	/^	void loop()$/;"	f	namespace:control
+loop_c	loop.cpp	/^inline void loop_c()$/;"	f
+main_mode_begin	menu.cpp	/^		void main_mode_begin() { }$/;"	f	namespace:menu::__anon1
+main_mode_end	menu.cpp	/^		void main_mode_end() { }$/;"	f	namespace:menu::__anon1
+main_mode_tick	menu.cpp	/^		void main_mode_tick() { }$/;"	f	namespace:menu::__anon1
+menu	menu.cpp	/^namespace menu$/;"	n	file:
+menu	menu.h	/^namespace menu$/;"	n
+motion	motion.cpp	/^namespace motion$/;"	n	file:
+motion	motion.h	/^namespace motion$/;"	n
+motor_left	motion.cpp	/^		const uint8_t motor_left = 0;$/;"	m	namespace:motion::__anon2	file:
+motor_right	motion.cpp	/^		const uint8_t motor_right = 1;$/;"	m	namespace:motion::__anon2	file:
+nullptr	control.h	4;"	d
+options_mode_begin	menu.cpp	/^		void options_mode_begin() { }$/;"	f	namespace:menu::__anon1
+options_mode_end	menu.cpp	/^		void options_mode_end() { }$/;"	f	namespace:menu::__anon1
+options_mode_tick	menu.cpp	/^		void options_mode_tick() { }$/;"	f	namespace:menu::__anon1
+out	pid.cpp	/^	int16_t Controller::out() const$/;"	f	class:pid::Controller
+pid	pid.cpp	/^namespace pid$/;"	n	file:
+pid	pid.h	/^namespace pid$/;"	n
+refresh	motion.cpp	/^		void refresh()$/;"	f	namespace:motion::__anon2
+reset	pid.cpp	/^	void Controller::reset()$/;"	f	class:pid::Controller
+reverse_left	motion.cpp	/^		const bool reverse_left = true;$/;"	m	namespace:motion::__anon2	file:
+reverse_right	motion.cpp	/^		const bool reverse_right = true;$/;"	m	namespace:motion::__anon2	file:
+set_mode	control.cpp	/^	void set_mode(const Mode* mode)$/;"	f	namespace:control
+start_adc	io.cpp	/^	void start_adc(uint8_t pin)$/;"	f	namespace:io
+string	io.h	/^	typedef std::string string;$/;"	t	namespace:io
+tick	control.h	/^			void (*tick)();$/;"	m	struct:control::final
+to_string	io.h	/^	string to_string(T t)$/;"	f	namespace:io
+vel	motion.cpp	/^	void vel(int16_t v)$/;"	f	namespace:motion
+velocity	motion.cpp	/^		int16_t direction, velocity;$/;"	m	namespace:motion::__anon2	file:

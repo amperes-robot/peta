@@ -9,7 +9,6 @@
 inline void init_c()
 {
 	control::init();
-	io::log<io::TRACE>("BEGIN");
 }
 
 inline void loop_c()

@@ -9,6 +9,9 @@ endif
 
 all: verify
 
+gui:
+	$(ARDUINO) $(MAIN)
+
 verify:
 	$(ARDUINO) --verify $(MAIN)
 

@@ -1,14 +1,11 @@
 #pragma once
-
 #include <Arduino.h>
 #include <motor.h>
 #include <phys253pins.h>
 #include <ServoTimer2.h>
 #include <LiquidCrystal.h>
-#define LOG_THRESHOLD INFO
 
 extern LiquidCrystal LCD;
-extern motorClass motor;
 
 #define N_ANALOG 8
 
@@ -19,39 +16,6 @@ namespace io
 #else
 	typedef String string;
 #endif
-
-	enum LogLevel
-	{
-		TRACE,
-		INFO,
-		CRITICAL,
-		FATAL
-	};
-
-	template<LogLevel Level>
-	inline void log(string msg)
-	{
-		if (Level >= LOG_THRESHOLD)
-		{
-#ifdef IO_SIM
-			std::string level = 
-				(Level == TRACE ? "TRACE" :
-				(Level == INFO ? "INFO" :
-				(Level == CRITICAL ? "CRITICAL" :
-				(Level == FATAL ? "FATAL" : ""))));
-			std::cout << "LCD " << level << " " << msg << std::endl;
-
-			if (Level >= FATAL)
-			{
-				throw std::logic_error("Fatal message logged");
-			}
-#else
-			LCD.clear();
-			LCD.home();
-			LCD.print(msg);
-#endif
-		}
-	}
 
 	template<typename T>
 	string to_string(T t)
@@ -65,6 +29,41 @@ namespace io
 #endif
 	}
 
+	template<typename T>
+	inline void log(T msg)
+	{
+#ifdef IO_SIM
+		std::cout << msg << std::endl;
+#else
+		LCD.clear();
+		LCD.home();
+		LCD.print(to_string(msg));
+#endif
+	}
+
+	namespace Analog
+	{
+		enum Analog_t : uint8_t
+		{
+			FOLLOW = 0,
+			TWEAK = 6,
+			SELECT = 7
+		};
+	}
+
+	namespace Digital
+	{
+		enum Digital_t : uint8_t
+		{
+			STOP = 49,
+			START = 50
+		};
+	}
+
+	bool digital_in(uint8_t pin);
+	void digital_out(uint8_t pin, bool value);
+
+	uint16_t analog_in(uint8_t pin);
 	void start_adc(uint8_t pin);
 
 #ifdef IO_SIM

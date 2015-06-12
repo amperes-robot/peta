@@ -1,4 +1,5 @@
 #pragma once
+#include "control.h"
 #include "io.h"
 
 namespace pid
@@ -6,40 +7,18 @@ namespace pid
 	struct Controller final
 	{
 		public:
-			typedef int16_t Entry;
-			typedef int32_t EntryAccumulator;
+			Controller(uint16_t gain_p, uint16_t gain_i, uint16_t gain_d);
 
-			/**
-			 * Construct a controller with gain specified.
-			 */
-			Controller(float gain_p, float gain_i, float gain_d);
-
-			/**
-			 * Add a new entry to the data buffer.
-			 */
-			void update(Entry entry);
-
-			/**
-			 * Retrieves the output of the controller.
-			 */
-			Entry output() const;
+			void in(int16_t entry);
+			int16_t out() const;
+			void reset();
 		private:
-			static const size_t _buffer_size = 32;
-			static const size_t _deriv_hyst = 4;
-			EntryAccumulator _int;
-
-			Entry _data[_buffer_size];
-			Entry* _begin;
-			size_t _count;
-
-			float _gain_p, _gain_i, _gain_d;
-
-			inline Entry* end() const
-			{
-				Entry* r = _begin + _count;
-				return r >= _data + _buffer_size ? r - _buffer_size : r;
-			}
+			const int16_t _int_lim = 4086;
+			int16_t _int, _prev, _now;
+			uint16_t _gain_p, _gain_i, _gain_d;
 	};
+
+	extern const control::Mode follow_mode;
 
 #ifdef IO_SIM
 	extern TestCallback test_suite[];

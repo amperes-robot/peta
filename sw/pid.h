@@ -12,10 +12,11 @@ namespace pid
 			void in(int16_t entry);
 			int16_t out() const;
 			void reset();
+
+			uint16_t gain_p, gain_i, gain_d;
 		private:
 			const int16_t _int_lim = 4086;
 			int16_t _int, _prev, _now;
-			uint16_t _gain_p, _gain_i, _gain_d;
 	};
 
 	extern const control::Mode follow_mode;

@@ -6,9 +6,14 @@ namespace pid
 {
 	namespace
 	{
-		Controller controller(70, 1, 80);
+		Controller controller(70, 1, 80); // default value
 
-		void follow_mode_begin() { }
+		void follow_mode_begin()
+		{
+			controller.gain_p = menu::flw_gain_p.value();
+			controller.gain_i = menu::flw_gain_i.value();
+			controller.gain_d = menu::flw_gain_d.value();
+		}
 		void follow_mode_tick()
 		{
 			int16_t thresh = 360;
@@ -17,14 +22,15 @@ namespace pid
 			controller.in((analogRead(0) - thresh));
 			int16_t out = controller.out();
 
-			motion::vel(75);
+			// default 95
+			motion::vel(menu::flw_vel.value());
 			motion::dir(controller.out());
-			delay(10);
 
-			if (!io::digital_in(io::Digital::STOP))
+			if (menu::stop_falling())
 			{
 				control::set_mode(&menu::main_mode);
 			}
+			delay(10);
 		}
 		void follow_mode_end()
 		{
@@ -35,7 +41,7 @@ namespace pid
 	}
 
 	Controller::Controller(uint16_t gain_p, uint16_t gain_i, uint16_t gain_d)
-		: _prev(0), _now(0), _gain_p(gain_p), _gain_i(gain_i), _gain_d(gain_d) { }
+		: _prev(0), _now(0), gain_p(gain_p), gain_i(gain_i), gain_d(gain_d) { }
 
 	void Controller::in(int16_t entry)
 	{
@@ -49,9 +55,9 @@ namespace pid
 
 	int16_t Controller::out() const
 	{
-		int16_t fp = (int32_t) _now * _gain_p / 255;
-		int16_t fi = (int32_t) _int * _gain_i / 255;
-		int16_t fd = (int32_t) (_now - _prev) * _gain_d / 255;
+		int16_t fp = (int32_t) _now * gain_p / 255;
+		int16_t fi = (int32_t) _int * gain_i / 255;
+		int16_t fd = (int32_t) (_now - _prev) * gain_d / 255;
 
 		return -(fp + fi + fd);
 	}

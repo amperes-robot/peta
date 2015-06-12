@@ -3,6 +3,11 @@
 
 namespace menu
 {
+	Opt flw_gain_p("flw.p", 1.0 / 255);
+	Opt flw_gain_i("flw.i", 1.0 / 255);
+	Opt flw_gain_d("flw.d", 1.0 / 255);
+	Opt flw_vel("flw.vel", 1.0);
+
 	namespace
 	{
 		uint8_t get_index(uint8_t n)
@@ -13,7 +18,7 @@ namespace menu
 		String main_names[] =
 		{
 			"run",
-			"pid",
+			"flw",
 			"opt"
 		};
 		const size_t main_count = sizeof(main_names) / sizeof(*main_names);
@@ -38,7 +43,7 @@ namespace menu
 			}
 			prev_index = index;
 
-			if (!io::digital_in(io::Digital::START))
+			if (start_falling())
 			{
 				switch (index)
 				{
@@ -60,18 +65,14 @@ namespace menu
 			LCD.clear();
 		}
 
-		Opt pid_gain_p("pid.p");
-		Opt pid_gain_i("pid.i");
-		Opt pid_gain_d("pid.d");
-
 		Opt opts[] =
 		{
-			pid_gain_p,
-			pid_gain_i,
-			pid_gain_d
+			flw_gain_p,
+			flw_gain_i,
+			flw_gain_d,
+			flw_vel
 		};
 		const size_t opts_count = sizeof(opts) / sizeof(*opts);
-
 		int8_t opt_editing = 0;
 
 		void opt_mode_begin()
@@ -85,41 +86,45 @@ namespace menu
 			uint8_t index = get_index(opts_count);
 			uint16_t tweak = io::analog_in(io::Analog::TWEAK);
 
-			if (prev_index != index)
+			if (prev_index != index || opt_editing >= 0)
 			{
 				LCD.clear();
 				LCD.home();
 				LCD.setCursor(0, 0);
 				LCD.print("opt ");
-				LCD.print(opts[index].name());
-				LCD.setCursor(0, 1);
 
 				if (opt_editing >= 0)
 				{
+					LCD.print(opts[opt_editing].name());
+					LCD.setCursor(0, 1);
 					LCD.print("*");
+					//LCD.print(tweak * opts[opt_editing].scale());
 					LCD.print(tweak);
 				}
 				else
 				{
+					LCD.print(opts[index].name());
+					LCD.setCursor(0, 1);
+					//LCD.print(opts[index].value() * opts[index].scale());
 					LCD.print(opts[index].value());
 				}
 			}
 			prev_index = index;
 
-			if (!io::digital_in(io::Digital::START))
+			if (start_falling())
 			{
 				if (opt_editing >= 0)
 				{
 					opts[opt_editing].write(tweak);
-					prev_index = -1;
 					opt_editing = -1;
 				}
 				else
 				{
 					opt_editing = index;
 				}
+				prev_index = -1;
 			}
-			if (!io::digital_in(io::Digital::STOP))
+			if (stop_falling())
 			{
 				if (opt_editing >= 0)
 				{
@@ -139,8 +144,38 @@ namespace menu
 			LCD.clear();
 		}
 	}
+	
+	bool stop_falling()
+	{
+		static bool prev_state = false;
+		bool state = !io::digital_in(io::Digital::STOP);
+		bool ret = false;
 
-	Opt::Opt(String name) : _name(name)
+		if (state && !prev_state)
+		{
+			ret = true;
+		}
+
+		prev_state = state;
+		return ret;
+	}
+
+	bool start_falling()
+	{
+		static bool prev_state = false;
+		bool state = !io::digital_in(io::Digital::START);
+		bool ret = false;
+
+		if (state && !prev_state)
+		{
+			ret = true;
+		}
+
+		prev_state = state;
+		return ret;
+	}
+
+	Opt::Opt(String name, float scale) : _name(name), _scale(scale)
 	{
 		_addr_eep = (uint16_t*)(2 * opt_count++);
 		_value = eeprom_read_word(_addr_eep);

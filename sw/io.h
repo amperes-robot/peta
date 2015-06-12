@@ -40,21 +40,17 @@ namespace io
 				(Level == CRITICAL ? "CRITICAL" :
 				(Level == FATAL ? "FATAL" : ""))));
 			std::cout << "LCD " << level << " " << msg << std::endl;
+
+			if (Level >= FATAL)
+			{
+				throw std::logic_error("Fatal message logged");
+			}
 #else
-			/*
 			LCD.clear();
 			LCD.home();
 			LCD.print(msg);
-			*/
 #endif
 		}
-
-#ifdef IO_SIM
-		if (Level >= FATAL)
-		{
-			throw std::logic_error("Fatal message logged");
-		}
-#endif
 	}
 
 	template<typename T>

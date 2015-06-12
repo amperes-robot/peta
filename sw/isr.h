@@ -18,4 +18,8 @@ namespace isr
 	 * RISING  - trigger when pin state changes from LOW  to HIGH 
 	*/
 	void attach_pin(uint8_t pin, uint8_t mode);
+	void detach_pin(uint8_t pin);
+
+	void attach_adc();
+	void detach_adc();
 }

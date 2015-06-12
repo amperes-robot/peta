@@ -1,6 +1,8 @@
 #pragma once
 
+#ifndef nullptr
 #define nullptr ((void*) 0)
+#endif
 
 namespace control
 {

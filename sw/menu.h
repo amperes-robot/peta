@@ -8,6 +8,9 @@ namespace menu
 	{
 		public:
 			static uint16_t opt_count;
+
+			Opt() = delete;
+			Opt(const Opt& other) = delete;
 			Opt(String name, float scale);
 
 			inline uint16_t value()

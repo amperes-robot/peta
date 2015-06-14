@@ -65,12 +65,12 @@ namespace menu
 			LCD.clear();
 		}
 
-		Opt opts[] =
+		Opt* opts[] =
 		{
-			flw_gain_p,
-			flw_gain_i,
-			flw_gain_d,
-			flw_vel
+			&flw_gain_p,
+			&flw_gain_i,
+			&flw_gain_d,
+			&flw_vel
 		};
 		const size_t opts_count = sizeof(opts) / sizeof(*opts);
 		int8_t opt_editing = 0;
@@ -95,18 +95,18 @@ namespace menu
 
 				if (opt_editing >= 0)
 				{
-					LCD.print(opts[opt_editing].name());
+					LCD.print(opts[opt_editing]->name());
 					LCD.setCursor(0, 1);
 					LCD.print("*");
-					//LCD.print(tweak * opts[opt_editing].scale());
+					//LCD.print(tweak * opts[opt_editing]->scale());
 					LCD.print(tweak);
 				}
 				else
 				{
-					LCD.print(opts[index].name());
+					LCD.print(opts[index]->name());
 					LCD.setCursor(0, 1);
-					//LCD.print(opts[index].value() * opts[index].scale());
-					LCD.print(opts[index].value());
+					//LCD.print(opts[index].value() * opts[index]->scale());
+					LCD.print(opts[index]->value());
 				}
 			}
 			prev_index = index;
@@ -115,7 +115,7 @@ namespace menu
 			{
 				if (opt_editing >= 0)
 				{
-					opts[opt_editing].write(tweak);
+					opts[opt_editing]->write(tweak);
 					opt_editing = -1;
 				}
 				else

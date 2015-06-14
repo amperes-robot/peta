@@ -5917,7 +5917,7 @@ Source: http://www.bourns.com/data/global/PDFs/3223.PDF</description>
 <part name="QRD1" library="opto-vishay" deviceset="SFH6943" device="" value=""/>
 <part name="R3" library="resistor" deviceset="R-US_" device="0204/2V" value="47k"/>
 <part name="IC1" library="linear" deviceset="LM311" device="D"/>
-<part name="R4" library="pot" deviceset="TRIM_US-" device="3223G"/>
+<part name="R4" library="pot" deviceset="TRIM_US-" device="3223G" value="100k"/>
 </parts>
 <sheets>
 <sheet>

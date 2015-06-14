@@ -6371,10 +6371,10 @@ FAIRCHILD FDS5680.pdf</description>
 <sheets>
 <sheet>
 <plain>
-<text x="-43.18" y="71.12" size="1.778" layer="91">TINAH Motor 0</text>
+<text x="-43.18" y="71.12" size="1.778" layer="91">TINAH Motor </text>
 <circle x="60.96" y="53.34" radius="5.08" width="0.1524" layer="94"/>
 <text x="58.42" y="53.34" size="1.778" layer="95">Motor 0</text>
-<text x="106.68" y="50.8" size="1.778" layer="91">TINAH Motor 0</text>
+<text x="106.68" y="50.8" size="1.778" layer="91">TINAH Motor </text>
 </plain>
 <instances>
 <instance part="IC1" gate="A" x="7.62" y="53.34"/>

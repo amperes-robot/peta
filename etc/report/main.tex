@@ -11,6 +11,14 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{tabularx}
 \usepackage{array}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks,
+	citecolor=blue,
+	filecolor=blue,
+	linkcolor=blue,
+	urlcolor=blue
+}
 \newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
 \renewcommand{\arraystretch}{1.5}
 
@@ -123,7 +131,7 @@ Our robot will consist of four main mechanical sub-assemblies: The Chassis, Boar
 	
 	\subsection{Board Storage Space}
 
-	The Board Storage Space is integrated into the rear of the chassis. The vertical sections of the chassis contain slots and tabs to support the three shelves in the Board Storage Space (See Figure \ref{fig:3}). The shelves will be 3.4" deep and 7.8" long and will have a flange at the front to prevent boards from sliding off the shelves. The two bottom shelves will house circuit boards; once the shelves have been loaded with boards, the back plate will be screwed on to secure the shelves. The top shelf will support the TINAH in conjunction with the back plate. Two mounting features for the TINAH are on the front of the top shelf while the remaining two are on the top of the back plate.
+	The Board Storage Space is integrated into the rear of the chassis. The vertical sections of the chassis contain slots and tabs to support the three shelves in the Board Storage Space (See \autoref{fig:3}). The shelves will be 3.4" deep and 7.8" long and will have a flange at the front to prevent boards from sliding off the shelves. The two bottom shelves will house circuit boards; once the bottom two shelves have been loaded with boards, the back plate will be screwed on to secure the shelves. The top shelf will support the TINAH in conjunction with the back plate. Two mounting features for the TINAH are on the front of the top shelf while the remaining two are on the top of the back plate.
 
 	\begin{figure}[h]
 		\centering
@@ -189,19 +197,23 @@ TEST
 
 	\subsection{Driving and Arm Actuation}
 	
-	There will be two motors for driving, each powering one wheel using differential steering. Each motor will be connected to a motor output on TINAH via an external H-bridge with a comparator attached. Similarly, an H-bridge is also used for actuating the arm for picking up pets. Additionally, another H-bridge is used for actuating the zipline servo. The circuit schematic is in Schematic A in the Schematics section in Appendix A.
+	There will be two motors for driving, each powering one wheel using differential steering. Each motor will be connected to a motor output on TINAH via an external H-bridge with a comparator attached. Similarly, an H-bridge is also used for actuating the arm for picking up pets and another for actuating the zipline delivery apparatus. The circuit schematic is in \hyperref[sch:A]{Schematic A} of \hyperref[appendixB]{Appendix B}.
 	
 	\subsection{Detecting Pets and Following Tape}
 	
-	There will be a QRD1114 photo-transistor to be used for tape following by PID algorithm. It will be connected to an analog input pin on TINAH. Another QRD1114 will be placed on the side of the robot and connected to a digital input on TINAH with a comparator for detecting tapes leading to pets. The circuit for these 2 photo-transistors is in Schematic B in the Schematics section in Appendix A. 
+	There will be a QRD1114 photo-transistor to be used for tape following by PID algorithm. It will be connected to an analog input pin on TINAH. Another QRD1114 will be placed on the side of the robot and connected to a digital input on TINAH with a comparator for detecting tapes leading to pets. The circuit for these 2 photo-transistors is in \hyperref[sch:B]{Schematic B} of \hyperref[appendixB]{Appendix B}. 
 	
 	\subsection{IR Beacon Detection}
 	
-	Schematic C in the Schematics section shows the circuit for the 2 IR detectors used for detecting the IR beacons during the competition. The type of IR detector we'll be using is QSD124.
+	\hyperref[sch:C]{Schematic C} of \hyperref[appendixB]{Appendix B} section shows the circuit for the 2 IR detectors used for detecting the IR beacons during the competition. The type of IR detector we'll be using is QSD124. 
+	
+	\subsection{Winch Actuation}
+	
+	For actuating the winch which will move the roller of the zipline onto the pipe, \hyperref[sch:D]{Schematic D} of \hyperref[appendixB]{Appendix B} will be used. It consists mainly of an N-type MOSFET switch for driving the motor for winch in one direction. 
 	
 	\subsection{Pet Pick-Up Detection}
 	
-	The micro-switch in Schematic E indicates how to detect if a pet has been picked up and placed into the container. If the value read is high, it means no pet is attached to the retrieval arm. If the value read is low, then it means there is a pet attached to the retrieval arm. 
+	The micro-switch in \hyperref[sch:E]{Schematic D} of \hyperref[appendixB]{Appendix B} indicates how to detect if a pet has been picked up and placed into the container. If the value read is high, it means no pet is attached to the retrieval arm. If the value read is low, then it means there is a pet attached to the retrieval arm. 
 	
 	
 	\begin{table}[h]
@@ -273,8 +285,7 @@ TEST
 
 \section{Software and Code Algorithms}	
 The software will operate statefully, with one main control loop that handles the primary strategy and execution. At the same time, a 10kHz timer interrupt will run in parallel which will handle the time-sensitive operation of polling input pins.
-The main control loop will call upon a variety of different modes that describe the current operation at any given point in the program's execution. A summary of the different modes and their transitions is described in the Figure \ref{fig:4} below.
-
+The main control loop will call upon a variety of different modes that describe the current operation at any given point in the program's execution. A summary of the different modes and their transitions is described in the \autoref{fig:4} below.
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.5]{"Figures/Software Modes".jpg}
@@ -282,8 +293,8 @@ The main control loop will call upon a variety of different modes that describe 
 	\label{fig:4}
 \end{figure}
 
-A more detailed description of the modes is shown below in Table \ref{table:Software Modes}.
-On the 10kHz timer interrupt will be attached a procedure that handles pin inputs. Because the default \texttt{analogRead} function blocks until the ADC conversion finishes (approximately a 1000-cycle process), carrying out the conversion in parallel can significantly decrease loop latency. Additionally, polling digital pin inputs on the timer interrupt can provide a better guarantee that changes in digital inputs will not be missed because of latency in the main loop.
+A more detailed description of the modes is shown below in \autoref{table:Software Modes}.
+On the 10kHz timer interrupt will be attached a procedure that handles pin inputs. Because the default analogRead function blocks until the ADC conversion finishes (approximately a 1000-cycle process), carrying out the conversion in parallel can significantly decrease loop latency. Additionally, polling digital pin inputs on the timer interrupt can provide a better guarantee that changes in digital inputs will not be missed because of latency in the main loop.
 
 \begin{table}
 	\caption{Table of Software Modes}
@@ -323,8 +334,7 @@ On the 10kHz timer interrupt will be attached a procedure that handles pin input
 
 \section{Risk Assessment and Contingency Planning}
 
-See Table \ref{table:Risk Assessment} below:
-
+See \autoref{table:Risk Assessment} below:
 \begin{table}
 	\caption{Risk Assessment}
 	\centering

@@ -10,6 +10,8 @@
 \usepackage[parfill]{parskip}
 \usepackage[margin=1in]{geometry}
 \usepackage{tabularx}
+\usepackage{array}
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
 \renewcommand{\arraystretch}{1.5}
 
 \begin{document}
@@ -201,14 +203,15 @@ TEST
 	
 	The micro-switch in Schematic E indicates how to detect if a pet has been picked up and placed into the container. If the value read is high, it means no pet is attached to the retrieval arm. If the value read is low, then it means there is a pet attached to the retrieval arm. 
 	
-	\begin{table}
+	
+	\begin{table}[h]
 		\caption{Table of TINAH Pin Connections}
 		\centering
-		\begin{tabular}[t]{|p{.5in}|p{1.5in}|}
+		\begin{tabular}[t]{|P{0.5in}|p{2in}|}
 			\hline
-			Digital Pin & Input/Output \\
+			\textbf{Digital Pin} & \textbf{Input/Output} \\
 			\hline
-			0 & QRD pet marker tape detection \\
+			0 & Pet marker tape detection QRD\\
 			\hline
 			1 & Micro-switch for pet 1-3 and 5 pickup \\
 			\hline
@@ -222,9 +225,9 @@ TEST
 			\hline
 		\end{tabular}
 		\quad
-		\begin{tabular}[t]{|p{.5in}|p{1.5in}|}
+		\begin{tabular}[t]{|P{0.5in}|p{2in}|}
 			\hline
-			Analog Pin & Input/Output \\
+			\textbf{Analog Pin} & \textbf{Input/Output} \\
 			\hline
 			0 & IR detection left \\
 			\hline
@@ -234,7 +237,7 @@ TEST
 			\hline
 			\multicolumn{2}{c}{ }\\
 			\hline
-			Motor Pin & Output\\
+			\textbf{Motor Pin} & \textbf{Output}\\
 			\hline
 			0 & Drive motor left\\
 			\hline
@@ -245,24 +248,23 @@ TEST
 			3 & Zipline delivery\\
 			\hline
 		\end{tabular}
-		%\quad
-		%\begin{tabular}[t]{|p{.5in}|p{1.5in}|}
-		%	\hline
-		%	Motor Pin & Output \\
-		%	\hline
-		%	0 & IR detection left \\
-		%	\hline
-		%	1 & IR detection right \\
-		%	\hline
-		%	2 &  QRD for tape following \\
-		%	\hline
-		%\end{tabular}
 		\label{table:TINAHpins}
 	\end{table}
 	
-	\begin{table}
+	\begin{table}[h]
 		\caption{Table of PCB Information}
 		\centering
+		\begin{tabular}[t]{|P{1in}|p{1.5in}|P{0.5in}|p{1.2in}|P{1in}|}
+			\hline
+			\textbf{PCB Number} & \textbf{Purpose} & \textbf{Size(cm x cm)} & \textbf{Components Connected} & \textbf{Rails Needed} \\
+			\hline
+			1 & H-bridges: 2 for driving, 1 for actuating pet retrieval arm, 1 for actuation zipline delivery arm & 18 x 7 & TINAH, 4 DC motors, one for each H-bridge & GND, 5V, 15V\\
+			\hline
+			2 & IR detection circuitry & X x X & TINAH, 2 photo transistors & GND, 5V, $\pm$ 9V\\
+			\hline
+			3 & ??? & X x X & ??? & ???\\
+			\hline
+		\end{tabular}
 		\label{table:PCBInfo}
 	\end{table}
 	

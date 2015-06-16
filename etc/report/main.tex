@@ -7,12 +7,16 @@
 \usepackage{caption}
 \graphicspath{{Figures/}}
 \usepackage[square, numbers, comma, sort&compress]{natbib} % Use the natbib reference package - read up on this to edit the reference style; if you want text (e.g. Smith et al., 2012) for the in-text references (instead of numbers), remove 'numbers' 
-\title{\ttitle} % Defines the thesis title - don't touch this
 \usepackage[parfill]{parskip}
+\usepackage[margin=1in]{geometry}
+\usepackage{tabularx}
+\renewcommand{\arraystretch}{1.5}
 
 \begin{document}
 
+
 % Define the page headers using the FancyHdr package and set up for one-sided printing
+
 
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % New command to make the lines in the title page
 
@@ -30,21 +34,21 @@
 {\huge \bfseries ""}\\[0.4cm] % Thesis title
 \HRule \\[1.5cm] % Horizontal line
  
-\begin{minipage}{0.4\textwidth}
+\begin{minipage}[t]{0.4\textwidth}
 \begin{flushleft} \large
 \emph{Team Members:}\\
 {Scott Fjordbotten \newline Anne Lim \newline Johnson Liu \newline Kevin Zhang} % Author names
 \end{flushleft}
 \end{minipage}
-\begin{minipage}{0.4\textwidth}
+\begin{minipage}[t]{0.4\textwidth}
 \begin{flushright} \large
 \emph{Instructors:} \\
-{Dr. Andre Marziali \newline Dr. Jon Nakane \newline Mr. Bernhard Zender} % Instructors names
+{Dr. Andre Marziali \\ Dr. Jon Nakane \\ Mr. Bernhard Zender} % Instructors names
 \end{flushright}
 \end{minipage}\\[3cm]
  
  
-{\large June 2015}\\[4cm] % Date
+{\large June 2015}\\[4cm]
 %\includegraphics{Logo} % University/department logo - uncomment to place it
  
 \vfill
@@ -60,7 +64,7 @@
 \section*{Executive Summary}
 This document contains the proposed specifications of a robot designed to complete the 2015 ENPH 253 Pet-Rescue Bots challenge. The robot should be able to navigate through an 8 foot x 8 foot ramp by following a tape path, and collect “Pets”, which are Beanie toys of height 6” with magnets attached to them. The robot will then transport itself and the toys to a “safe area” via a zip line of height 19”, which goes from the end of the path to the start.
 
-The robot must be able to go through a doorway which is 14” wide and 18” tall. As for the Pets, some will be placed freely or in containers beside the tape path, one will be standing in the middle of the path, one will be on a raised platform, and one will be in a box filled with Styrofoam bricks.
+The robot must be able to go through a doorway which is 14” wide and 18” tall. As for the Pets, some will be placed along and beside the path, and others will be located in containers. All will be unattached from the playing surface.
 
 Our robot will be controlled by a TINAH Board using a ATMega128 processor, and QRD114 sensors will be used to detect the tape path.
 
@@ -140,7 +144,7 @@ Our robot will consist of four main mechanical sub-assemblies: The Chassis, Boar
 	\subsection{The Zipline Apparatus}
 		\subsubsection{Zipline Delivery System}
 	
-		\subsubsection{The Zipline Zipper}
+		\subsubsection{The Zipline Pulley}
 	
 		\subsubsection{The Winch System}
 
@@ -148,6 +152,8 @@ Our robot will consist of four main mechanical sub-assemblies: The Chassis, Boar
 %Drive and Actuator Systems
 \section{Drive and Actuator Systems}
 
+
+TEST
 	\subsection{Drive System}
 	
 	\subsection{Retrieval Arm Actuation}
@@ -165,6 +171,8 @@ Our robot will consist of four main mechanical sub-assemblies: The Chassis, Boar
 \section{Sensor System}
 	
 	\subsection{Tape Following}
+	
+	TEST
 	
 	\subsection{IR Detection}
 	
@@ -263,7 +271,7 @@ Our robot will consist of four main mechanical sub-assemblies: The Chassis, Boar
 
 \section{Software and Code Algorithms}	
 The software will operate statefully, with one main control loop that handles the primary strategy and execution. At the same time, a 10kHz timer interrupt will run in parallel which will handle the time-sensitive operation of polling input pins.
-The main control loop will call upon a variety of different “modes” that describe the current operation at any given point in the program's execution. A summary of the different modes and their transitions is described in the Figure \ref{fig:4} below.
+The main control loop will call upon a variety of different modes that describe the current operation at any given point in the program's execution. A summary of the different modes and their transitions is described in the Figure \ref{fig:4} below.
 
 \begin{figure}[h]
 	\centering
@@ -278,6 +286,20 @@ On the 10kHz timer interrupt will be attached a procedure that handles pin input
 \begin{table}
 	\caption{Table of Software Modes}
 	\centering
+	\begin{tabular}{ | c | p{5in} | }
+	\hline
+	Mode & Description \\ \hline \hline
+	Main Menu & This is the mode automatically entered when the board boots. The knobs are used to cycle between menu options. Additionally, any mode can be cancelled to return to the Main Menu. \\ \hline
+	Options Menu & Allows runtime parameters to be modified using the second knob. \\ \hline
+	Segment Select & Starts the selected mode from a list containing modes during program execution. \\ \hline
+	Course Begin & Transitions to the Follow/Retrieval mode. \\ \hline
+	Follow/Retrieval & Follows the tape and picks up the first three animals. Upon reaching the end of the tape (once all horizontal marks have been detected), switches to the Beacon Homing mode. \\ \hline
+	Beacon Homing & Using the two forward IR sensors, navigates towards the IR beacon. Picks up the elevated pet on the rafters by measuring distance from the end of the tape. Switches to Rubble Excavation upon IR sensor intensity reaching a threshold to be determined empirically. \\ \hline
+	Rubble Excavation & Turns 90 degrees and brushes off the top layer of foam using the arm. Attempts to find and retrieve the pet buried in the foam, and upon retrieving it (or on approaching the 2 minute time limit), switches to Zipline/Return. \\ \hline
+	Zipline/Return &
+	Uses the side IR sensor to align the robot with the beacon, raises the zipline arm, and cranks the winch up to return to the Safe Area. Returns to Main Menu afterwards.
+	\\ \hline
+	\end{tabular}
 	\label{table:Software Modes}
 \end{table}
 

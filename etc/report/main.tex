@@ -42,7 +42,9 @@
 \textsc{\LARGE ENPH 253 Design Proposal}\\[1.5cm]
 
 \HRule \\[0.4cm] % Horizontal line
-{\huge \bfseries "ROBOT NAME HERE"}\\[0.4cm] % Thesis title
+
+{\huge \bfseries "ROBOT NAME HERE"}\\[0.4cm]
+
 \HRule \\[1.5cm] % Horizontal line
  
 \begin{minipage}[t]{0.4\textwidth}
@@ -73,9 +75,9 @@
 %	Executive Summary
 %----------------------------------------------------------------------------------------
 \section*{Executive Summary}
-This document contains the proposed specifications of a robot designed to complete the 2015 ENPH 253 Pet-Rescue Bots challenge. The robot should be able to navigate through an 8 foot x 8 foot ramp by following a tape path, and collect “Pets”, which are Beanie toys of height 6” with magnets attached to them. The robot will then transport itself and the toys to a “safe area” via a zip line of height 19”, which goes from the end of the path to the start.
+This document contains the proposed specifications of a robot designed to complete the 2015 ENPH 253 Pet-Rescue Bots challenge. The robot should be able to navigate through an 8' by 8' foot ramp by following a tape path, and collect "Pets", which are Beanie toys of height 6" with magnets attached to them. The robot will then transport itself and the toys to a "safe area" via a zip line of height 19", which goes from the end of the path to the start.
 
-The robot must be able to go through a doorway which is 14” wide and 18” tall. As for the Pets, some will be placed along and beside the path, and others will be located in containers. All will be unattached from the playing surface.
+The robot must be able to go through a doorway which is 14" wide and 18" tall. As for the Pets, some will be placed along and beside the path, and others will be located in containers. All will be unattached from the playing surface.
 
 Our robot will be controlled by a TINAH Board using a ATMega128 processor, and QRD114 sensors will be used to detect the tape path.
 
@@ -294,17 +296,17 @@ TEST
 			\hline
 			\textbf{Digital Pin} & \textbf{Input/Output} \\
 			\hline
-			0 & Pet marker tape detection QRD\\
+			0 & Pet Marker QRD \\
 			\hline
-			1 & Micro-switch for pet 1-3 and 5 pickup \\
+			1 & Pickup Microswitch Lower \\
 			\hline
-			2 & Micro-switch for pet 6 pickup \\
+			2 & Pickup Microswitch Upper \\
 			\hline
-			3 & Winch control \\
+			3 & Winch Enable \\
 			\hline
-			4 & Wheel encoder left \\
+			4 & Wheel Encoder Left \\
 			\hline
-			5 & Wheel encoder right\\
+			5 & Wheel Encoder Right\\
 			\hline
 		\end{tabular}
 		\quad
@@ -312,23 +314,23 @@ TEST
 			\hline
 			\textbf{Analog Pin} & \textbf{Input/Output} \\
 			\hline
-			0 & IR detection left \\
+			0 & IR Sensor Left \\
 			\hline
-			1 & IR detection right \\
+			1 & IR Sensor Right \\
 			\hline
-			2 &  QRD for tape following \\
+			2 & Tape Follower QRD \\
 			\hline
-			\multicolumn{2}{c}{ }\\
+			\multicolumn{2}{c}{ } \\
 			\hline
 			\textbf{Motor Pin} & \textbf{Output}\\
 			\hline
-			0 & Drive motor left\\
+			0 & Drive Motor Left \\
 			\hline
-			1 & Drive motor right\\
+			1 & Drive Motor Right \\
 			\hline
-			2 & Pet retrieval arm actuation\\
+			2 & Retrieval Arm Motor \\
 			\hline
-			3 & Zipline delivery\\
+			3 & Zipline Arm Motor \\
 			\hline
 		\end{tabular}
 		\label{table:TINAHpins}
@@ -337,13 +339,13 @@ TEST
 	\begin{table}[h]
 		\caption{Table of PCB Information}
 		\centering
-		\begin{tabular}[t]{|P{1in}|p{1.5in}|P{0.5in}|p{1.2in}|P{1in}|}
+		\begin{tabular}[t]{ | P{0.7in} | p{1.5in} | P{0.7in} | p{1.2in} | P{1in} | }
 			\hline
-			\textbf{PCB Number} & \textbf{Purpose} & \textbf{Size(cm x cm)} & \textbf{Components Connected} & \textbf{Rails Needed} \\
+			\textbf{PCB Number} & \textbf{Purpose} & \textbf{Size (mm)} & \textbf{Components Connected} & \textbf{Rails Needed} \\
 			\hline
-			1 & H-bridges: 2 for driving, 1 for actuating pet retrieval arm, 1 for actuation zipline delivery arm & 18 x 7 & TINAH, 4 DC motors, one for each H-bridge & GND, 5V, 15V\\
+			1 & H-bridges: Drive Motors Left and Right, Retrieval Arm Motor, Zipline Arm Motor & 180 x 70 & TINAH, 4 DC motors & GND, 5V, 15V\\
 			\hline
-			2 & IR detection circuitry & X x X & TINAH, 2 photo transistors & GND, 5V, $\pm$ 9V\\
+			2 & IR detection circuitry & X x X & TINAH, 2 photodiodes & GND, 5V, $\pm$ 9V\\
 			\hline
 			3 & ??? & X x X & ??? & ???\\
 			\hline
@@ -396,9 +398,9 @@ On the 10kHz timer interrupt will be attached a procedure that handles pin input
 
 	\subsection{Error Handling}
 		\subsubsection{Unable to Retrieve Pet in Loft}
-		We will make several attempts at this, adjusting the position of the robot each time. If after XXX attempts we have not retrieved the pet, we will move on to the next stage.
+		We will make several attempts at this, adjusting the position of the robot each time. If after a certain number attempts we have not retrieved the pet, we will move on to the next stage.
 		\subsubsection{Lost Tape}
-		We will adjust proportional, differential, and integral constants to minimize this risk. Additionally, using wheel encoders allows us to have an additional position input, which we can use to correct position if the tape is lost.
+		We will adjust proportional, differential, and integral constants to minimize this risk. Additionally, using wheel encoders allows us to have an additional input, which we can use to correct position if the tape is lost.
 
 %--------------------------------------------
 %Risk Assessment and Contingency Planning

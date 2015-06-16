@@ -102,13 +102,13 @@ Our robot will be controlled by a TINAH Board using a ATMega128 processor, and Q
 %Overview of Basic Strategy
 \section{Overview of Basic Strategy}
 
-Our robot will contain a meshed in area at the front to carry the pets. Pets will be picked up by a plastic arm with a steel bracket on the end which will move along a circular path in the plane parallel to the front of the robot to magnetically attach and collect the pets. Below the steel bracket will be attached a hinged aluminum plate that will be sandwiched between the steel plate and any attached magnet, triggering a micro-switch when a magnet is attached. A rod fixed to the chassis will be located at the end of the arm's path such that the load will be sheared off the metallic plate in order to land in the meshed area.
+Our robot will contain a meshed in area at the front to carry the pets. Pets will be picked up by a plastic arm with a steel bracket on the end which will move along a circular path in the plane parallel to the front of the robot to magnetically attach and collect the pets. Below the steel bracket will be attached a hinged aluminium plate that will be sandwiched between the steel plate and any attached magnet, triggering a micro-switch when a magnet is attached. A rod fixed to the chassis will be located at the end of the arm's path such that the load will be sheared off the metallic plate in order to land in the meshed area.
 
-The robot will start following the tape in the starting location and follow it using a single QRD sensor connected to an analog input on the TINAH board and a proportional-integral-derivative controller algorithm. Upon detecting tape markers perpendicular to the main tape path using a side QRD connected to a LM311 comparator and a digital input, the retrieval arm will then be lowered until the attachment signal is received from the micro-switch. At this point, the arm will retract until the load is sheared off using the fixed rod, which can be detected by the falling signal from the micro-switch. The pet located in the middle of the path will magnetically attach to a steel bracket at the front of the robot and will remain attached to this bracket for the duration of the heat. The pet located on the elevated rafters will be located using the IR beacon and the rotary encoders on the wheels to determine the distance traveled since the end of the tape.
+The robot will start following the tape in the starting location and follow it using a single QRD sensor connected to an analog input on the TINAH board and a proportional-integral-derivative controller algorithm. Upon detecting tape markers perpendicular to the main tape path using a side QRD connected to a LM311 comparator and a digital input, the retrieval arm will then be lowered until the attachment signal is received from the micro-switch. At this point, the arm will retract until the load is sheared off using the fixed rod, which can be detected by the falling signal from the micro-switch. The pet located in the middle of the path will magnetically attach to a steel bracket at the front of the robot and will remain attached to this bracket for the duration of the heat. The pet located on the elevated rafters will be located using the IR beacon and the rotary encoders on the wheels to determine the distance travelled since the end of the tape.
 
 After collecting the elevated pet, the robot will continue to follow the IR beacon until the intensity from the beacon reaches a certain threshold, to be determined empirically. Based on encoder data, the robot will pivot 90 degrees to position the retrieval arm along the edge of the box. The retrieval arm will be used to push the Styrofoam rubble aside and retrieve the last pet.
 
-At this point, the robot should be positioned below and facing away from the zipline. An arm located on the left side of the robot opposite the pet retrieval arm and containing a magnetically attached zipline pulley will swing in the plane parallel to the side of the robot to attach the pulley to the zipline. A winch in the center of the robot and attached to the bottom side of the pulley will simultaneously detach the pulley from the zipline arm and lift the robot off the ground. Once off the ground, the robot will roll down the zipline to the Safe Area by virtue of gravity.
+At this point, the robot should be positioned below and facing away from the zipline. An arm located on the left side of the robot opposite the pet retrieval arm and containing a magnetically attached zipline pulley will swing in the plane parallel to the side of the robot to attach the pulley to the zipline. A winch in the centre of the robot and attached to the bottom side of the pulley will simultaneously detach the pulley from the zipline arm and lift the robot off the ground. Once off the ground, the robot will roll down the zipline to the Safe Area by virtue of gravity.
 
 %--------------------------------------------
 %Mechanical Design
@@ -118,7 +118,7 @@ Our robot will consist of four main mechanical sub-assemblies: The Chassis, Boar
 
 	\subsection{The Chassis}
 
-	The Chassis is the base for the robot. The Chassis consists of the Chassis Plate and two supports for the rear drive motors and axles. The Chassis Plate includes two vertical sections at the rear that support the components of the Board Storage Space. These sections will be discussed in more detail in the next section. Circular holes have been integrated in the front portion of the chassis plate to allow for wire routing to the tape following and tape detection QRD1114 reflectance sensors. The Chassis Plate and motor supports will be manufactured from 20 gauge aluminum to limit the overall weight of the robot. Additional brackets may be fabricated to reinforce the edge flange joints if necessary. 
+	The Chassis is the base for the robot. The Chassis consists of the Chassis Plate and two supports for the rear drive motors and axles. The Chassis Plate includes two vertical sections at the rear that support the components of the Board Storage Space. These sections will be discussed in more detail in the next section. Circular holes have been integrated in the front portion of the chassis plate to allow for wire routing to the tape following and tape detection QRD1114 reflectance sensors. The Chassis Plate and motor supports will be manufactured from 20 gauge aluminium to limit the overall weight of the robot. Additional brackets may be fabricated to reinforce the edge flange joints if necessary. 
 
 	\begin{figure}[h]
 		\centering
@@ -132,6 +132,7 @@ Our robot will consist of four main mechanical sub-assemblies: The Chassis, Boar
 	\subsection{Board Storage Space}
 
 	The Board Storage Space is integrated into the rear of the chassis. The vertical sections of the chassis contain slots and tabs to support the three shelves in the Board Storage Space (See \autoref{fig:3}). The shelves will be 3.4" deep and 7.8" long and will have a flange at the front to prevent boards from sliding off the shelves. The two bottom shelves will house circuit boards; once the bottom two shelves have been loaded with boards, the back plate will be screwed on to secure the shelves. The top shelf will support the TINAH in conjunction with the back plate. Two mounting features for the TINAH are on the front of the top shelf while the remaining two are on the top of the back plate.
+
 	\begin{figure}[h]
 		\centering
 		\includegraphics[scale=0.5]{"Figures/Board Storage Space".jpg}
@@ -169,7 +170,7 @@ TEST
 	
 	\subsection{Zipline Apparatus Actuation}
 	
-		\subsubsection{Zipline Delivery System Acuation}
+		\subsubsection{Zipline Delivery System Actuation}
 		
 		\subsubsection{Zipline Winch Actuation}
 
@@ -290,6 +291,7 @@ The main control loop will call upon a variety of different modes that describe 
 
 A more detailed description of the modes is shown below in \autoref{table:Software Modes}.
 On the 10kHz timer interrupt will be attached a procedure that handles pin inputs. Because the default analogRead function blocks until the ADC conversion finishes (approximately a 1000-cycle process), carrying out the conversion in parallel can significantly decrease loop latency. Additionally, polling digital pin inputs on the timer interrupt can provide a better guarantee that changes in digital inputs will not be missed because of latency in the main loop.
+
 \begin{table}
 	\caption{Table of Software Modes}
 	\centering
@@ -345,5 +347,7 @@ See \autoref{table:Risk Assessment} below:
 	\centering
 	\label{table:Task Schedule}
 \end{table}
+
+\input{"appendix.tex"}
 
 \end{document}  

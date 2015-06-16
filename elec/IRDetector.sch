@@ -6192,17 +6192,12 @@ standard rectifier, 3 A, 50 V (Motorola)</description>
 </class>
 </classes>
 <parts>
-<part name="SUPPLY1" library="supply2" deviceset="+15V" device=""/>
 <part name="T1" library="opto-trans-siemens" deviceset="BP103" device="" value="QSD124N"/>
 <part name="R1" library="resistor" deviceset="R-US_" device="0204/5" value="330"/>
-<part name="SUPPLY2" library="supply2" deviceset="GND" device=""/>
 <part name="IC1" library="linear" deviceset="TL082" device="P"/>
-<part name="SUPPLY3" library="supply2" deviceset="+15V" device=""/>
 <part name="C1" library="resistor" deviceset="C-US" device="025-024X044" value="100nF"/>
 <part name="R2" library="resistor" deviceset="R-US_" device="0204/5" value="1k"/>
 <part name="R3" library="resistor" deviceset="R-US_" device="0207/5V"/>
-<part name="SUPPLY4" library="supply2" deviceset="+15V" device=""/>
-<part name="SUPPLY5" library="supply2" deviceset="-15V" device=""/>
 <part name="R4" library="resistor" deviceset="R-US_" device="01005" value="100k"/>
 <part name="R5" library="resistor" deviceset="R-US_" device="01005" value="3.3k"/>
 <part name="C2" library="resistor" deviceset="C-US" device="025-025X050" value="4.7nF"/>
@@ -6216,44 +6211,30 @@ standard rectifier, 3 A, 50 V (Motorola)</description>
 <part name="C5" library="resistor" deviceset="C-US" device="050-045X075" value="4.7nF"/>
 <part name="R8" library="resistor" deviceset="R-US_" device="0309/12" value="3.3k"/>
 <part name="IC3" library="linear" deviceset="TL082" device="P"/>
-<part name="SUPPLY8" library="supply2" deviceset="+15V" device=""/>
-<part name="SUPPLY9" library="supply2" deviceset="-15V" device=""/>
 <part name="D1" library="diode" deviceset="1N4004" device=""/>
 <part name="R9" library="resistor" deviceset="R-US_" device="0207/5V" value="33k"/>
 <part name="C6" library="resistor" deviceset="C-US" device="025-060X050" value="100nF"/>
-<part name="SUPPLY10" library="supply2" deviceset="GND" device=""/>
-<part name="SUPPLY11" library="supply2" deviceset="GND" device=""/>
-<part name="SUPPLY12" library="supply2" deviceset="+15V" device=""/>
-<part name="SUPPLY13" library="supply2" deviceset="-15V" device=""/>
 <part name="R10" library="resistor" deviceset="R-US_" device="0414/5V" value="100"/>
 <part name="D2" library="diode" deviceset="1N5400" device=""/>
-<part name="SUPPLY14" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY15" library="supply2" deviceset="V+" device="" value="V+ "/>
 <part name="SUPPLY16" library="supply2" deviceset="V-" device="" value="V-"/>
-<part name="SUPPLY17" library="supply2" deviceset="+15V" device=""/>
-<part name="SUPPLY18" library="supply2" deviceset="+15V" device=""/>
-<part name="SUPPLY19" library="supply2" deviceset="-15V" device=""/>
-<part name="SUPPLY20" library="supply2" deviceset="-15V" device=""/>
-<part name="SUPPLY21" library="supply2" deviceset="-15V" device=""/>
+<part name="SUPPLY22" library="supply2" deviceset="+15V" device="" value="+9V"/>
+<part name="SUPPLY1" library="supply2" deviceset="GND" device=""/>
+<part name="SUPPLY2" library="supply2" deviceset="-15V" device="" value="-9V"/>
 </parts>
 <sheets>
 <sheet>
 <plain>
-<text x="220.98" y="-73.66" size="1.016" layer="91">TINAH</text>
+<text x="220.98" y="-73.66" size="1.016" layer="91">To TINAH A1, A2</text>
 </plain>
 <instances>
-<instance part="SUPPLY1" gate="+15V" x="-15.24" y="81.28"/>
 <instance part="T1" gate="1" x="-17.78" y="73.66"/>
 <instance part="R1" gate="G$1" x="-15.24" y="60.96" rot="R90"/>
-<instance part="SUPPLY2" gate="GND" x="-15.24" y="48.26"/>
 <instance part="IC1" gate="A" x="7.62" y="63.5"/>
-<instance part="SUPPLY3" gate="+15V" x="7.62" y="68.58"/>
 <instance part="C1" gate="G$1" x="37.36768125" y="63.764378125" rot="R270"/>
 <instance part="R2" gate="G$1" x="43.18" y="58.42" rot="R90"/>
 <instance part="R3" gate="G$1" x="53.34" y="63.5"/>
 <instance part="IC1" gate="B" x="73.66" y="66.04"/>
-<instance part="SUPPLY4" gate="+15V" x="73.66" y="71.12"/>
-<instance part="SUPPLY5" gate="G$1" x="73.66" y="60.96"/>
 <instance part="R4" gate="G$1" x="81.28" y="53.34"/>
 <instance part="R5" gate="G$1" x="91.44" y="66.04"/>
 <instance part="C2" gate="G$1" x="101.6" y="66.04" rot="R270"/>
@@ -6268,36 +6249,21 @@ standard rectifier, 3 A, 50 V (Motorola)</description>
 <instance part="C5" gate="G$1" x="182.88" y="58.42" rot="R90"/>
 <instance part="R8" gate="G$1" x="175.26" y="50.8"/>
 <instance part="IC3" gate="A" x="187.96" y="25.4" rot="R270"/>
-<instance part="SUPPLY8" gate="+15V" x="193.04" y="25.4" rot="R270"/>
-<instance part="SUPPLY9" gate="G$1" x="182.88" y="25.4" rot="R270"/>
 <instance part="D1" gate="1" x="187.96" y="15.24" rot="R270"/>
 <instance part="R9" gate="G$1" x="180.34" y="-5.08"/>
 <instance part="C6" gate="G$1" x="180.34" y="-12.7" rot="R270"/>
-<instance part="SUPPLY10" gate="GND" x="172.72" y="-5.08" rot="R270"/>
-<instance part="SUPPLY11" gate="GND" x="172.72" y="-12.7" rot="R270"/>
 <instance part="IC3" gate="B" x="185.42" y="-38.1" rot="R270"/>
-<instance part="SUPPLY12" gate="+15V" x="190.5" y="-38.1" rot="R270"/>
-<instance part="SUPPLY13" gate="G$1" x="180.34" y="-38.1" rot="R270"/>
 <instance part="R10" gate="G$1" x="185.42" y="-58.42" rot="R90"/>
 <instance part="D2" gate="1" x="185.42" y="-78.74" rot="R90"/>
-<instance part="SUPPLY14" gate="GND" x="185.42" y="-83.82"/>
 <instance part="SUPPLY15" gate="1" x="218.44" y="-66.04" rot="R270"/>
 <instance part="SUPPLY16" gate="1" x="218.44" y="-81.28" rot="R90"/>
-<instance part="SUPPLY17" gate="+15V" x="127" y="73.66"/>
-<instance part="SUPPLY18" gate="+15V" x="175.26" y="76.2"/>
-<instance part="SUPPLY19" gate="G$1" x="7.62" y="58.42"/>
-<instance part="SUPPLY20" gate="G$1" x="127" y="63.5"/>
-<instance part="SUPPLY21" gate="G$1" x="175.26" y="66.04"/>
+<instance part="SUPPLY22" gate="+15V" x="-15.24" y="109.22"/>
+<instance part="SUPPLY1" gate="GND" x="-15.24" y="-38.1"/>
+<instance part="SUPPLY2" gate="G$1" x="-68.58" y="25.4" rot="R270"/>
 </instances>
 <busses>
 </busses>
 <nets>
-<net name="+15V" class="0">
-<segment>
-<pinref part="SUPPLY1" gate="+15V" pin="+15V"/>
-<pinref part="T1" gate="1" pin="C"/>
-</segment>
-</net>
 <net name="N$1" class="0">
 <segment>
 <pinref part="T1" gate="1" pin="E"/>
@@ -6310,23 +6276,6 @@ standard rectifier, 3 A, 50 V (Motorola)</description>
 </segment>
 </net>
 <net name="GND" class="0">
-<segment>
-<pinref part="R1" gate="G$1" pin="1"/>
-<pinref part="SUPPLY2" gate="GND" pin="GND"/>
-<wire x1="-15.24" y1="50.8" x2="-15.24" y2="53.34" width="0.1524" layer="91"/>
-<pinref part="R2" gate="G$1" pin="1"/>
-<wire x1="-15.24" y1="53.34" x2="-15.24" y2="55.88" width="0.1524" layer="91"/>
-<wire x1="43.18" y1="53.34" x2="-15.24" y2="53.34" width="0.1524" layer="91"/>
-<wire x1="43.18" y1="53.34" x2="43.18" y2="55.88" width="0.1524" layer="91"/>
-<wire x1="43.18" y1="53.34" x2="60.96" y2="53.34" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="B" pin="+IN"/>
-<wire x1="66.04" y1="68.58" x2="60.96" y2="68.58" width="0.1524" layer="91"/>
-<wire x1="60.96" y1="68.58" x2="60.96" y2="66.04" width="0.1524" layer="91"/>
-<wire x1="60.96" y1="66.04" x2="60.96" y2="60.96" width="0.1524" layer="91" curve="-180"/>
-<wire x1="60.96" y1="60.96" x2="60.96" y2="53.34" width="0.1524" layer="91"/>
-<junction x="-15.24" y="53.34"/>
-<junction x="43.18" y="53.34"/>
-</segment>
 <segment>
 <pinref part="SUPPLY6" gate="GND" pin="GND"/>
 <wire x1="114.3" y1="71.12" x2="116.84" y2="71.12" width="0.1524" layer="91"/>
@@ -6368,34 +6317,6 @@ standard rectifier, 3 A, 50 V (Motorola)</description>
 <junction x="190.5" y="50.8"/>
 <junction x="190.5" y="58.42"/>
 <junction x="167.64" y="78.74"/>
-</segment>
-<segment>
-<pinref part="R9" gate="G$1" pin="1"/>
-<pinref part="SUPPLY10" gate="GND" pin="GND"/>
-</segment>
-<segment>
-<pinref part="IC3" gate="A" pin="-IN"/>
-<wire x1="185.42" y1="33.02" x2="170.18" y2="33.02" width="0.1524" layer="91"/>
-<wire x1="170.18" y1="33.02" x2="170.18" y2="2.54" width="0.1524" layer="91"/>
-<wire x1="170.18" y1="2.54" x2="187.96" y2="2.54" width="0.1524" layer="91"/>
-<wire x1="187.96" y1="2.54" x2="187.96" y2="12.7" width="0.1524" layer="91"/>
-<pinref part="D1" gate="1" pin="C"/>
-<pinref part="R9" gate="G$1" pin="2"/>
-<wire x1="185.42" y1="-5.08" x2="187.96" y2="-5.08" width="0.1524" layer="91"/>
-<wire x1="187.96" y1="-5.08" x2="187.96" y2="2.54" width="0.1524" layer="91"/>
-<pinref part="C6" gate="G$1" pin="2"/>
-<wire x1="175.26" y1="-12.7" x2="182.88" y2="-12.7" width="0.1524" layer="91"/>
-<wire x1="182.88" y1="-12.7" x2="187.96" y2="-12.7" width="0.1524" layer="91"/>
-<wire x1="187.96" y1="-12.7" x2="187.96" y2="-5.08" width="0.1524" layer="91"/>
-<pinref part="C6" gate="G$1" pin="1"/>
-<junction x="182.88" y="-12.7"/>
-<pinref part="SUPPLY11" gate="GND" pin="GND"/>
-<junction x="175.26" y="-12.7"/>
-<junction x="187.96" y="2.54"/>
-<junction x="187.96" y="-5.08"/>
-<junction x="187.96" y="-12.7"/>
-<pinref part="IC3" gate="B" pin="+IN"/>
-<wire x1="187.96" y1="-12.7" x2="187.96" y2="-30.48" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$2" class="0">
@@ -6511,14 +6432,127 @@ standard rectifier, 3 A, 50 V (Motorola)</description>
 <wire x1="185.42" y1="-66.04" x2="185.42" y2="-63.5" width="0.1524" layer="91"/>
 <wire x1="185.42" y1="-66.04" x2="215.9" y2="-66.04" width="0.1524" layer="91"/>
 <pinref part="SUPPLY15" gate="1" pin="V+"/>
+<junction x="185.42" y="-66.04"/>
 </segment>
 </net>
 <net name="V-" class="0">
 <segment>
 <pinref part="D2" gate="1" pin="A"/>
-<pinref part="SUPPLY14" gate="GND" pin="GND"/>
 <wire x1="185.42" y1="-81.28" x2="215.9" y2="-81.28" width="0.1524" layer="91"/>
 <pinref part="SUPPLY16" gate="1" pin="V-"/>
+<pinref part="IC3" gate="A" pin="-IN"/>
+<wire x1="185.42" y1="33.02" x2="170.18" y2="33.02" width="0.1524" layer="91"/>
+<wire x1="170.18" y1="33.02" x2="170.18" y2="2.54" width="0.1524" layer="91"/>
+<wire x1="170.18" y1="2.54" x2="187.96" y2="2.54" width="0.1524" layer="91"/>
+<wire x1="187.96" y1="2.54" x2="187.96" y2="12.7" width="0.1524" layer="91"/>
+<pinref part="D1" gate="1" pin="C"/>
+<pinref part="R9" gate="G$1" pin="2"/>
+<wire x1="185.42" y1="-5.08" x2="187.96" y2="-5.08" width="0.1524" layer="91"/>
+<wire x1="187.96" y1="-5.08" x2="187.96" y2="2.54" width="0.1524" layer="91"/>
+<pinref part="C6" gate="G$1" pin="2"/>
+<wire x1="175.26" y1="-12.7" x2="182.88" y2="-12.7" width="0.1524" layer="91"/>
+<wire x1="182.88" y1="-12.7" x2="187.96" y2="-12.7" width="0.1524" layer="91"/>
+<wire x1="187.96" y1="-12.7" x2="187.96" y2="-5.08" width="0.1524" layer="91"/>
+<pinref part="C6" gate="G$1" pin="1"/>
+<junction x="182.88" y="-12.7"/>
+<junction x="187.96" y="2.54"/>
+<junction x="187.96" y="-5.08"/>
+<junction x="187.96" y="-12.7"/>
+<pinref part="IC3" gate="B" pin="+IN"/>
+<wire x1="187.96" y1="-12.7" x2="187.96" y2="-30.48" width="0.1524" layer="91"/>
+<pinref part="R1" gate="G$1" pin="1"/>
+<pinref part="R2" gate="G$1" pin="1"/>
+<wire x1="-15.24" y1="53.34" x2="-15.24" y2="55.88" width="0.1524" layer="91"/>
+<wire x1="43.18" y1="53.34" x2="-15.24" y2="53.34" width="0.1524" layer="91"/>
+<wire x1="43.18" y1="53.34" x2="43.18" y2="55.88" width="0.1524" layer="91"/>
+<wire x1="43.18" y1="53.34" x2="60.96" y2="53.34" width="0.1524" layer="91"/>
+<pinref part="IC1" gate="B" pin="+IN"/>
+<wire x1="66.04" y1="68.58" x2="60.96" y2="68.58" width="0.1524" layer="91"/>
+<wire x1="60.96" y1="68.58" x2="60.96" y2="66.04" width="0.1524" layer="91"/>
+<wire x1="60.96" y1="66.04" x2="60.96" y2="60.96" width="0.1524" layer="91" curve="-180"/>
+<wire x1="60.96" y1="60.96" x2="60.96" y2="53.34" width="0.1524" layer="91"/>
+<junction x="-15.24" y="53.34"/>
+<junction x="43.18" y="53.34"/>
+<wire x1="-15.24" y1="53.34" x2="-15.24" y2="-2.54" width="0.1524" layer="91"/>
+<pinref part="R9" gate="G$1" pin="1"/>
+<wire x1="-15.24" y1="-2.54" x2="-15.24" y2="-12.7" width="0.1524" layer="91"/>
+<wire x1="-15.24" y1="-12.7" x2="-15.24" y2="-38.1" width="0.1524" layer="91"/>
+<wire x1="175.26" y1="-5.08" x2="172.72" y2="-2.54" width="0.1524" layer="91"/>
+<wire x1="172.72" y1="-2.54" x2="-15.24" y2="-2.54" width="0.1524" layer="91"/>
+<wire x1="175.26" y1="-12.7" x2="-15.24" y2="-12.7" width="0.1524" layer="91"/>
+<wire x1="-15.24" y1="-12.7" x2="53.34" y2="-81.28" width="0.1524" layer="91"/>
+<wire x1="53.34" y1="-81.28" x2="185.42" y2="-81.28" width="0.1524" layer="91"/>
+<junction x="-15.24" y="-12.7"/>
+<junction x="-15.24" y="-2.54"/>
+</segment>
+</net>
+<net name="+15V" class="0">
+<segment>
+<pinref part="T1" gate="1" pin="C"/>
+<pinref part="SUPPLY22" gate="+15V" pin="+15V"/>
+<wire x1="-15.24" y1="78.74" x2="-15.24" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="7.62" y1="66.04" x2="7.62" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="7.62" y1="76.2" x2="7.62" y2="81.28" width="0.1524" layer="91" curve="-180"/>
+<wire x1="7.62" y1="81.28" x2="7.62" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="7.62" y1="106.68" x2="-15.24" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="-15.24" y1="106.68" x2="73.66" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="73.66" y1="68.58" x2="73.66" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="73.66" y1="106.68" x2="127" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="127" y1="106.68" x2="127" y2="83.82" width="0.1524" layer="91"/>
+<wire x1="127" y1="83.82" x2="127" y2="78.74" width="0.1524" layer="91" curve="-180"/>
+<wire x1="127" y1="78.74" x2="127" y2="71.12" width="0.1524" layer="91"/>
+<wire x1="175.26" y1="73.66" x2="175.26" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="175.26" y1="76.2" x2="175.26" y2="81.28" width="0.1524" layer="91" curve="-180"/>
+<wire x1="175.26" y1="81.28" x2="175.26" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="175.26" y1="106.68" x2="127" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="190.5" y1="25.4" x2="215.9" y2="25.4" width="0.1524" layer="91"/>
+<wire x1="215.9" y1="25.4" x2="215.9" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="215.9" y1="106.68" x2="175.26" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="187.96" y1="-38.1" x2="215.9" y2="-38.1" width="0.1524" layer="91"/>
+<wire x1="215.9" y1="-38.1" x2="215.9" y2="25.4" width="0.1524" layer="91"/>
+<junction x="215.9" y="25.4"/>
+</segment>
+</net>
+<net name="N$3" class="0">
+<segment>
+<wire x1="7.62" y1="60.96" x2="7.62" y2="55.88" width="0.1524" layer="91"/>
+<wire x1="7.62" y1="55.88" x2="7.62" y2="50.8" width="0.1524" layer="91" curve="-180"/>
+<wire x1="7.62" y1="50.8" x2="7.62" y2="27.94" width="0.1524" layer="91"/>
+<wire x1="175.26" y1="68.58" x2="170.18" y2="63.5" width="0.1524" layer="91"/>
+<wire x1="170.18" y1="63.5" x2="165.1" y2="63.5" width="0.1524" layer="91" curve="-180"/>
+<wire x1="165.1" y1="63.5" x2="160.02" y2="63.5" width="0.1524" layer="91"/>
+<wire x1="160.02" y1="63.5" x2="160.02" y2="27.94" width="0.1524" layer="91"/>
+<wire x1="127" y1="66.04" x2="121.92" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="121.92" y1="60.96" x2="116.84" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="116.84" y1="60.96" x2="111.76" y2="60.96" width="0.1524" layer="91" curve="-180"/>
+<wire x1="111.76" y1="60.96" x2="111.76" y2="27.94" width="0.1524" layer="91"/>
+<wire x1="73.66" y1="63.5" x2="73.66" y2="55.88" width="0.1524" layer="91"/>
+<wire x1="73.66" y1="55.88" x2="73.66" y2="50.8" width="0.1524" layer="91" curve="-180"/>
+<wire x1="73.66" y1="50.8" x2="73.66" y2="27.94" width="0.1524" layer="91"/>
+<wire x1="73.66" y1="27.94" x2="7.62" y2="27.94" width="0.1524" layer="91"/>
+<wire x1="7.62" y1="27.94" x2="-12.7" y2="27.94" width="0.1524" layer="91"/>
+<wire x1="111.76" y1="27.94" x2="73.66" y2="27.94" width="0.1524" layer="91"/>
+<wire x1="160.02" y1="27.94" x2="111.76" y2="27.94" width="0.1524" layer="91"/>
+<wire x1="160.02" y1="27.94" x2="167.64" y2="27.94" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="27.94" x2="172.72" y2="25.4" width="0.1524" layer="91" curve="-180"/>
+<wire x1="172.72" y1="25.4" x2="185.42" y2="25.4" width="0.1524" layer="91"/>
+<wire x1="182.88" y1="-38.1" x2="165.1" y2="-38.1" width="0.1524" layer="91"/>
+<wire x1="165.1" y1="-38.1" x2="160.02" y2="-38.1" width="0.1524" layer="91" curve="-180"/>
+<wire x1="160.02" y1="-38.1" x2="160.02" y2="-15.24" width="0.1524" layer="91"/>
+<wire x1="160.02" y1="-15.24" x2="160.02" y2="-10.16" width="0.1524" layer="91" curve="-180"/>
+<wire x1="160.02" y1="-10.16" x2="160.02" y2="-5.08" width="0.1524" layer="91"/>
+<wire x1="160.02" y1="-5.08" x2="160.02" y2="0" width="0.1524" layer="91" curve="-180"/>
+<wire x1="160.02" y1="27.94" x2="160.02" y2="0" width="0.1524" layer="91"/>
+<junction x="73.66" y="27.94"/>
+<junction x="111.76" y="27.94"/>
+<junction x="7.62" y="27.94"/>
+</segment>
+</net>
+<net name="N$15" class="0">
+<segment>
+<wire x1="-71.12" y1="25.4" x2="-68.58" y2="27.94" width="0.1524" layer="91"/>
+<wire x1="-68.58" y1="27.94" x2="-17.78" y2="27.94" width="0.1524" layer="91"/>
+<wire x1="-17.78" y1="27.94" x2="-12.7" y2="27.94" width="0.1524" layer="91" curve="-180"/>
 </segment>
 </net>
 </nets>

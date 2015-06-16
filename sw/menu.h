@@ -15,6 +15,10 @@ namespace menu
 				_value = eeprom_read_word(_addr_eep);
 			}
 
+			Opt() = delete;
+			Opt(const Opt& other) = delete;
+			Opt(String name, float scale);
+
 			inline uint16_t value() const
 			{
 				return _value;
@@ -61,7 +65,7 @@ namespace menu
 	bool stop_falling();
 
 	/**
-	 * Retruns treu if start button is on falling edge.
+	 * Retruns true if start button is on falling edge.
 	 */
 	bool start_falling();
 }

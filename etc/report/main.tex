@@ -33,7 +33,7 @@
 \textsc{\LARGE ENPH 253 Design Proposal}\\[1.5cm]
 
 \HRule \\[0.4cm] % Horizontal line
-{\huge \bfseries ""}\\[0.4cm] % Thesis title
+{\huge \bfseries NAME HERE}\\[0.4cm] % Thesis title
 \HRule \\[1.5cm] % Horizontal line
  
 \begin{minipage}[t]{0.4\textwidth}
@@ -64,9 +64,9 @@
 %	Executive Summary
 %----------------------------------------------------------------------------------------
 \section*{Executive Summary}
-This document contains the proposed specifications of a robot designed to complete the 2015 ENPH 253 Pet-Rescue Bots challenge. The robot should be able to navigate through an 8 foot x 8 foot ramp by following a tape path, and collect “Pets”, which are Beanie toys of height 6” with magnets attached to them. The robot will then transport itself and the toys to a “safe area” via a zip line of height 19”, which goes from the end of the path to the start.
+This document contains the proposed specifications of a robot designed to complete the 2015 ENPH 253 Pet-Rescue Bots challenge. The robot should be able to navigate through an 8' by 8' foot ramp by following a tape path, and collect "Pets", which are Beanie toys of height 6" with magnets attached to them. The robot will then transport itself and the toys to a "safe area" via a zip line of height 19", which goes from the end of the path to the start.
 
-The robot must be able to go through a doorway which is 14” wide and 18” tall. As for the Pets, some will be placed along and beside the path, and others will be located in containers. All will be unattached from the playing surface.
+The robot must be able to go through a doorway which is 14" wide and 18" tall. As for the Pets, some will be placed along and beside the path, and others will be located in containers. All will be unattached from the playing surface.
 
 Our robot will be controlled by a TINAH Board using a ATMega128 processor, and QRD114 sensors will be used to detect the tape path.
 
@@ -314,9 +314,9 @@ On the 10kHz timer interrupt will be attached a procedure that handles pin input
 
 	\subsection{Error Handling}
 		\subsubsection{Unable to Retrieve Pet in Loft}
-		We will make several attempts at this, adjusting the position of the robot each time. If after XXX attempts we have not retrieved the pet, we will move on to the next stage.
+		We will make several attempts at this, adjusting the position of the robot each time. If after a certain number attempts we have not retrieved the pet, we will move on to the next stage.
 		\subsubsection{Lost Tape}
-		We will adjust proportional, differential, and integral constants to minimize this risk. Additionally, using wheel encoders allows us to have an additional position input, which we can use to correct position if the tape is lost.
+		We will adjust proportional, differential, and integral constants to minimize this risk. Additionally, using wheel encoders allows us to have an additional input, which we can use to correct position if the tape is lost.
 
 %--------------------------------------------
 %Risk Assessment and Contingency Planning

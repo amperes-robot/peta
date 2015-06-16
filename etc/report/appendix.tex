@@ -5,7 +5,17 @@
 \label{AppendixA}
 
 	\subsection{Rear Wheel Torque}
-	From Solidworks' analysis of our CAD models, we have an upper bound $m$ of 5~kg on the assembly's weight. The height $h_G$ of the centre of gravity $G$ off the ground is 0.144~m. The horizontal distance $l_A$ from the back (driven) wheels at $A$ to $G$ is 0.085~m. The horizontal distance $l_B$ from the front support at $B$ to $G$ is 0.134~m. From our measurements, the ramp has an incline of 14$^\circ$. Applying force and moment balancing equations on a static body,
+	From Solidworks' analysis of our CAD models, we have an upper bound $m$ of 5~kg on the assembly's weight. The height $h_G$ of the centre of gravity $G$ off the ground is 0.144~m. The horizontal distance $l_A$ from the back (driven) wheels at $A$ to $G$ is 0.085~m. The horizontal distance $l_B$ from the front support $B$ to $G$ is 0.134~m. From our measurements, the ramp has an incline of 8$^\circ$. The rear motors apply a frictional force $F_F$ on the back wheels, and the front support is estimated to have a coefficient of static friction $\mu$~=~0.2. Applying force and moment balancing equations on a static body,
 	
-	$$N_A$$
+	$$\Sigma F_x = 0:~~ N_A\hat{\imath} + N_B\hat{\imath} - mg\cos{14^\circ}\hat{\imath} = 0$$
+	$$\Sigma F_y = 0:~~ F_F\hat{\jmath} - \mu N_B\hat{\jmath}  - mg\sin{14^\circ}\hat{\jmath} = 0$$
+	$$\Sigma M = 0:~~ N_Bl_B - N_Al_A + F_Fh_G - \mu N_Bh_G= 0$$
 	
+	% wolfram alpha: a+b-5*9.8*cos8=0, f-0.2b-5*9.8*sin8=0, b*0.134-a*0.085+f*0.144-0.2*b*0.144=0
+	Solving these equations, we obtain 9.7~N force necessary to drive the assembly out of stasis on the ramp, which will be the most difficult part of the course. The wheels have radius 2.8~cm, so a gear ratio of 3:1 will be sufficient to sustain movement with less than half of maximum torque.
+	
+	\subsection{Actuator Torque}
+	Again, from the Solidworks analysis, the actuator arm has a centre of mass 9~cm from the pivot and weighs 0.535~kg when it is loaded with a pet. This requires a torque of 48~Ncm, and consequently a gear ratio of 5:1 will allow the motor to run at half of maximum torque.
+	
+	\subsection{Zipline Arm Torque}
+	The zipline arm has a mass of 0.117~kg which is centred 1.5~cm from the pivot. This is a 1.7~Ncm moment required, which the motor can run at one-tenth of maximum torque without any gearing.

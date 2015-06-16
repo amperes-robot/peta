@@ -1,0 +1,268 @@
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[11pt, oneside]{article} % The default font size and one-sided printing (no margin offsets)
+\usepackage{graphicx}
+\usepackage{caption}
+\graphicspath{{Figures/}}
+\usepackage[square, numbers, comma, sort&compress]{natbib} % Use the natbib reference package - read up on this to edit the reference style; if you want text (e.g. Smith et al., 2012) for the in-text references (instead of numbers), remove 'numbers' 
+\title{\ttitle} % Defines the thesis title - don't touch this
+\usepackage[parfill]{parskip}
+
+\begin{document}
+
+% Define the page headers using the FancyHdr package and set up for one-sided printing
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % New command to make the lines in the title page
+
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\begin{titlepage}
+\begin{center}
+
+\textsc{\LARGE ENPH 253 Design Proposal}\\[1.5cm]
+
+\HRule \\[0.4cm] % Horizontal line
+{\huge \bfseries ""}\\[0.4cm] % Thesis title
+\HRule \\[1.5cm] % Horizontal line
+ 
+\begin{minipage}{0.4\textwidth}
+\begin{flushleft} \large
+\emph{Team Members:}\\
+{Scott Fjordbotten \newline Anne Lim \newline Johnson Liu \newline Kevin Zhang} % Author names
+\end{flushleft}
+\end{minipage}
+\begin{minipage}{0.4\textwidth}
+\begin{flushright} \large
+\emph{Instructors:} \\
+{Dr. Andre Marziali \newline Dr. Jon Nakane \newline Mr. Bernhard Zender} % Instructors names
+\end{flushright}
+\end{minipage}\\[3cm]
+ 
+ 
+{\large June 2015}\\[4cm] % Date
+%\includegraphics{Logo} % University/department logo - uncomment to place it
+ 
+\vfill
+\end{center}
+
+\end{titlepage}
+
+
+
+%----------------------------------------------------------------------------------------
+%	Executive Summary
+%----------------------------------------------------------------------------------------
+\section*{Executive Summary}
+This document contains the proposed specifications of a robot designed to complete the 2015 ENPH 253 Pet-Rescue Bots challenge. The robot should be able to navigate through an 8 foot x 8 foot ramp by following a tape path, and collect “Pets”, which are Beanie toys of height 6” with magnets attached to them. The robot will then transport itself and the toys to a “safe area” via a zip line of height 19”, which goes from the end of the path to the start.
+
+The robot must be able to go through a doorway which is 14” wide and 18” tall. As for the Pets, some will be placed freely or in containers beside the tape path, one will be standing in the middle of the path, one will be on a raised platform, and one will be in a box filled with Styrofoam bricks.
+
+Our robot will be controlled by a TINAH Board using a ATMega128 processor, and QRD114 sensors will be used to detect the tape path.
+
+\newpage
+
+%----------------------------------------------------------------------------------------
+%	LIST OF CONTENTS/FIGURES/TABLES PAGES
+%----------------------------------------------------------------------------------------
+
+\tableofcontents % Write out the Table of Contents
+\listoffigures % Write out the List of Figures
+\listoftables % Write out the List of Tables
+
+%----------------------------------------------------------------------------------------
+
+\newpage
+%	Document Content
+%---------------------------------------------------------------------------------------
+
+%--------------------------------------------
+%PREFACE
+\section{Preface}
+
+%--------------------------------------------
+%Overview of Basic Strategy
+\section{Overview of Basic Strategy}
+
+Our robot will contain a meshed in area at the front to carry the pets. Pets will be picked up by a plastic arm with a steel bracket on the end which will move along a circular path in the plane parallel to the front of the robot to magnetically attach and collect the pets. Below the steel bracket will be attached a hinged aluminum plate that will be sandwiched between the steel plate and any attached magnet, triggering a micro-switch when a magnet is attached. A rod fixed to the chassis will be located at the end of the arm's path such that the load will be sheared off the metallic plate in order to land in the meshed area.
+
+The robot will start following the tape in the starting location and follow it using a single QRD sensor connected to an analog input on the TINAH board and a proportional-integral-derivative controller algorithm. Upon detecting tape markers perpendicular to the main tape path using a side QRD connected to a LM311 comparator and a digital input, the retrieval arm will then be lowered until the attachment signal is received from the micro-switch. At this point, the arm will retract until the load is sheared off using the fixed rod, which can be detected by the falling signal from the micro-switch. The pet located in the middle of the path will magnetically attach to a steel bracket at the front of the robot and will remain attached to this bracket for the duration of the heat. The pet located on the elevated rafters will be located using the IR beacon and the rotary encoders on the wheels to determine the distance traveled since the end of the tape.
+
+After collecting the elevated pet, the robot will continue to follow the IR beacon until the intensity from the beacon reaches a certain threshold, to be determined empirically. Based on encoder data, the robot will pivot 90 degrees to position the retrieval arm along the edge of the box. The retrieval arm will be used to push the Styrofoam rubble aside and retrieve the last pet.
+
+At this point, the robot should be positioned below and facing away from the zipline. An arm located on the left side of the robot opposite the pet retrieval arm and containing a magnetically attached zipline pulley will swing in the plane parallel to the side of the robot to attach the pulley to the zipline. A winch in the center of the robot and attached to the bottom side of the pulley will simultaneously detach the pulley from the zipline arm and lift the robot off the ground. Once off the ground, the robot will roll down the zipline to the Safe Area by virtue of gravity.
+
+%--------------------------------------------
+%Mechanical Design
+\section{Mechanical Design}
+
+Our robot will consist of four main mechanical sub-assemblies: The Chassis, Board Storage Space, The Retrieval Arm, and The Zipline Apparatus.
+
+	\subsection{The Chassis}
+
+	The Chassis is the base for the robot. The Chassis consists of the Chassis Plate and two supports for the rear drive motors and axles. The Chassis Plate includes two vertical sections at the rear that support the components of the Board Storage Space. These sections will be discussed in more detail in the next section. Circular holes have been integrated in the front portion of the chassis plate to allow for wire routing to the tape following and tape detection QRD1114 reflectance sensors. The Chassis Plate and motor supports will be manufactured from 20 gauge aluminum to limit the overall weight of the robot. Additional brackets may be fabricated to reinforce the edge flange joints if necessary. 
+
+	\begin{figure}[h]
+		\centering
+		\includegraphics[scale=0.5]{"Figures/Chassis Body".jpg}
+		\caption[Chassis]{The Chassis}
+		\label{fig:1}
+	\end{figure}
+
+	\subsubsection{Pet 4 Pickup Arm}
+	
+	\subsection{Board Storage Space}
+
+	The Board Storage Space is integrated into the rear of the chassis. The vertical sections of the chassis contain slots and tabs to support the three shelves in the Board Storage Space (See Figure \ref{fig:3}). The shelves will be 3.4" deep and 7.8" long and will have a flange at the front to prevent boards from sliding off the shelves. The two bottom shelves will house circuit boards; once the bottom two shelves have been loaded with boards, the back plate will be screwed on to secure the shelves. The top shelf will support the TINAH in conjunction with the back plate. Two mounting features for the TINAH are on the front of the top shelf while the remaining two are on the top of the back plate.
+
+	\begin{figure}[h]
+		\centering
+		\includegraphics[scale=0.5]{"Figures/Board Storage Space".jpg}
+		\caption[Board Storage Space]{Board Storage Space}
+		\label{fig:2}
+	\end{figure}
+
+	\begin{figure}[h]
+		\centering
+		\includegraphics[scale=0.5]{"Figures/chassis back features".jpg}
+		\caption[Board Storage Support Features]{Board Storage Support Features}
+		\label{fig:3}
+	\end{figure}
+
+	\subsection{The Retrieval Arm}
+
+		\subsubsection{Retrieval Arm End}
+
+	\subsection{The Zipline Apparatus}
+		\subsubsection{Zipline Delivery System}
+	
+		\subsubsection{The Zipline Zipper}
+	
+		\subsubsection{The Winch System}
+
+%--------------------------------------------
+%Drive and Actuator Systems
+\section{Drive and Actuator Systems}
+
+	\subsection{Drive System}
+	
+	\subsection{Retrieval Arm Actuation}
+	
+	\subsection{Zipline Apparatus Actuation}
+	
+		\subsubsection{Zipline Delivery System Acuation}
+		
+		\subsubsection{Zipline Winch Actuation}
+
+
+%--------------------------------------------
+%Sensor System
+
+\section{Sensor System}
+	
+	\subsection{Tape Following}
+	
+	\subsection{IR Detection}
+	
+	\subsection{Wheel Encoders}
+	
+	\subsection{Pet Pick-up Detection}
+	
+%--------------------------------------------
+%Electrical Design
+
+\section{Electrical Design}
+
+	\subsection{Driving and Arm Actuation}
+	
+	There will be two motors for driving, each powering one wheel using differential steering. Each motor will be connected to a motor output on TINAH via an external H-bridge with a comparator attached. Similarly, an H-bridge is also used for actuating the arm for picking up pets. Additionally, another H-bridge is used for actuating the zipline servo. The circuit schematic is in Schematic A in the Schematics section in Appendix A.
+	
+	\subsection{Detecting Pets and Following Tape}
+	
+	There will be a QRD1114 photo-transistor to be used for tape following by PID algorithm. It will be connected to an analog input pin on TINAH. Another QRD1114 will be placed on the side of the robot and connected to a digital input on TINAH with a comparator for detecting tapes leading to pets. The circuit for these 2 photo-transistors is in Schematic B in the Schematics section in Appendix A. 
+	
+	\subsection{IR Beacon Detection}
+	
+	Schematic C in the Schematics section shows the circuit for the 2 IR detectors used for detecting the IR beacons during the competition. The type of IR detector we'll be using is QSD124.
+	
+	\subsection{Pet Pick-Up Detection}
+	
+	The micro-switch in Schematic E indicates how to detect if a pet has been picked up and placed into the container. If the value read is high, it means no pet is attached to the retrieval arm. If the value read is low, then it means there is a pet attached to the retrieval arm. 
+	
+	\begin{table}
+		\caption{Table of TINAH Pin Connections}
+		\centering
+		\label{table:TINAHpins}
+	\end{table}
+	
+	\begin{table}
+		\caption{Table of PCB Information}
+		\centering
+		\label{table:PCBInfo}
+	\end{table}
+	
+%--------------------------------------------
+%Softwate and Code Algorithms
+
+\section{Software and Code Algorithms}	
+The software will operate statefully, with one main control loop that handles the primary strategy and execution. At the same time, a 10kHz timer interrupt will run in parallel which will handle the time-sensitive operation of polling input pins.
+The main control loop will call upon a variety of different “modes” that describe the current operation at any given point in the program's execution. A summary of the different modes and their transitions is described in the Figure \ref{fig:4} below.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{"Figures/Software Modes".jpg}
+	\caption[Software Modes]{Software Modes}
+	\label{fig:4}
+\end{figure}
+
+A more detailed description of the modes is shown below in Table \ref{table:Software Modes}.
+On the 10kHz timer interrupt will be attached a procedure that handles pin inputs. Because the default analogRead function blocks until the ADC conversion finishes (approximately a 1000-cycle process), carrying out the conversion in parallel can significantly decrease loop latency. Additionally, polling digital pin inputs on the timer interrupt can provide a better guarantee that changes in digital inputs will not be missed because of latency in the main loop.
+
+\begin{table}
+	\caption{Table of Software Modes}
+	\centering
+	\label{table:Software Modes}
+\end{table}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{"Figures/Software State Diag".jpg}
+	\caption[Software State Diagram]{Software State Diagram}
+	\label{fig:SoftStates}
+\end{figure}
+
+	\subsection{Error Handling}
+		\subsubsection{Unable to Retrieve Pet in Loft}
+		We will make several attempts at this, adjusting the position of the robot each time. If after XXX attempts we have not retrieved the pet, we will move on to the next stage.
+		\subsubsection{Lost Tape}
+		We will adjust proportional, differential, and integral constants to minimize this risk. Additionally, using wheel encoders allows us to have an additional position input, which we can use to correct position if the tape is lost.
+
+%--------------------------------------------
+%Risk Assessment and Contingency Planning
+
+\section{Risk Assessment and Contingency Planning}
+
+See Table \ref{table:Risk Assessment} below:
+
+\begin{table}
+	\caption{Risk Assessment}
+	\centering
+	\label{table:Risk Assessment}
+\end{table}
+
+%--------------------------------------------
+%Task Schedule and Responsibilities
+
+\section{Task Schedule and Responsibilities}
+
+\begin{table}
+	\caption{Task Schedule}
+	\centering
+	\label{table:Task Schedule}
+\end{table}
+
+\end{document}  

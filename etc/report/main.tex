@@ -5,6 +5,7 @@
 \documentclass[11pt, oneside]{article} % The default font size and one-sided printing (no margin offsets)
 \usepackage{graphicx}
 \usepackage{caption}
+\usepackage{subcaption}
 \graphicspath{{Figures/}}
 \usepackage[square, numbers, comma, sort&compress]{natbib} % Use the natbib reference package - read up on this to edit the reference style; if you want text (e.g. Smith et al., 2012) for the in-text references (instead of numbers), remove 'numbers' 
 \usepackage[parfill]{parskip}
@@ -41,7 +42,7 @@
 \textsc{\LARGE ENPH 253 Design Proposal}\\[1.5cm]
 
 \HRule \\[0.4cm] % Horizontal line
-{\huge \bfseries ""}\\[0.4cm] % Thesis title
+{\huge \bfseries "ROBOT NAME HERE"}\\[0.4cm] % Thesis title
 \HRule \\[1.5cm] % Horizontal line
  
 \begin{minipage}[t]{0.4\textwidth}
@@ -114,11 +115,11 @@ At this point, the robot should be positioned below and facing away from the zip
 %Mechanical Design
 \section{Mechanical Design}
 
-Our robot will consist of four main mechanical sub-assemblies: The Chassis, Board Storage Space, The Retrieval Arm, and The Zipline Apparatus.
+Our robot will consist of four main mechanical sub-assemblies: The Chassis, The Retrieval Arm, and The Zipline Apparatus. These assemblies have been designed such that they are independent modules that can be built and tested at a basic level in parallel. This design section has been broken into sections to show each element individually before being combined into the complete version of the robot.
 
 	\subsection{The Chassis}
 
-	The Chassis is the base for the robot. The Chassis consists of the Chassis Plate and two supports for the rear drive motors and axles. The Chassis Plate includes two vertical sections at the rear that support the components of the Board Storage Space. These sections will be discussed in more detail in the next section. Circular holes have been integrated in the front portion of the chassis plate to allow for wire routing to the tape following and tape detection QRD1114 reflectance sensors. The Chassis Plate and motor supports will be manufactured from 20 gauge aluminium to limit the overall weight of the robot. Additional brackets may be fabricated to reinforce the edge flange joints if necessary. 
+	The Chassis is the base for the robot. The Chassis consists of the Chassis Plate and two supports for the rear drive motors and axles. The Chassis Plate includes two vertical sections at the rear that support the components of the Board Storage Space. These sections will be discussed in more detail in the 'Board Storage Space' subsection. Circular holes have been integrated in the front portion of the chassis plate to allow for wire routing to the tape following and tape detection QRD1114 reflectance sensors. The Chassis Plate and motor supports will be manufactured from 20 gauge aluminium to limit the overall weight of the robot. Additional brackets may be fabricated to reinforce the edge flange joints if necessary. The complete Chassis and Board Storage module is shown in \autoref{fig:chassisAssy}.
 
 	\begin{figure}[h]
 		\centering
@@ -127,30 +128,100 @@ Our robot will consist of four main mechanical sub-assemblies: The Chassis, Boar
 		\label{fig:1}
 	\end{figure}
 
-	\subsubsection{Pet 4 Pickup Arm}
+		\subsubsection{Pet 4 Pickup Arm}
+		The fourth pet (in the middle of the path) will be picked up statically. To accomplish this there will be a steel bracket mounted to the front of the chassis via a acrylic arm (See \autoref{fig:front arm}). The steel bracket will be at the height of the pets head and reinforced with magnets to ensure the pet does not fall off in the IR and zipline phases of the course.
 	
-	\subsection{Board Storage Space}
+		\subsubsection{The Sled}
+		Rather than building structures to support wheels at the front of the robot, we will construct a sled and attach it to the front of the chassis via two axle mounted brackets (See \autoref{fig:front sled}). The sled will be free to pivot about the mounting axles to minimize the chance of the sled catching on something and forcing the robot off the desired trajectory. The sled will also have a support (not shown) and hole for the tape following QRD. Both the sled and its mounting brackets will be constructed from 20 gauge aluminum.
+		
+		\subsubsection{Board Storage Space}
 
-	The Board Storage Space is integrated into the rear of the chassis. The vertical sections of the chassis contain slots and tabs to support the three shelves in the Board Storage Space (See \autoref{fig:3}). The shelves will be 3.4" deep and 7.8" long and will have a flange at the front to prevent boards from sliding off the shelves. The two bottom shelves will house circuit boards; once the bottom two shelves have been loaded with boards, the back plate will be screwed on to secure the shelves. The top shelf will support the TINAH in conjunction with the back plate. Two mounting features for the TINAH are on the front of the top shelf while the remaining two are on the top of the back plate.
-
-	\begin{figure}[h]
-		\centering
-		\includegraphics[scale=0.5]{"Figures/Board Storage Space".jpg}
-		\caption[Board Storage Space]{Board Storage Space}
-		\label{fig:2}
-	\end{figure}
-
-	\begin{figure}[h]
-		\centering
-		\includegraphics[scale=0.5]{"Figures/chassis back features".jpg}
-		\caption[Board Storage Support Features]{Board Storage Support Features}
-		\label{fig:3}
-	\end{figure}
-
+		The Board Storage Space is integrated into the rear of the chassis. The vertical sections of the chassis contain slots and tabs to support the three shelves in the Board Storage Space (See \autoref{fig:3}). The shelves will be 3.4" deep and 7.8" long and will have a flange at the front to prevent boards from sliding off the shelves. The two bottom shelves will house circuit boards; once the bottom two shelves have been loaded with boards, the back plate will be screwed on to secure the shelves. The top shelf will support the TINAH in conjunction with the back plate. Two mounting features for the TINAH are on the front of the top shelf while the remaining two are on the top of the back plate.
+			
+		\begin{figure}[!ht]
+			\centering
+			\begin{minipage}[t]{.5\textwidth}
+				\centering
+				\includegraphics[scale=0.5]{"Figures/Board Storage Space".jpg}
+				\caption[Board Storage Space]{Board Storage Space}
+				\label{fig:2}
+			\end{minipage}%
+			\begin{minipage}[t]{.5\textwidth}
+				\centering
+				\includegraphics[scale=0.5]{"Figures/chassis back features".jpg}
+				\caption[Board Storage Support Features]{Board Storage Support Features}
+				\label{fig:3}
+			\end{minipage}
+		\end{figure}
+		
+		\begin{figure}[!ht]
+			\begin{minipage}[t]{.5\textwidth}
+				\centering
+				\includegraphics[scale=0.75]{"Figures/frontSled".jpg}
+				\caption[The Sled]{The font sled}
+				\label{fig:front sled}
+			\end{minipage}%
+			\begin{minipage}[t]{.75\textwidth}
+				\centering
+				\includegraphics[scale=1]{"Figures/frontArm".jpg}
+				\caption[Front Arm]{The front arm for statically \\ collecting pet 4}
+				\label{fig:front arm}
+			\end{minipage}
+		\end{figure}
+		
+		\begin{figure}[!ht]
+			\centering
+			\includegraphics[scale=0.5]{"Figures/chassisAssy".jpg}
+			\caption[Complete Chassis and Board Storage Module]{Complete Chassis and Board Storage Module}
+			\label{fig:chassisAssy}
+		\end{figure}
+		
 	\subsection{The Retrieval Arm}
-
+	The retrieval arm consists of two main section: the supporting body (\autoref{fig:armBody}) and the arm end (\autoref{fig:armEnd}). The supporting body is constructed out of 20 gauge aluminum. It houses the arm sections, gears and pet knock off tool (\autoref{fig:knockOffTool})and will attach to the chassis via pop rivet. There will be two arm sections, one strait and one that will double as the large driving gear. Both arms will be cut out of acrylic(\autoref{fig:arm}). The gear ratio between the driving DC motor and the arm gear will be 5:1 as determined in \autoref{AppendixA}. The knock of tool will be made of 3.2mm diameter round steel and positioned so that pets will be knocked off the arm above the chassis. The length and center of rotation of the arm were chosen such that the arm is the same distance from the chassis center(eight inches) when the pick up surface is at both six and twelve inches from the playing surface so that both arms can be used to pick up the pets placed on the surface and the pet that is elevated.
+	
 		\subsubsection{Retrieval Arm End}
-
+		The arm end will consist of a body made of acrylic, L-brackets made of steel to magnetically attach to pets, and aluminum sheets that will be pushed into micro-switches when a pet is picked up(\autoref{fig:armEnd}). There will be two such L-bracket assemblies. The smaller assembly, facing the front of the robot, will be used to pick up pets 1-4 and 5. This arm will align with the knock off tool to deposit pets in the chassis. The larger assembly, facing the rear of the robot, is at the bottom of the body and will be used to collect pet 6 from the box of foam. This assembly will be reinforced with magnets and the 6th pet will remain on the bracket for the remainder of the course.
+		
+	\begin{figure}[h]
+		\centering
+		\begin{subfigure}[b]{0.4\textwidth}
+			\centering
+			\includegraphics[scale=0.5]{"Figures/armBodyFront".jpg}
+			\caption{Front View}
+		\end{subfigure}
+		~
+		\begin{subfigure}[b]{0.5\textwidth}
+			\centering
+			\includegraphics[scale=0.5]{"Figures/armBodyRear".jpg}
+			\caption{Rear View}
+		\end{subfigure}
+		\caption[Retrieval Arm Body]{Retrieval Arm Body}
+		\label{fig:armBody}
+	\end{figure}
+		
+	\begin{figure}[h]
+		\centering
+		\begin{minipage}[t]{.5\textwidth}
+			\centering
+			\includegraphics[scale = 0.4]{"Figures/armEnd".jpg}
+			\caption[Retrieval Arm End]{Retrieval Arm End}
+			\label{fig:armEnd}
+		\end{minipage}%
+		\begin{minipage}[t]{.5\textwidth}
+			\centering
+			\includegraphics[scale=0.4]{"Figures/armArms".jpg}
+			\caption[Retrieval Arm Arms]{Retrieval Arm Arms}
+			\label{fig:arm}
+		\end{minipage}
+	\end{figure}
+	
+	\begin{figure}[!h]
+		\centering
+		\includegraphics[scale=0.4]{"Figures/knockOffTool".jpg}
+		\caption[Knock Off Tool]{Knock Off Tool}
+		\label{fig:knockOffTool}
+	\end{figure}
+	
 	\subsection{The Zipline Apparatus}
 		\subsubsection{Zipline Delivery System}
 	

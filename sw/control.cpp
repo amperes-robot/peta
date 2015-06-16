@@ -38,6 +38,7 @@ namespace control
 	void init()
 	{
 		Serial.begin(9600);
+		menu::init();
 		current_mode = &idle_mode;
 		set_mode(&menu::main_mode);
 	}

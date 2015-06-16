@@ -223,17 +223,17 @@ TEST
 			\hline
 			\textbf{Digital Pin} & \textbf{Input/Output} \\
 			\hline
-			0 & Pet marker tape detection QRD\\
+			0 & Pet Marker QRD \\
 			\hline
-			1 & Micro-switch for pet 1-3 and 5 pickup \\
+			1 & Pickup Microswitch Lower \\
 			\hline
-			2 & Micro-switch for pet 6 pickup \\
+			2 & Pickup Microswitch Upper \\
 			\hline
-			3 & Winch control \\
+			3 & Winch Enable \\
 			\hline
-			4 & Wheel encoder left \\
+			4 & Wheel Encoder Left \\
 			\hline
-			5 & Wheel encoder right\\
+			5 & Wheel Encoder Right\\
 			\hline
 		\end{tabular}
 		\quad
@@ -241,23 +241,23 @@ TEST
 			\hline
 			\textbf{Analog Pin} & \textbf{Input/Output} \\
 			\hline
-			0 & IR detection left \\
+			0 & IR Sensor Left \\
 			\hline
-			1 & IR detection right \\
+			1 & IR Sensor Right \\
 			\hline
-			2 &  QRD for tape following \\
+			2 & Tape Follower QRD \\
 			\hline
-			\multicolumn{2}{c}{ }\\
+			\multicolumn{2}{c}{ } \\
 			\hline
 			\textbf{Motor Pin} & \textbf{Output}\\
 			\hline
-			0 & Drive motor left\\
+			0 & Drive Motor Left \\
 			\hline
-			1 & Drive motor right\\
+			1 & Drive Motor Right \\
 			\hline
-			2 & Pet retrieval arm actuation\\
+			2 & Retrieval Arm Motor \\
 			\hline
-			3 & Zipline delivery\\
+			3 & Zipline Arm Motor \\
 			\hline
 		\end{tabular}
 		\label{table:TINAHpins}
@@ -266,13 +266,13 @@ TEST
 	\begin{table}[h]
 		\caption{Table of PCB Information}
 		\centering
-		\begin{tabular}[t]{|P{1in}|p{1.5in}|P{0.5in}|p{1.2in}|P{1in}|}
+		\begin{tabular}[t]{ | P{0.7in} | p{1.5in} | P{0.7in} | p{1.2in} | P{1in} | }
 			\hline
-			\textbf{PCB Number} & \textbf{Purpose} & \textbf{Size(cm x cm)} & \textbf{Components Connected} & \textbf{Rails Needed} \\
+			\textbf{PCB Number} & \textbf{Purpose} & \textbf{Size (mm)} & \textbf{Components Connected} & \textbf{Rails Needed} \\
 			\hline
-			1 & H-bridges: 2 for driving, 1 for actuating pet retrieval arm, 1 for actuation zipline delivery arm & 18 x 7 & TINAH, 4 DC motors, one for each H-bridge & GND, 5V, 15V\\
+			1 & H-bridges: Drive Motors Left and Right, Retrieval Arm Motor, Zipline Arm Motor & 180 x 70 & TINAH, 4 DC motors & GND, 5V, 15V\\
 			\hline
-			2 & IR detection circuitry & X x X & TINAH, 2 photo transistors & GND, 5V, $\pm$ 9V\\
+			2 & IR detection circuitry & X x X & TINAH, 2 photodiodes & GND, 5V, $\pm$ 9V\\
 			\hline
 			3 & ??? & X x X & ??? & ???\\
 			\hline

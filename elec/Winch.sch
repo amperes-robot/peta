@@ -3640,7 +3640,7 @@ Source: www.fairchildsemi.com</description>
 <sheets>
 <sheet>
 <plain>
-<text x="-10.16" y="86.36" size="1.778" layer="91">TINAH PWM</text>
+<text x="-10.16" y="86.36" size="1.778" layer="91">TINAH D2</text>
 <circle x="27.94" y="68.58" radius="8.032184375" width="0.1524" layer="99"/>
 <text x="40.64" y="68.58" size="1.778" layer="91">Winch Motor</text>
 </plain>

@@ -23,6 +23,7 @@ namespace pid
 			int16_t out = controller.out();
 
 			// default 95
+			io::log(menu::flw_vel.value());
 			motion::vel(menu::flw_vel.value());
 			motion::dir(controller.out());
 

@@ -3,11 +3,6 @@
 
 namespace menu
 {
-	Opt flw_gain_p("flw.p", 1.0 / 255);
-	Opt flw_gain_i("flw.i", 1.0 / 255);
-	Opt flw_gain_d("flw.d", 1.0 / 255);
-	Opt flw_vel("flw.vel", 1.0);
-
 	namespace
 	{
 		uint8_t get_index(uint8_t n)
@@ -37,7 +32,7 @@ namespace menu
 				LCD.clear();
 				LCD.home();
 				LCD.setCursor(0, 0);
-				LCD.print("MENU");
+				LCD.write((uint8_t) 0);
 				LCD.setCursor(0, 1);
 				LCD.print(main_names[index]);
 			}
@@ -144,6 +139,30 @@ namespace menu
 			LCD.clear();
 		}
 	}
+
+	Opt flw_gain_p("flw.p", 1.0 / 255);
+	Opt flw_gain_i("flw.i", 1.0 / 255);
+	Opt flw_gain_d("flw.d", 1.0 / 255);
+	Opt flw_vel("flw.vel", 1.0);
+
+	byte cross[8] =
+	{
+		B00100,
+		B10110,
+		B01101,
+		B00110,
+		B01100,
+		B10110,
+		B01101,
+		B00100,
+	};
+
+	extern uint8_t opt_count;
+
+	void init()
+	{
+		LCD.createChar(0, cross);
+	}
 	
 	bool stop_falling()
 	{
@@ -175,14 +194,7 @@ namespace menu
 		return ret;
 	}
 
-	Opt::Opt(String name, float scale) : _name(name), _scale(scale)
-	{
-		_addr_eep = (uint16_t*)(2 * opt_count++);
-		_value = eeprom_read_word(_addr_eep);
-	}
-
-	uint16_t Opt::opt_count = 0;
-
+	uint8_t Opt::opt_count = 0;
 
 	const control::Mode main_mode
 	{

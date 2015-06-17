@@ -45,13 +45,13 @@
 
 \begin{minipage}[t]{0.4\textwidth}
 \begin{flushleft} \large
-Team Members: \\
+\textbf{Team Members} \\
 {Scott Fjordbotten \newline Anne Lim \newline Johnson Liu \newline Kevin Zhang} % Author names
 \end{flushleft}
 \end{minipage}
 \begin{minipage}[t]{0.4\textwidth}
 \begin{flushright} \large
-\emph{Instructors:} \\
+\textbf{Instructors} \\
 {Dr. Andre Marziali \\ Dr. Jon Nakane \\ Mr. Bernhard Zender \\ Ms. Pamela Rogalski} % Instructors names
 \end{flushright}
 \end{minipage}\\[3cm]
@@ -399,7 +399,35 @@ A more detailed description of the modes is shown in \autoref{table:Software Mod
 
 	\subsection{I/O}
 	
-	On the 10kHz timer interrupt will be attached a procedure that handles pin inputs. Because the default \texttt{analogRead} function blocks until the ADC conversion finishes (approximately a 1000-cycle process), carrying out the conversion in parallel can significantly decrease loop latency. Additionally, polling digital pin inputs on the timer interrupt can provide a better guarantee that changes in digital inputs will not be missed because of latency in the main loop.
+	On the 10kHz timer interrupt will be attached a procedure that handles pin inputs. Because the standard \texttt{analogRead} function blocks until the ADC conversion finishes (approximately a 1000-cycle process), carrying out the conversion in parallel can significantly decrease loop latency. Additionally, polling digital pin inputs on the timer interrupt can provide a better guarantee that changes in digital inputs will not be missed because of latency in the main loop.
+	
+	Inputs to digital pins 0 to 3 were chosen because of their ability to trigger external interrupts. As a result, we will not poll these pins on the timer interrupt.
+	
+	\subsection{Positional Correction}
+	
+	The encoders, tape-seeking QRD, and side QRD make up the position correction mechanism. Using all of the below methods, we can accurately navigate the course.
+	
+		\subsubsection{Tape Following}
+		
+		Tape following is the procedure of using a positional feedback model to adjust velocity based on a physical track. The analog tape-seeking QRD is read into the following formula which calculates an output value $\delta\theta$ based on the QRD reading $Q$:
+		$$-\delta\theta = G_P (Q - Q_T) + G_I \int_{0}^{t} (Q - Q_T) \delta t + G_D \frac{\delta (Q - Q_T)}{\delta t}$$
+		where the gains $G_P$, $G_I$, $G_D$ are to be empirically determined, and $Q_T$ is the desired value of $Q$ (in this case, the half-way point between the black and white readings). The robot will then attempt to follow the boundary between the tape and the non-taped area.
+		
+		\subsubsection{Dead Reckoning}
+		
+		Dead reckoning is the process of calculating position based on an initial condition and velocity data over the course of travel. From encoder data, we can derive estimates for the change in position and angle with numerical integration. The number of encoder ticks corresponds proportionally to the instantaneous left and right wheel velocities $v_l$ and $v_d$. With a distance of $l$ between the two wheels, the instantaneous change in bearing $d\theta$ is
+		$$\frac{d\theta}{dt} = \omega = \frac{v_r - v_l}{l}$$
+		and the magnitude of the velocity of point located in centre $c$ of the wheels is simply
+		$$\left|v_c\right| = \frac{v_r + v_l}{l}$$
+		giving us formulae
+		$$\frac{dx}{dt} = \left|v_c\right| \cos{\theta}$$
+		$$\frac{dy}{dt} = \left|v_c\right| \sin{\theta}$$
+		which we can approximate and discretize into
+		$$\delta x = \delta t \left|v_c\right| \cos{\theta}$$
+		$$\delta y = \delta t \left|v_c\right| \sin{\theta}$$
+		with $v_r$ and $v_l$ determined by
+		$$v_{wheel} = sgn(\omega_{wheel}) \frac{\delta E_{wheel}}{\delta t} r_{wheel} $$
+		where $E$ is the integer number of encoder ticks on a wheel.
 
 
 \begin{figure}[h]

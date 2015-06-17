@@ -303,39 +303,45 @@ TEST
 	
 	\subsection{Tape Following}
 	
-	There will be 1 QRD1114 phototransistor at the front of the robot for reading reflectance values to detect tape on the playing surface. It will work together with wheel encoder to ensure efficient tape following. Another QRD1114 will be placed on the side of the robot for detecting tapes leading to the pets. 
+	There will be one analog QRD1114 phototransistor at the front of the robot for reading reflectance values to detect the tape on the playing surface. It will work in conjunction with the wheel encoders to ensure efficient tape following. Another QRD will be placed on the side of the robot for detecting the pet marker tape.
 	
 	\subsection{IR Detection}
-	There will be 2 QSD124 IR phototransistors for detecting the 10kHz rescue beacon. By analyzing the change in values read from these 2 IR phototransistors while the robot is moving, the distance and direction to the 10kHz rescue beacon can be known. 
+	Two front-facing QSD124 IR photodiodes for detecting the 10kHz rescue beacon will be used to triangulate the distance and angle of the beacon. An additional photodiode will be left-facing in order to align the robot with the beacon at the end of the run.
+	
 	\subsection{Wheel Encoders}
-	To detect the pet on the elevated rafter, a wheel encoder will be hard coded to determine if the robot has reached the location of it. Upon detection, the pet will be held in front of the robot for the rest of the heat. 
-	\subsection{Pet Pick-up Detection}
-	A microswitch status is associated with whether a pet has been knocked into the container by the fixed rod.
+	
+	The wheel encoders will be mounted on the drive train, and will be used to calculate position and also attempt to recover from the loss of tape.
+	
+	\subsection{Pickup Microswitches}
+	
+	Two microswitches attached to the actuator arm's will be triggered when a pet is attached.
+	
 %--------------------------------------------
 %Electrical Design
 
 \section{Electrical Design}
 
-	\subsection{Driving and Arm Actuation}
+Wires will be routed somewhere...
+
+	\subsection{Drive}
 	
-	There will be two motors for driving, each powering one wheel using differential steering. Each motor will be connected to a motor output on TINAH via an external H-bridge with a comparator attached. Similarly, an H-bridge is also used for actuating the arm for picking up pets and another for actuating the zipline delivery apparatus. The circuit schematic is in \hyperref[sch:A]{Schematic A} of \hyperref[appendixB]{Appendix B}.
+	There will be two motors for driving, each powering one wheel using differential steering. Each motor will be connected to a motor output on TINAH via an external H-bridge with a comparator attached. Similarly, another H-bridge is used for actuating the arm for picking up pets, shown in \hyperref[sch:A]{Schematic A}.
 	
-	\subsection{Detecting Pets and Following Tape}
+	\subsection{Phototransistors}
 	
-	There will be a QRD1114 photo-transistor for tape following by PID algorithm. It will be connected to an analog input pin on TINAH. Another QRD1114 will be placed on the side of the robot and connected to a digital input on TINAH with a comparator for detecting tapes leading to pets. The circuit for these 2 photo-transistors is in \hyperref[sch:B]{Schematic B} of \hyperref[appendixB]{Appendix B}. 
+	The QRD1114 phototransistor for tape following will be connected directly to an analog input pin on TINAH. Another QRD1114 will be placed on the side of the robot and connected to a digital input on TINAH with an adjustable comparator for detecting the pet marker tape. This is shown in \hyperref[sch:B]{Schematic B}.
 	
-	\subsection{IR Beacon Detection}
+	\subsection{Photodiodes}
 	
-	\hyperref[sch:C]{Schematic C} of \hyperref[appendixB]{Appendix B} section shows the circuit for the 2 IR detectors used for detecting the IR beacons during the competition. The type of IR detector we'll be using is QSD124. 
+	\hyperref[sch:C]{Schematic C} shows the circuit for the three identical IR detectors used for detecting the IR beacons during the competition.
 	
-	\subsection{Winch Actuation}
+	\subsection{Winch}
 	
-	For actuating the winch which will move the roller of the zipline onto the pipe, \hyperref[sch:D]{Schematic D} of \hyperref[appendixB]{Appendix B} will be used. It consists mainly of an N-type MOSFET switch for driving the motor for winch in one direction. 
+	One N-type MOSFET drives the motor for the winch. Since it does not need to be reversible, a full H-bridge is not needed.
 	
-	\subsection{Pet Pick-Up Detection}
+	\subsection{Pickup Microswitches}
 	
-	The micro-switch in \hyperref[sch:E]{Schematic D} of \hyperref[appendixB]{Appendix B} indicates how to detect if a pet has been picked up and placed into the container. If the value read is high, it means no pet is attached to the retrieval arm. If the value read is low, then it means there is a pet attached to the retrieval arm. 
-	
+	The microswitches connected to the lower and upper plates of the retrieval arm are connected as shown in \hyperref[sch:E]{Schematic D}
 	
 	\begin{table}[h]
 		\caption{Table of TINAH Pin Connections}

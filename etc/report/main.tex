@@ -6,6 +6,7 @@
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{placeins}
 \graphicspath{{Figures/}}
 \usepackage[square, numbers, comma, sort&compress]{natbib} % Use the natbib reference package - read up on this to edit the reference style; if you want text (e.g. Smith et al., 2012) for the in-text references (instead of numbers), remove 'numbers' 
 \usepackage[parfill]{parskip}
@@ -70,11 +71,17 @@
 %	Executive Summary
 %----------------------------------------------------------------------------------------
 \section*{Executive Summary}
-This document contains the proposed specifications of a robot designed to complete the 2015 ENPH 253 Pet-Rescue Bots challenge. The robot should be able to navigate through an 8' by 8' foot ramp by following a tape path, and collect ``Pets'', which are Beanie toys of height 6" with magnets attached to them. The robot will then transport itself and the toys to a "safe area" via a zip line of height 19", which goes from the end of the path to the start.
+This document contains the proposed specifications of a robot designed to complete the 2015 ENPH 253 Pet-Rescue Bots challenge. The robot should be able to navigate through an 8' by 8' course by following a tape path and infrared beacon, collect ``Pets'', which are Beanie toys of height 6" with magnets attached to them and return to the start area. Our robot will transport itself and the toys to a "start area" via the zip line of height 19", which spans the course.
 
-The robot must be able to go through a doorway which is 14" wide and 18" tall. As for the Pets, some will be placed along and beside the path, and others will be located in containers. All will be unattached from the playing surface.
+The robot must be able to go through a doorway which is 14" wide and 18" tall. Most pets will be placed 8" to the right of the tape path, one will be placed on a platform 6" above the playing surface, and the last pet will be located in a container and covered with Styrofoam bricks. All will be unattached from the playing surface.
 
 Our robot will be controlled by a TINAH Board using a ATMega128 processor. The proposed design for the robot has an upper bound of 5~kg and a lower bound of 3~kg mass. The design has a length of 15.74", a width of 11.61", and a height of 14.5" when fully retracted.
+
+\begin{figure*}[h]
+	\centering
+	\includegraphics{"Figures/course".jpg}
+	\caption*{The Competition Course, Pets marked P1-6}
+\end{figure*}
 
 \newpage
 
@@ -83,6 +90,7 @@ Our robot will be controlled by a TINAH Board using a ATMega128 processor. The p
 %----------------------------------------------------------------------------------------
 
 \tableofcontents % Write out the Table of Contents
+\newpage
 \listoffigures % Write out the List of Figures
 \listoftables % Write out the List of Tables
 
@@ -119,7 +127,14 @@ The robot will start following the tape in the starting location and follow it u
 
 After collecting the elevated pet, the robot will continue to follow the IR beacon until the intensity from the beacon reaches a certain threshold, to be determined empirically. Based on encoder data, the robot will pivot 90 degrees to position the retrieval arm along the edge of the box. The retrieval arm will be used to push the Styrofoam rubble aside and retrieve the last pet.
 
-At this point, the robot should be positioned below and facing away from the zipline. An arm located on the left side of the robot opposite the pet retrieval arm and containing a magnetically attached zipline trolley will swing in the plane parallel to the side of the robot to attach the trolley to the zipline. A winch in the centre of the robot and attached to the bottom side of the trolley will simultaneously detach the trolley from the zipline arm and lift the robot off the ground. Once off the ground, the robot will roll down the zipline to the Safe Area by virtue of gravity.
+At this point, the robot should be positioned below and facing away from the zipline. An arm located on the left side of the robot opposite the pet retrieval arm and containing a magnetically attached zipline trolley will swing in the plane parallel to the side of the robot to attach the trolley to the zipline. A  in the centre of the robot and attached to the bottom side of the trolley will simultaneously detach the trolley from the zipline arm and lift the robot off the ground. Once off the ground, the robot will roll down the zipline to the Safe Area by virtue of gravity.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{"Figures/Software State Diag".jpg}
+	\caption[Software State Diagram]{Software State Diagram}
+	\label{fig:SoftStates}
+\end{figure}
 
 %--------------------------------------------
 %Mechanical Design
@@ -147,8 +162,9 @@ Our robot will consist of four main mechanical sub-assemblies: The Chassis, The 
 		\subsubsection{Board Storage Space}
 
 		The Board Storage Space is integrated into the rear of the chassis. The vertical sections of the chassis contain slots and tabs to support the three shelves in the Board Storage Space (See \autoref{fig:3}). The shelves will be 3.4" deep and 7.8" long and will have a flange at the front to prevent boards from sliding off the shelves. The two bottom shelves will house circuit boards; once the bottom two shelves have been loaded with boards, the back plate will be screwed on to secure the shelves. The top shelf will support the TINAH in conjunction with the back plate. Two mounting features for the TINAH are on the front of the top shelf while the remaining two are on the top of the back plate.
-			
-		\begin{figure}[!ht]
+		
+		\newpage
+		\begin{figure}[ht]
 			\centering
 			\begin{minipage}[t]{.5\textwidth}
 				\centering
@@ -179,13 +195,14 @@ Our robot will consist of four main mechanical sub-assemblies: The Chassis, The 
 			\end{minipage}
 		\end{figure}
 		
-		\begin{figure}[!ht]
+		\begin{figure}[ht]
 			\centering
 			\includegraphics[scale=0.5]{"Figures/chassisAssy".jpg}
 			\caption[Complete Chassis and Board Storage Module]{Complete Chassis and Board Storage Module}
 			\label{fig:chassisAssy}
 		\end{figure}
-		
+	
+	\newpage	
 	\subsection{The Retrieval Arm}
 	The retrieval arm consists of two main section: the supporting body (\autoref{fig:armBody}) and the arm end (\autoref{fig:armEnd}). The supporting body is constructed out of 20 gauge aluminum. It houses the arm sections, gears and pet knock off tool (\autoref{fig:knockOffTool})and will attach to the chassis via pop rivet. There will be two arm sections, one strait and one that will double as the large driving gear. Both arms will be cut out of acrylic(\autoref{fig:arm}). The gear ratio between the driving DC motor and the arm gear will be 5:1 as determined in \autoref{AppendixA}. The knock of tool will be made of 3.2mm diameter round steel and positioned so that pets will be knocked off the arm above the chassis. The length and center of rotation of the arm were chosen such that the arm is the same distance from the chassis center(eight inches) when the pick up surface is at both six and twelve inches from the playing surface so that both arms can be used to pick up the pets placed on the surface and the pet that is elevated.
 	
@@ -232,20 +249,18 @@ Our robot will consist of four main mechanical sub-assemblies: The Chassis, The 
 		\label{fig:knockOffTool}
 	\end{figure}
 	
+	\newpage
 	\subsection{The Zipline Apparatus}
 	The zipline apparatus is contained in a body similar to the pet retrieval arm body. This body houses the motors for the zipline delivery system and the winch system, the gears for these systems the zipline delivery arm and the zipline trolley (\autoref{fig:zipModule}). The body will be made from 20 gauge aluminum and the gears will be made ot of acrylic.
 	
 		\subsubsection{Zipline Delivery System}
-		The zipline delivery system consists of a guide that swings the zipline trolley into place. The guide has flanges around all sides to prevent the trolley from falling out before the 
-		trolley is deployed. The trolley frame and guide will be made of aluminum and will have small magnets attached to prevent premature separation.  
+		The zipline delivery system consists of a guide that swings the zipline trolley into place. The guide has flanges around all sides to prevent the trolley from falling out before the trolley is deployed. The trolley frame and guide will be made of aluminum and will have small magnets attached to prevent premature separation.
 		
 		\subsubsection{The Zipline Trolley}
 		The zipline trolley consists of a frame, winch attachment axle and roller (\autoref{fig:zipTrolley}). The frame was designed with flanges all the way around to improve rigidity. A basic FEA was carried out in Solidworks. The results showed stresses much below the plastic limit and deflections of a fraction of a millimeter (See \autoref{fig:zipFEA}). Although the validity of the FEA is questionable, the results would have to be off by two orders of magnitude for deflections to be concerning so we are confident our design is sufficient. The winch belt will be attached to the trolley via a pin at the bottom of the frame. The pin bracket will be manufactured from 20 gauge aluminum. The top of trolley supports the roller which will sit on the zipline, allowing the robot to use the force of gravity to slide to safety once lifted by the winch. The roller will be lathed out of Ultra High Molecular Weight Polyethylene.
 		
 		\subsubsection{The Winch System}
-		The robot will be lifted off the ground by the winch system. The winch will be driven by a worm gear system with a 40:1 gear ratio to ensure ample torque and prevent back driving (\autoref{fig:winch}). The winch will be connected to the trolley by a 1.5" wide fabric (exact material to be determined likely similar to a backpack adjustment strap). 
-		
-		\newpage
+		The robot will be lifted off the ground by the winch system. The winch will be driven by a worm gear system with a 1:40 gear ratio to ensure ample torque and prevent back driving (\autoref{fig:winch}). The winch will be connected to the trolley by a 1.5" wide fabric (exact material to be determined). 
 		
 		\begin{figure}[h]
 			\centering
@@ -278,23 +293,39 @@ Our robot will consist of four main mechanical sub-assemblies: The Chassis, The 
 				\label{fig:winch}
 			\end{minipage}
 		\end{figure}
-			
+	
+	\newpage
+	\subsection{The Robot Assembly}
+	When the sub-assemblies have been constructed and tested, they will be combined to form our robot (\autoref{fig:RobotAssy}). The sub-assemblies will be pop riveted to the Chassis Plate.
+	
+	\begin{figure}[h]
+		\centering
+		\includegraphics[scale=0.7]{"Figures/robotAssy".jpg}
+		\caption[Robot Assembly]{Robot Assembly}
+		\label{fig:RobotAssy}
+	\end{figure}
+	
+	\newpage
+	
 %--------------------------------------------
 %Drive and Actuator Systems
 \section{Drive and Actuator Systems}
+The drive and actuator systems will consist of five Barber-Coleman geared DC motors. Four of the five will be controlled by H-Bridge circuitry while the winch motor will run unidirectionally on a single MOSFET.
 
-
-TEST
 	\subsection{Drive System}
+	The drive system will consist of two DC motors connected to the drive wheel axles through encoders. Both drive motors will be controlled by H-bridge circuits. The gear ratio between the wheels and the motors will be 3:1 as calculated in \autoref{AppendixA}. All gears will be located in the gap between the vertical section of the Chassis Plate and the inside edge of the wheels. See \autoref{fig:chassisAssy} for the location of the drive system.
 	
 	\subsection{Retrieval Arm Actuation}
+	The retrieval arm will be actuated by a single, H-bridge controlled DC motor. The gear ratio between the arm and the motor will be 5:1 as calculated in \autoref{AppendixA}. The gears for the retrieval arm will be contained within the retrieval arm body.
 	
 	\subsection{Zipline Apparatus Actuation}
-	
+	The zipline apparatus will consist of two actuation systems. One for the delivery system and one for the winch. See \autoref{fig:zipModule} for the location of these motors.
+		
 		\subsubsection{Zipline Delivery System Actuation}
+		The zipline delivery system will be actuated by a single DC motor controlled by an H-bridge. The motor will be supported at the top of the zipline body. The gear ratio between the delivery system and the motor will be 1:1 as calculated in \autoref{AppendixA}.
 		
 		\subsubsection{Zipline Winch Actuation}
-
+		The winch will be actuated by a single direction DC motor as we will only ever need to lift the robot, not return it to the ground. This motor will be located in the bottom of the zipline body and will be controlled by a single MOSFET. The motor will be connected to the winch my a worm gear and a gear with a 40:1 gear ratio to ensure plenty of torque and to prevent back driving (as determined in \autoref{AppendixA}).
 
 %--------------------------------------------
 %Sensor System
@@ -303,39 +334,53 @@ TEST
 	
 	\subsection{Tape Following}
 	
-	There will be 1 QRD1114 phototransistor at the front of the robot for reading reflectance values to detect tape on the playing surface. It will work together with wheel encoder to ensure efficient tape following. Another QRD1114 will be placed on the side of the robot for detecting tapes leading to the pets. 
+	There will be one analog QRD1114 phototransistor at the front of the robot for reading reflectance values to detect the tape on the playing surface. It will work in conjunction with the wheel encoders to ensure efficient tape following. Another QRD will be placed on the side of the robot for detecting the pet marker tape.
 	
 	\subsection{IR Detection}
-	There will be 2 QSD124 IR phototransistors for detecting the 10kHz rescue beacon. By analyzing the change in values read from these 2 IR phototransistors while the robot is moving, the distance and direction to the 10kHz rescue beacon can be known. 
+	Two front-facing QSD124 IR photodiodes for detecting the 10kHz rescue beacon will be used to triangulate the distance and angle of the beacon. An additional photodiode will be left-facing in order to align the robot with the beacon at the end of the run.
+	
 	\subsection{Wheel Encoders}
-	To detect the pet on the elevated rafter, a wheel encoder will be hard coded to determine if the robot has reached the location of it. Upon detection, the pet will be held in front of the robot for the rest of the heat. 
-	\subsection{Pet Pick-up Detection}
-	A microswitch status is associated with whether a pet has been knocked into the container by the fixed rod.
+	
+	The wheel encoders will be mounted on the drive train, and will be used to calculate position and also attempt to recover from the loss of tape.
+	
+	\subsection{Pickup Microswitches}
+	
+	Two microswitches attached to the actuator arm's will be triggered when a pet is attached.
+	
 %--------------------------------------------
 %Electrical Design
 
 \section{Electrical Design}
 
-	\subsection{Driving and Arm Actuation}
+Wires will be routed along the center of the robot, up along the front of the board storage space and to the shelf where the circuitry will reside. Wire routes are shown in red in \autoref{fig:wire routing}). Microswitch wires from the retrieval arm will run along the arms, through the retrieval arm body and to the connection points on the TINAH. Motor wires for the zipline sub-assembly will be kept within the zipline body whenever possible so that the aluminum body doubles as EMR shields. Motor control circuits will be on the lower shelf of the board storage space wile IR detection circuits will be on the top shelf. As mentioned in the mechanical design section, the shelves will be constructed from aluminum so they will also act as EMR shields between the motor circuits and sensitive detection circuits for QRDs an IR sensors. Shielded wires will be used for sensitive signal wires to further protect against noise from power wires and circuits.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale = 0.75]{"Figures/wireRouting".jpg}
+	\caption[Wire Routing]{Wire routes shown in red}
+	\label{fig:wire routing}
+\end{figure}
+
+	\newpage
+	\subsection{Drive}
 	
-	There will be two motors for driving, each powering one wheel using differential steering. Each motor will be connected to a motor output on TINAH via an external H-bridge with a comparator attached. Similarly, an H-bridge is also used for actuating the arm for picking up pets and another for actuating the zipline delivery apparatus. The circuit schematic is in \hyperref[sch:A]{Schematic A} of \hyperref[appendixB]{Appendix B}.
+	There will be two motors for driving, each powering one wheel using differential steering. Each motor will be connected to a motor output on TINAH via an external H-bridge with a comparator attached. Similarly, another H-bridge is used for actuating the arm for picking up pets, shown in \hyperref[sch:A]{Schematic A}.
 	
-	\subsection{Detecting Pets and Following Tape}
+	\subsection{Phototransistors}
 	
-	There will be a QRD1114 photo-transistor for tape following by PID algorithm. It will be connected to an analog input pin on TINAH. Another QRD1114 will be placed on the side of the robot and connected to a digital input on TINAH with a comparator for detecting tapes leading to pets. The circuit for these 2 photo-transistors is in \hyperref[sch:B]{Schematic B} of \hyperref[appendixB]{Appendix B}. 
+	The QRD1114 phototransistor for tape following will be connected directly to an analog input pin on TINAH. Another QRD1114 will be placed on the side of the robot and connected to a digital input on TINAH with an adjustable comparator for detecting the pet marker tape. This is shown in \hyperref[sch:B]{Schematic B}.
 	
-	\subsection{IR Beacon Detection}
+	\subsection{Photodiodes}
 	
-	\hyperref[sch:C]{Schematic C} of \hyperref[appendixB]{Appendix B} section shows the circuit for the 2 IR detectors used for detecting the IR beacons during the competition. The type of IR detector we'll be using is QSD124. 
+	\hyperref[sch:C]{Schematic C} shows the circuit for the three identical IR detectors used for detecting the IR beacons during the competition.
 	
-	\subsection{Winch Actuation}
+	\subsection{Winch}
 	
-	For actuating the winch which will move the roller of the zipline onto the pipe, \hyperref[sch:D]{Schematic D} of \hyperref[appendixB]{Appendix B} will be used. It consists mainly of an N-type MOSFET switch for driving the motor for winch in one direction. 
+	One N-type MOSFET drives the motor for the winch. Since it does not need to be reversible, a full H-bridge is not needed.
 	
-	\subsection{Pet Pick-Up Detection}
+	\subsection{Pickup Microswitches}
 	
-	The micro-switch in \hyperref[sch:E]{Schematic D} of \hyperref[appendixB]{Appendix B} indicates how to detect if a pet has been picked up and placed into the container. If the value read is high, it means no pet is attached to the retrieval arm. If the value read is low, then it means there is a pet attached to the retrieval arm. 
-	
+	The microswitches connected to the lower and upper plates of the retrieval arm are connected as shown in \hyperref[sch:E]{Schematic D}
 	
 	\begin{table}[h]
 		\caption{Table of TINAH Pin Connections}
@@ -393,9 +438,7 @@ TEST
 			\hline
 			1 & H-bridges: Drive Motors Left and Right, Retrieval Arm Motor, Zipline Arm Motor & 180 x 70 & TINAH, 4 DC motors & GND, 5V, 15V\\
 			\hline
-			2 & IR detection circuitry & X x X & TINAH, 2 photodiodes & GND, 5V, $\pm$ 9V\\
-			\hline
-			3 & ??? & X x X & ??? & ???\\
+			2 & IR detection circuitry & 90 x 70 & TINAH, 2 photo-diodes & GND, 5V, $\pm$ 9V\\
 			\hline
 		\end{tabular}
 		\label{table:PCBInfo}
@@ -403,7 +446,7 @@ TEST
 	
 %--------------------------------------------
 %Softwate and Code Algorithms
-
+\newpage
 \section{Software and Code Algorithms}	
 The software will operate statefully, with one main control loop that handles the primary strategy and execution. At the same time, a 10kHz timer interrupt will run in parallel which will handle the time-sensitive operation of polling input pins.
 The main control loop will call upon a variety of different modes that describe the current operation at any given point in the program's execution. A summary of the different modes and their transitions is described in \autoref{fig:4} below.
@@ -415,28 +458,8 @@ The main control loop will call upon a variety of different modes that describe 
 	\label{fig:4}
 \end{figure}
 
-A more detailed description of the modes is shown in \autoref{table:Software Modes}.
-
-\begin{table}
-	\caption{Table of Software Modes}
-	\centering
-	\begin{tabular}{ | c | p{5in} | }
-	\hline
-	\textbf{Mode} & \textbf{Description} \\ \hline
-	Main Menu & This is the mode automatically entered when the board boots. The knobs are used to cycle between menu options. Additionally, any mode can be cancelled to return to the Main Menu. \\ \hline
-	Options Menu & Allows runtime parameters to be modified using the second knob. \\ \hline
-	Segment Select & Starts the selected mode from a list containing modes during program execution. \\ \hline
-	Course Begin & Transitions to the Follow/Retrieval mode. \\ \hline
-	Follow/Retrieval & Follows the tape and picks up the first three animals. Upon reaching the end of the tape (once all horizontal marks have been detected), switches to the Beacon Homing mode. \\ \hline
-	Beacon Homing & Using the two forward IR sensors, navigates towards the IR beacon. Picks up the elevated pet on the rafters by measuring distance from the end of the tape. Switches to Rubble Excavation upon IR sensor intensity reaching a threshold to be determined empirically. \\ \hline
-	Rubble Excavation & Turns 90 degrees and brushes off the top layer of foam using the arm. Attempts to find and retrieve the pet buried in the foam, and upon retrieving it (or on approaching the 2 minute time limit), switches to Zipline/Return. \\ \hline
-	Zipline/Return &
-	Uses the side IR sensor to align the robot with the beacon, raises the zipline arm, and cranks the winch up to return to the Safe Area. Returns to Main Menu afterwards.
-	\\ \hline
-	\end{tabular}
-	\label{table:Software Modes}
-\end{table}
-
+A more detailed description of the modes is shown in \autoref{AppendixC}.
+	
 	\subsection{I/O}
 	
 	On the 10kHz timer interrupt will be attached a procedure that handles pin inputs. Because the standard \texttt{analogRead} function blocks until the ADC conversion finishes (approximately a 1000-cycle process), carrying out the conversion in parallel can significantly decrease loop latency. Additionally, polling digital pin inputs on the timer interrupt can provide a better guarantee that changes in digital inputs will not be missed because of latency in the main loop.
@@ -469,14 +492,6 @@ A more detailed description of the modes is shown in \autoref{table:Software Mod
 		$$v_{wheel} = sgn(\omega_{wheel}) \frac{\delta E_{wheel}}{\delta t} r_{wheel} $$
 		where $E$ is the integer number of encoder ticks on a wheel.
 
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[scale=0.5]{"Figures/Software State Diag".jpg}
-	\caption[Software State Diagram]{Software State Diagram}
-	\label{fig:SoftStates}
-\end{figure}
-
 	\subsection{Error Handling}
 		\subsubsection{Unable to Retrieve Pet in Loft}
 		We will make several attempts at this, adjusting the position of the robot each time. If after a certain number attempts we have not retrieved the pet, we will move on to the next stage.
@@ -485,16 +500,17 @@ A more detailed description of the modes is shown in \autoref{table:Software Mod
 
 %--------------------------------------------
 %Risk Assessment and Contingency Planning
+\newpage
 \section{Risk Assessment and Contingency Planning}
 
-See \autoref{table:Risk Assessment} below:
-\begin{table}[h]
+%See \autoref{table:Risk Assessment} below:
+\begin{table}[ht]
 	\caption{Risk Assessment}
 	\centering
-	\begin{tabular}{ | p{3cm} | p{2cm} | p{4cm} | p{4cm} | p{3cm} |} 
+	\begin{tabular}{ | p{3cm} | p{1.5cm} | p{4cm} | p{5cm} | p{2.4cm} |} 
 	\hline
-	\textbf{Risk Condition} & \textbf{Likelihood} & \textbf{Impact to Project} & \textbf{Change to Work Plan} & \textbf{Expected Date of Risk Decision} \\ \hline 
-	Unable to attach to zipline	 &  High & Robot can?t go back to safety zone & Find other ways to attach to zipline & End of June \\ \hline
+	\textbf{Risk Condition} & \textbf{Level of Risk} & \textbf{Impact to Project} & \textbf{Change to Work Plan} & \textbf{Expected Date of Risk Decision} \\ \hline 
+	Unable to attach to zipline	 &  High & Robot can't go back to safety zone & Find other ways to attach to zipline & End of June \\ \hline
 	Pets fall off robot arm as it is being picked up &  Medium & Experiment with different magnets strength or find alternative ways to pick up pet & Find other ways to attach to zipline & End of June \\ \hline
 	Pets stack on-top of each other and fall off basket & Very Low & Unable to save pets & Change shape of basket & Mid July \\ \hline
 	Unable to detect IR Beacon &  Low & Robot may not reach zipline very reliably& Move in a straight line after the tape is finished, until it hits the box. It should be closer to the IR Beacon. OR the robot can drive back to safety zone & Beginning of July \\ \hline
@@ -510,8 +526,29 @@ See \autoref{table:Risk Assessment} below:
 %--------------------------------------------
 %Task Schedule and Responsibilities
 
-\section{Task Schedule and Responsibilities}
+\section{Task Schedule, Responsibilities and Major Milestones}
 
+	\subsection{Tasks} 
+	The main tasks will be construction of the chassis, retrieval arm and zipline apparatus sub-assemblies; construction of motor control and sensor circuitry; and software construction for each stage as described in \autoref{AppendixA}.
+
+	\subsection{Milestones}
+		\subsubsection{Tape Following}
+		The first milestone will be reliably tape following. Meeting this milestone will require completion of the chassis sub-assembly, two motor control circuits, wheel encoder and tape following QRD circuit completion, and the tape follow subsection of the 'Follow/Retrieve' software mode.
+		\subsubsection{IR Homing}
+		The second milestone will be reliably following the IR beacon.  This milestone will require the completion of the first milestone as well as completion of the IR circuits and the Beacon Homing software mode.
+		\subsubsection{Functional Retrieval Arm}
+		The third milestone will be a standalone arm that is capable of picking up and dropping off pets. This milestone will require the completion of the retrieval arm sub-assembly, the motor control circuit, microswitch circuits, and the retrieve subsection of the 'Follow/Retrieve' software mode.
+		\subsubsection{Pet Retrieval}
+		The fourth milestone will be our robot running through the course and retrieving pets 1-5. This milestone will require the completion of milestones 1-3, the pet marker tape QRD circuitry, and both the 'Follow/Retrieve' and 'Beacon Homing' software modes.
+		\subsubsection{Ruble Excavation}
+		The fifth milestone will be successfully retrieving pet 6. This will require completion of milestones 1-4 and the 'Ruble Excavation' software mode.
+		\subsubsection{Functional Zipline}
+		This milestone will be a standalone zipline assembly that can attach to the zipline. This can be accomplished in parallel with milestones 3 and 4. This milestone will require the completion of the zipline apparatus sub-assembly, motor control circuits for the winch and delivery system, and the swing and winch sections of the 'Zipline/Return' software mode.
+		\subsubsection{Zipline Use}
+		This milestone will be our robot attaching to and using the zipline. This will require the completion of the chassis assembly and drive systems, the 'Functional Zipline' milestone, the side IR sensing circuit, and the 'Zipline/Return' software mode.
+		\subsubsection{Complete Course}
+		This milestone will be our robot successfully completing the entire course. This will require the completion of all other milestones and the integration of all sub-assemblies and software modes.
+		
 \begin{table}[ht]
 	\caption{Task Schedule}
 	\centering

@@ -20,6 +20,9 @@
 	\subsection{Zipline Arm Torque}
 	The zipline arm has a mass of 0.117~kg which is centred 1.5~cm from the pivot. This is a 1.7~Ncm moment required, which the motor can run at one-tenth of maximum torque without any gearing.
 	
+	\subsection{Winch Torque}
+	The robot has an upper bound of 5~kg on mass. The winch pulley has a radius of 1~cm, which can increase to an upper bound of 2~cm when the belt is wrapped around the spindle. This requires an upper bound of a 100~Ncm moment. A gear ratio of 1:40 is used, allowing the motor to run at just over half of maximum torque.
+	
 \newpage	
 \section{Appendix: Circuit Schematics}
 \label{AppendixB}
@@ -30,7 +33,7 @@
 	\label{sch:A}
 \end{figure}
 \newpage
-\begin{figure}[h]
+\begin{figure}[ht]
 	\centering
 	\includegraphics[scale = 0.5, angle = 90]{"Figures/Schematic_B_QRD".png}
 	\caption*{Schematic B: QRD1114 circuitry for tape following}
@@ -39,23 +42,49 @@
 
 Left QRD1114 is for general tape following; right QRD1114 is for detecting tape leading to pet.
 
-\begin{figure}[h]
+\newpage
+\begin{figure}[ht]
 	\centering
 	\includegraphics[scale = 1, angle = 90]{"Figures/Schematic_C-IR".png}
 	\caption*{Schematic C: Circuitry for 10kHz IR beacon detector}
 	\label{sch:C}
 \end{figure}
 
-\begin{figure}[h]
+\newpage
+\begin{figure}[ht]
 	\centering
 	\includegraphics[scale = 0.5, angle = 90]{"Figures/Schematic_D-winch".png}
 	\caption*{Schematic D: circuitry for controlling winch}
 	\label{sch:D}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[ht]
 	\centering
-	\includegraphics[scale = 0.5, angle = 90]{"Figures/Schematic_E-petpickup".png}
+	\includegraphics[scale = 1, angle = 90]{"Figures/Schematic_E-petpickup".png}
 	\caption*{Schematic E: circuit for microswitch detecting pet pick up}
 	\label{sch:E}
 \end{figure}
+\FloatBarrier
+
+\section{Appendix: Software Modes}
+\label{AppendixC}
+
+\begin{table}[h]
+	\caption{Table of Software Modes}
+	\centering
+	\begin{tabular}{ | c | p{5in} | }
+		\hline
+		\textbf{Mode} & \textbf{Description} \\ \hline
+		Main Menu & This is the mode automatically entered when the board boots. The knobs are used to cycle between menu options. Additionally, any mode can be canceled to return to the Main Menu. \\ \hline
+		Options Menu & Allows runtime parameters to be modified using the second knob. \\ \hline
+		Segment Select & Starts the selected mode from a list containing modes during program execution. \\ \hline
+		Course Begin & Transitions to the Follow/Retrieval mode. \\ \hline
+		Follow/Retrieval & Follows the tape and picks up the first three animals. Upon reaching the end of the tape (once all horizontal marks have been detected), switches to the Beacon Homing mode. \\ \hline
+		Beacon Homing & Using the two forward IR sensors, navigates towards the IR beacon. Picks up the elevated pet on the rafters by measuring distance from the end of the tape. Switches to Rubble Excavation upon IR sensor intensity reaching a threshold to be determined empirically. \\ \hline
+		Rubble Excavation & Turns 90 degrees and brushes off the top layer of foam using the arm. Attempts to find and retrieve the pet buried in the foam, and upon retrieving it (or on approaching the 2 minute time limit), switches to Zipline/Return. \\ \hline
+		Zipline/Return &
+		Uses the side IR sensor to align the robot with the beacon, raises the zipline arm, and cranks the winch up to return to the Safe Area. Returns to Main Menu afterwards.
+		\\ \hline
+	\end{tabular}
+	\label{table:Software Modes}
+\end{table}

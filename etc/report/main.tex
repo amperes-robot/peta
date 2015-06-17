@@ -413,6 +413,8 @@ Wires will be routed along the center of the robot, up along the front of the bo
 			\hline
 			2 & Tape Follower QRD \\
 			\hline
+			3 & IR Sensor Side \\
+			\hline
 			\multicolumn{2}{c}{ } \\
 			\hline
 			\textbf{Motor Pin} & \textbf{Output}\\
@@ -529,7 +531,7 @@ A more detailed description of the modes is shown in \autoref{AppendixC}.
 \section{Task Schedule, Responsibilities and Major Milestones}
 
 	\subsection{Tasks} 
-	The main tasks will be construction of the chassis, retrieval arm and zipline apparatus sub-assemblies; construction of motor control and sensor circuitry; and software construction for each stage as described in \autoref{AppendixA}.
+	The main tasks will be construction of the chassis, retrieval arm and zipline apparatus sub-assemblies; construction of motor control and sensor circuitry; and software construction for each stage as described in \autoref{AppendixC}.
 
 	\subsection{Milestones}
 		\subsubsection{Tape Following}
@@ -540,7 +542,7 @@ A more detailed description of the modes is shown in \autoref{AppendixC}.
 		The third milestone will be a standalone arm that is capable of picking up and dropping off pets. This milestone will require the completion of the retrieval arm sub-assembly, the motor control circuit, microswitch circuits, and the retrieve subsection of the 'Follow/Retrieve' software mode.
 		\subsubsection{Pet Retrieval}
 		The fourth milestone will be our robot running through the course and retrieving pets 1-5. This milestone will require the completion of milestones 1-3, the pet marker tape QRD circuitry, and both the 'Follow/Retrieve' and 'Beacon Homing' software modes.
-		\subsubsection{Ruble Excavation}
+		\subsubsection{Rubble Excavation}
 		The fifth milestone will be successfully retrieving pet 6. This will require completion of milestones 1-4 and the 'Ruble Excavation' software mode.
 		\subsubsection{Functional Zipline}
 		This milestone will be a standalone zipline assembly that can attach to the zipline. This can be accomplished in parallel with milestones 3 and 4. This milestone will require the completion of the zipline apparatus sub-assembly, motor control circuits for the winch and delivery system, and the swing and winch sections of the 'Zipline/Return' software mode.
@@ -552,16 +554,15 @@ A more detailed description of the modes is shown in \autoref{AppendixC}.
 \begin{table}[ht]
 	\caption{Task Schedule}
 	\centering
-	\begin{tabular}{ | p{4.5cm} | p{3cm} | p{3cm} | p{3cm} | p{3cm} |} 
+	\begin{tabular}{ | p{1.3cm} | p{3.5cm} | p{3cm} | p{3cm} | p{3.5cm} |} 
 	\hline
-	\textbf{Week} & \textbf{Anne} & \textbf{Kevin} & \textbf{Johnson} & \textbf{Scott} \\ \hline 
-	7& & & & \\ \hline
-	8& & & & \\ \hline
-	9& & & & \\ \hline
-	10& & & & \\ \hline
-	11 (Time Trials)& & & & \\ \hline
-	12 (Team Presentations)& & & & \\ \hline
-	13 (Competition Week)& & & & \\ \hline
+	\textbf{Week} & \textbf{FJORDBOTTEN} & \textbf{LIM} & \textbf{LIU} & \textbf{ZHANG} \\ \hline 
+	7& Chassis & Chassis \newline Drive & Drive & Position Correction \newline Retrieval Arm \\ \hline
+	8& Retrieval Arm & Sensors \newline Arm Circuit & Sensors \newline Arm Circuit & Retrieval Arm \newline Retrieval Code \\ \hline
+	9& Zipline & Zipline Code \newline Testing Retrieval & Other Circuits & Zipline \newline Rubble Excavation \\ \hline
+	10& Testing \newline Rebuilding? & Testing \newline Rebuilding? & Testing \newline Rebuilding? & Testing \newline Rebuilding? \newline Dead Reckoning? \\ \hline
+	11 \newline 12 \newline 13 &
+	\multicolumn{4}{l|}{\parbox{10cm}{Shared Goals: \newline Retrieves pets on ground \newline Retrieves pet on rafters \newline Retrieves pet in rubble \newline Can zipline back intact \newline Test dead reckoning}} \\ \hline
 	\end{tabular}
 	\label{table:Task Schedule}
 \end{table}

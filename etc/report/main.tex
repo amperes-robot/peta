@@ -52,7 +52,7 @@ Team Members: \\
 \begin{minipage}[t]{0.4\textwidth}
 \begin{flushright} \large
 \emph{Instructors:} \\
-{Dr. Andre Marziali \\ Dr. Jon Nakane \\ Mr. Bernhard Zender \\ Ms. Pamela Rogalski} % Instructors names
+{Dr. Andre Marziali \\ Dr. Jon Nakane \\ Mr. Bernhard Zender \\ Ms. Pamela Rogalski } % Instructors names
 \end{flushright}
 \end{minipage}\\[3cm]
  
@@ -381,18 +381,18 @@ A more detailed description of the modes is shown in \autoref{table:Software Mod
 	\caption{Table of Software Modes}
 	\centering
 	\begin{tabular}{ | c | p{5in} | }
-		\hline
-		Mode & Description \\ \hline \hline
-		Main Menu & This is the mode automatically entered when the board boots. The knobs are used to cycle between menu options. Additionally, any mode can be cancelled to return to the Main Menu. \\ \hline
-		Options Menu & Allows runtime parameters to be modified using the second knob. \\ \hline
-		Segment Select & Starts the selected mode from a list containing modes during program execution. \\ \hline
-		Course Begin & Transitions to the Follow/Retrieval mode. \\ \hline
-		Follow/Retrieval & Follows the tape and picks up the first three animals. Upon reaching the end of the tape (once all horizontal marks have been detected), switches to the Beacon Homing mode. \\ \hline
-		Beacon Homing & Using the two forward IR sensors, navigates towards the IR beacon. Picks up the elevated pet on the rafters by measuring distance from the end of the tape. Switches to Rubble Excavation upon IR sensor intensity reaching a threshold to be determined empirically. \\ \hline
-		Rubble Excavation & Turns 90 degrees and brushes off the top layer of foam using the arm. Attempts to find and retrieve the pet buried in the foam, and upon retrieving it (or on approaching the 2 minute time limit), switches to Zipline/Return. \\ \hline
-		Zipline/Return &
-		Uses the side IR sensor to align the robot with the beacon, raises the zipline arm, and cranks the winch up to return to the Safe Area. Returns to Main Menu afterwards.
-		\\ \hline
+	\hline
+	\textbf{Mode} & \textbf{Description} \\ \hline
+	Main Menu & This is the mode automatically entered when the board boots. The knobs are used to cycle between menu options. Additionally, any mode can be cancelled to return to the Main Menu. \\ \hline
+	Options Menu & Allows runtime parameters to be modified using the second knob. \\ \hline
+	Segment Select & Starts the selected mode from a list containing modes during program execution. \\ \hline
+	Course Begin & Transitions to the Follow/Retrieval mode. \\ \hline
+	Follow/Retrieval & Follows the tape and picks up the first three animals. Upon reaching the end of the tape (once all horizontal marks have been detected), switches to the Beacon Homing mode. \\ \hline
+	Beacon Homing & Using the two forward IR sensors, navigates towards the IR beacon. Picks up the elevated pet on the rafters by measuring distance from the end of the tape. Switches to Rubble Excavation upon IR sensor intensity reaching a threshold to be determined empirically. \\ \hline
+	Rubble Excavation & Turns 90 degrees and brushes off the top layer of foam using the arm. Attempts to find and retrieve the pet buried in the foam, and upon retrieving it (or on approaching the 2 minute time limit), switches to Zipline/Return. \\ \hline
+	Zipline/Return &
+	Uses the side IR sensor to align the robot with the beacon, raises the zipline arm, and cranks the winch up to return to the Safe Area. Returns to Main Menu afterwards.
+	\\ \hline
 	\end{tabular}
 	\label{table:Software Modes}
 \end{table}
@@ -426,7 +426,7 @@ See \autoref{table:Risk Assessment} below:
 	\centering
 	\begin{tabular}{ | p{3cm} | p{2cm} | p{4cm} | p{4cm} | p{3cm} |} 
 	\hline
-	Risk Condition & Likelihood & Impact to Project & Change to Work Plan & Expected Date of Risk Decision \\ \hline \hline 
+	\textbf{Risk Condition} & \textbf{Likelihood} & \textbf{Impact to Project} & \textbf{Change to Work Plan} & \textbf{Expected Date of Risk Decision} \\ \hline 
 	Unable to attach to zipline	 &  High & Robot can?t go back to safety zone & Find other ways to attach to zipline & End of June \\ \hline
 	Pets fall off robot arm as it is being picked up &  Medium & Experiment with different magnets strength or find alternative ways to pick up pet & Find other ways to attach to zipline & End of June \\ \hline
 	Pets stack on-top of each other and fall off basket & Very Low & Unable to save pets & Change shape of basket & Mid July \\ \hline

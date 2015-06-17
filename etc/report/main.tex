@@ -111,7 +111,7 @@ The robot will start following the tape in the starting location and follow it u
 
 After collecting the elevated pet, the robot will continue to follow the IR beacon until the intensity from the beacon reaches a certain threshold, to be determined empirically. Based on encoder data, the robot will pivot 90 degrees to position the retrieval arm along the edge of the box. The retrieval arm will be used to push the Styrofoam rubble aside and retrieve the last pet.
 
-At this point, the robot should be positioned below and facing away from the zipline. An arm located on the left side of the robot opposite the pet retrieval arm and containing a magnetically attached zipline pulley will swing in the plane parallel to the side of the robot to attach the pulley to the zipline. A winch in the centre of the robot and attached to the bottom side of the pulley will simultaneously detach the pulley from the zipline arm and lift the robot off the ground. Once off the ground, the robot will roll down the zipline to the Safe Area by virtue of gravity.
+At this point, the robot should be positioned below and facing away from the zipline. An arm located on the left side of the robot opposite the pet retrieval arm and containing a magnetically attached zipline trolley will swing in the plane parallel to the side of the robot to attach the trolley to the zipline. A winch in the centre of the robot and attached to the bottom side of the trolley will simultaneously detach the trolley from the zipline arm and lift the robot off the ground. Once off the ground, the robot will roll down the zipline to the Safe Area by virtue of gravity.
 
 %--------------------------------------------
 %Mechanical Design
@@ -197,7 +197,7 @@ Our robot will consist of four main mechanical sub-assemblies: The Chassis, The 
 			\includegraphics[scale=0.5]{"Figures/armBodyRear".jpg}
 			\caption{Rear View}
 		\end{subfigure}
-		\caption[Retrieval Arm Body]{Retrieval Arm Body}
+		\caption[Retrieval Arm Module]{Retrieval Arm Module}
 		\label{fig:armBody}
 	\end{figure}
 		
@@ -225,12 +225,49 @@ Our robot will consist of four main mechanical sub-assemblies: The Chassis, The 
 	\end{figure}
 	
 	\subsection{The Zipline Apparatus}
+	The zipline apparatus is contained in a body similar to the pet retrieval arm body. This body houses the motors for the zipline delivery system and the winch system, the gears for these systems the zipline delivery arm and the zipline trolley (\autoref{fig:zipModule}). The body will be made from 20 gauge aluminum and the gears will be made ot of acrylic.
+	
 		\subsubsection{Zipline Delivery System}
-	
-		\subsubsection{The Zipline Pulley}
-	
+		The zipline delivery system consists of a guide that swings the zipline trolley into place. The guide has flanges around all sides to prevent the trolley from falling out before the 
+		trolley is deployed. The trolley frame and guide will be made of aluminum and will have small magnets attached to prevent premature separation.  
+		
+		\subsubsection{The Zipline Trolley}
+		The zipline trolley consists of a frame, winch attachment axle and roller (\autoref{fig:zipTrolley}). The frame was designed with flanges all the way around to improve rigidity. A basic FEA was carried out in Solidworks. The results showed stresses much below the plastic limit and deflections of a fraction of a millimeter (See \autoref{fig:zipFEA}). Although the validity of the FEA is questionable, the results would have to be off by two orders of magnitude for deflections to be concerning so we are confident our design is sufficient. The winch belt will be attached to the trolley via a pin at the bottom of the frame. The pin bracket will be manufactured from 20 gauge aluminum. The top of trolley supports the roller which will sit on the zipline, allowing the robot to use the force of gravity to slide to safety once lifted by the winch. The roller will be lathed out of Ultra High Molecular Weight Polyethylene.
+		
 		\subsubsection{The Winch System}
-
+		The robot will be lifted off the ground by the winch system. The winch will be driven by a worm gear system with a 40:1 gear ratio to ensure ample torque and prevent back driving (\autoref{fig:winch}). The winch will be connected to the trolley by a 1.5" wide fabric (exact material to be determined likely similar to a backpack adjustment strap). 
+		
+		\begin{figure}[h]
+			\centering
+			\begin{minipage}[t]{.5\textwidth}
+				\centering
+				\includegraphics[scale = 0.4]{"Figures/ziplineModule".jpg}
+				\caption[Zipline Module]{Zipline Module}
+				\label{fig:zipModule}
+			\end{minipage}%
+			\begin{minipage}[t]{.5\textwidth}
+				\centering
+				\includegraphics[scale=0.4]{"Figures/zipTrolley".jpg}
+				\caption[Zipline Trolley]{Zipline Trolley}
+				\label{fig:zipTrolley}
+			\end{minipage}
+		\end{figure}	
+		
+		\begin{figure}[h]
+			\centering
+			\begin{minipage}[t]{.5\textwidth}
+				\centering
+				\includegraphics[scale = 0.4]{"Figures/ziplineZipperFEA".jpg}
+				\caption[Zipline Trolley FEA]{Zipline Trolley FEA}
+				\label{fig:zipFEA}
+			\end{minipage}%
+			\begin{minipage}[t]{.5\textwidth}
+				\centering
+				\includegraphics[scale=0.4]{"Figures/winch".jpg}
+				\caption[WinchSystem]{Winch System}
+				\label{fig:winch}
+			\end{minipage}
+		\end{figure}	
 %--------------------------------------------
 %Drive and Actuator Systems
 \section{Drive and Actuator Systems}

@@ -263,14 +263,14 @@ TEST
 	
 	\subsection{Tape Following}
 	
-	TEST
+	There will be 1 QRD1114 phototransistor at the front of the robot for reading reflectance values to detect tape on the playing surface. It will work together with wheel encoder to ensure efficient tape following. Another QRD1114 will be placed on the side of the robot for detecting tapes leading to the pets. 
 	
 	\subsection{IR Detection}
-	
+	There will be 2 QSD124 IR phototransistors for detecting the 10kHz rescue beacon. By analyzing the change in values read from these 2 IR phototransistors while the robot is moving, the distance and direction to the 10kHz rescue beacon can be known. 
 	\subsection{Wheel Encoders}
-	
+	To detect the pet on the elevated rafter, a wheel encoder will be hard coded to determine if the robot has reached the location of it. Upon detection, the pet will be held in front of the robot for the rest of the heat. 
 	\subsection{Pet Pick-up Detection}
-	
+	A microswitch status is associated with whether a pet has been knocked into the container by the fixed rod.
 %--------------------------------------------
 %Electrical Design
 
@@ -282,7 +282,7 @@ TEST
 	
 	\subsection{Detecting Pets and Following Tape}
 	
-	There will be a QRD1114 photo-transistor to be used for tape following by PID algorithm. It will be connected to an analog input pin on TINAH. Another QRD1114 will be placed on the side of the robot and connected to a digital input on TINAH with a comparator for detecting tapes leading to pets. The circuit for these 2 photo-transistors is in \hyperref[sch:B]{Schematic B} of \hyperref[appendixB]{Appendix B}. 
+	There will be a QRD1114 photo-transistor for tape following by PID algorithm. It will be connected to an analog input pin on TINAH. Another QRD1114 will be placed on the side of the robot and connected to a digital input on TINAH with a comparator for detecting tapes leading to pets. The circuit for these 2 photo-transistors is in \hyperref[sch:B]{Schematic B} of \hyperref[appendixB]{Appendix B}. 
 	
 	\subsection{IR Beacon Detection}
 	

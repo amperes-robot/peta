@@ -6338,7 +6338,7 @@ FAIRCHILD FDS5680.pdf</description>
 </classes>
 <parts>
 <part name="IC1" library="linear" deviceset="LM311" device="D"/>
-<part name="SUPPLY3" library="supply2" deviceset="+5V" device=""/>
+<part name="SUPPLY3" library="supply2" deviceset="+5V" device="" value="+9V"/>
 <part name="R1" library="resistor" deviceset="R-US_" device="0204/2V" value="3.3k"/>
 <part name="R2" library="resistor" deviceset="R-US_" device="0204/2V" value="20k"/>
 <part name="T1" library="transistor" deviceset="2N3904" device=""/>
@@ -6356,7 +6356,7 @@ FAIRCHILD FDS5680.pdf</description>
 <part name="IC2" library="linear" deviceset="LM311" device="D"/>
 <part name="R7" library="resistor" deviceset="R-US_" device="0204/2V" value="20k"/>
 <part name="R8" library="resistor" deviceset="R-US_" device="0204/2V" value="3.3k"/>
-<part name="SUPPLY5" library="supply2" deviceset="+5V" device=""/>
+<part name="SUPPLY5" library="supply2" deviceset="+5V" device="" value="+9V"/>
 <part name="R9" library="resistor" deviceset="R-US_" device="0204/2V" value="100"/>
 <part name="Q5" library="transistor-pnp" deviceset="2N3906" device=""/>
 <part name="R10" library="resistor" deviceset="R-US_" device="0204/2V" value="10k"/>

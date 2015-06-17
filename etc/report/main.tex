@@ -21,15 +21,13 @@
 }
 \newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
 \renewcommand{\arraystretch}{1.5}
+\newcommand{\robotname}{NAME}
 
 \begin{document}
 
-
 % Define the page headers using the FancyHdr package and set up for one-sided printing
 
-
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % New command to make the lines in the title page
-
 
 %----------------------------------------------------------------------------------------
 %	TITLE PAGE
@@ -41,19 +39,18 @@
 \textsc{\LARGE ENPH 253 Design Proposal}\\[1.5cm]
 
 \HRule \\[0.4cm] % Horizontal line
-{\huge \bfseries NAME HERE}\\[0.4cm] % Thesis title
+{\huge \bfseries \robotname}\\[0.07cm] % Thesis title
 \HRule \\[1.5cm] % Horizontal line
- 
 \begin{minipage}[t]{0.4\textwidth}
 \begin{flushleft} \large
-\emph{Team Members:}\\
+Team Members: \\
 {Scott Fjordbotten \newline Anne Lim \newline Johnson Liu \newline Kevin Zhang} % Author names
 \end{flushleft}
 \end{minipage}
 \begin{minipage}[t]{0.4\textwidth}
 \begin{flushright} \large
 \emph{Instructors:} \\
-{Dr. Andre Marziali \\ Dr. Jon Nakane \\ Mr. Bernhard Zender} % Instructors names
+{Dr. Andre Marziali \\ Dr. Jon Nakane \\ Mr. Bernhard Zender \\ Ms. Pamela Rogalski} % Instructors names
 \end{flushright}
 \end{minipage}\\[3cm]
  
@@ -67,16 +64,15 @@
 \end{titlepage}
 
 
-
 %----------------------------------------------------------------------------------------
 %	Executive Summary
 %----------------------------------------------------------------------------------------
 \section*{Executive Summary}
-This document contains the proposed specifications of a robot designed to complete the 2015 ENPH 253 Pet-Rescue Bots challenge. The robot should be able to navigate through an 8' by 8' foot ramp by following a tape path, and collect "Pets", which are Beanie toys of height 6" with magnets attached to them. The robot will then transport itself and the toys to a "safe area" via a zip line of height 19", which goes from the end of the path to the start.
+This document contains the proposed specifications of a robot designed to complete the 2015 ENPH 253 Pet-Rescue Bots challenge. The robot should be able to navigate through an 8' by 8' foot ramp by following a tape path, and collect ``Pets'', which are Beanie toys of height 6" with magnets attached to them. The robot will then transport itself and the toys to a "safe area" via a zip line of height 19", which goes from the end of the path to the start.
 
 The robot must be able to go through a doorway which is 14" wide and 18" tall. As for the Pets, some will be placed along and beside the path, and others will be located in containers. All will be unattached from the playing surface.
 
-Our robot will be controlled by a TINAH Board using a ATMega128 processor, and QRD114 sensors will be used to detect the tape path.
+Our robot will be controlled by a TINAH Board using a ATMega128 processor. The proposed design for the robot has an upper bound of 5~kg and a lower bound of 3~kg mass. The design has a length of 15.74", a width of 11.61", and a height of 14.5" when fully retracted.
 
 \newpage
 
@@ -98,13 +94,26 @@ Our robot will be controlled by a TINAH Board using a ATMega128 processor, and Q
 %PREFACE
 \section{Preface}
 
+This report was written in collaboration by Kevin Zhang, Scott Fjordbotten, Johnson Liu, and Anne Lim, in the hope of identifying and addressing potential issues with the design. Work was begun on this document in the beginning of June 2015. We would like to thank the teaching assistants and professors of ENPH 253 for their support and advice throughout.
+
+In the process of preparing this proposal, all major design decisions were agreed upon by unanimous consent. Listed below is a summary of the work done by each team member on this report.
+
+\begin{center}
+	\begin{tabular}{ l l }
+		FJORDBOTTEN & Typesetting, Mechanical Design \\
+		LIM & Letter of Transmittal, Editing \\
+		LIU & Electronics and Sensors \\
+		ZHANG & Software, Editing \\
+	\end{tabular}
+\end{center}
+
 %--------------------------------------------
 %Overview of Basic Strategy
 \section{Overview of Basic Strategy}
 
-Our robot will contain a meshed in area at the front to carry the pets. Pets will be picked up by a plastic arm with a steel bracket on the end which will move along a circular path in the plane parallel to the front of the robot to magnetically attach and collect the pets. Below the steel bracket will be attached a hinged aluminium plate that will be sandwiched between the steel plate and any attached magnet, triggering a micro-switch when a magnet is attached. A rod fixed to the chassis will be located at the end of the arm's path such that the load will be sheared off the metallic plate in order to land in the meshed area.
+The robot will contain a meshed in area at the front for carrying the payloads. Pets will be picked up by a plastic arm with a steel bracket on the end which will move along a circular path in the plane parallel to the front of the robot to magnetically attach and collect the pets. Below the steel bracket will be attached a hinged aluminium plate that will be sandwiched between the steel plate and any attached magnet, triggering a micro-switch when a magnet is attached. A rod fixed to the chassis will be located at the end of the arm's path such that the load will be sheared off the metallic plate in order to land in the meshed area.
 
-The robot will start following the tape in the starting location and follow it using a single QRD sensor connected to an analog input on the TINAH board and a proportional-integral-derivative controller algorithm. Upon detecting tape markers perpendicular to the main tape path using a side QRD connected to a LM311 comparator and a digital input, the retrieval arm will then be lowered until the attachment signal is received from the micro-switch. At this point, the arm will retract until the load is sheared off using the fixed rod, which can be detected by the falling signal from the micro-switch. The pet located in the middle of the path will magnetically attach to a steel bracket at the front of the robot and will remain attached to this bracket for the duration of the heat. The pet located on the elevated rafters will be located using the IR beacon and the rotary encoders on the wheels to determine the distance travelled since the end of the tape.
+The robot will start following the tape in the starting location and follow it using a single QRD sensor connected to an analog input on the TINAH board and a proportional-integral-derivative controller. Upon detecting tape markers perpendicular to the main tape path using a side QRD connected to a LM311 comparator and a digital input, the retrieval arm will then be lowered until the attachment signal is received from the micro-switch. At this point, the arm will retract until the load is sheared off using the fixed rod, which can be detected by the falling signal from the micro-switch. The pet located in the middle of the path will magnetically attach to a steel bracket at the front of the robot and will remain attached to this bracket for the duration of the heat. The pet located on the elevated rafters will be located using the IR beacon and the rotary encoders on the wheels to determine the distance travelled since the end of the tape.
 
 After collecting the elevated pet, the robot will continue to follow the IR beacon until the intensity from the beacon reaches a certain threshold, to be determined empirically. Based on encoder data, the robot will pivot 90 degrees to position the retrieval arm along the edge of the box. The retrieval arm will be used to push the Styrofoam rubble aside and retrieve the last pet.
 
@@ -285,7 +294,8 @@ TEST
 
 \section{Software and Code Algorithms}	
 The software will operate statefully, with one main control loop that handles the primary strategy and execution. At the same time, a 10kHz timer interrupt will run in parallel which will handle the time-sensitive operation of polling input pins.
-The main control loop will call upon a variety of different modes that describe the current operation at any given point in the program's execution. A summary of the different modes and their transitions is described in the \autoref{fig:4} below.
+The main control loop will call upon a variety of different modes that describe the current operation at any given point in the program's execution. A summary of the different modes and their transitions is described in \autoref{fig:4} below.
+
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.5]{"Figures/Software Modes".jpg}
@@ -293,28 +303,32 @@ The main control loop will call upon a variety of different modes that describe 
 	\label{fig:4}
 \end{figure}
 
-A more detailed description of the modes is shown below in \autoref{table:Software Modes}.
-On the 10kHz timer interrupt will be attached a procedure that handles pin inputs. Because the default analogRead function blocks until the ADC conversion finishes (approximately a 1000-cycle process), carrying out the conversion in parallel can significantly decrease loop latency. Additionally, polling digital pin inputs on the timer interrupt can provide a better guarantee that changes in digital inputs will not be missed because of latency in the main loop.
+A more detailed description of the modes is shown in \autoref{table:Software Modes}.
 
 \begin{table}
 	\caption{Table of Software Modes}
 	\centering
 	\begin{tabular}{ | c | p{5in} | }
-	\hline
-	Mode & Description \\ \hline \hline
-	Main Menu & This is the mode automatically entered when the board boots. The knobs are used to cycle between menu options. Additionally, any mode can be cancelled to return to the Main Menu. \\ \hline
-	Options Menu & Allows runtime parameters to be modified using the second knob. \\ \hline
-	Segment Select & Starts the selected mode from a list containing modes during program execution. \\ \hline
-	Course Begin & Transitions to the Follow/Retrieval mode. \\ \hline
-	Follow/Retrieval & Follows the tape and picks up the first three animals. Upon reaching the end of the tape (once all horizontal marks have been detected), switches to the Beacon Homing mode. \\ \hline
-	Beacon Homing & Using the two forward IR sensors, navigates towards the IR beacon. Picks up the elevated pet on the rafters by measuring distance from the end of the tape. Switches to Rubble Excavation upon IR sensor intensity reaching a threshold to be determined empirically. \\ \hline
-	Rubble Excavation & Turns 90 degrees and brushes off the top layer of foam using the arm. Attempts to find and retrieve the pet buried in the foam, and upon retrieving it (or on approaching the 2 minute time limit), switches to Zipline/Return. \\ \hline
-	Zipline/Return &
-	Uses the side IR sensor to align the robot with the beacon, raises the zipline arm, and cranks the winch up to return to the Safe Area. Returns to Main Menu afterwards.
-	\\ \hline
+		\hline
+		Mode & Description \\ \hline \hline
+		Main Menu & This is the mode automatically entered when the board boots. The knobs are used to cycle between menu options. Additionally, any mode can be cancelled to return to the Main Menu. \\ \hline
+		Options Menu & Allows runtime parameters to be modified using the second knob. \\ \hline
+		Segment Select & Starts the selected mode from a list containing modes during program execution. \\ \hline
+		Course Begin & Transitions to the Follow/Retrieval mode. \\ \hline
+		Follow/Retrieval & Follows the tape and picks up the first three animals. Upon reaching the end of the tape (once all horizontal marks have been detected), switches to the Beacon Homing mode. \\ \hline
+		Beacon Homing & Using the two forward IR sensors, navigates towards the IR beacon. Picks up the elevated pet on the rafters by measuring distance from the end of the tape. Switches to Rubble Excavation upon IR sensor intensity reaching a threshold to be determined empirically. \\ \hline
+		Rubble Excavation & Turns 90 degrees and brushes off the top layer of foam using the arm. Attempts to find and retrieve the pet buried in the foam, and upon retrieving it (or on approaching the 2 minute time limit), switches to Zipline/Return. \\ \hline
+		Zipline/Return &
+		Uses the side IR sensor to align the robot with the beacon, raises the zipline arm, and cranks the winch up to return to the Safe Area. Returns to Main Menu afterwards.
+		\\ \hline
 	\end{tabular}
 	\label{table:Software Modes}
 \end{table}
+
+	\subsection{I/O}
+	
+	On the 10kHz timer interrupt will be attached a procedure that handles pin inputs. Because the default \texttt{analogRead} function blocks until the ADC conversion finishes (approximately a 1000-cycle process), carrying out the conversion in parallel can significantly decrease loop latency. Additionally, polling digital pin inputs on the timer interrupt can provide a better guarantee that changes in digital inputs will not be missed because of latency in the main loop.
+
 
 \begin{figure}[h]
 	\centering

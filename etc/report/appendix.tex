@@ -23,7 +23,57 @@
 	\subsection{Winch Torque}
 	The robot has an upper bound of 5~kg on mass. The winch pulley has a radius of 1~cm, which can increase to an upper bound of 2~cm when the belt is wrapped around the spindle. This requires an upper bound of a 100~Ncm moment. A gear ratio of 1:40 is used, allowing the motor to run at just over half of maximum torque.
 	
-\newpage	
+	\subsection{IR Sensing Circuit Value Validation}
+		\subsubsection{DC Block}
+		Since:
+		$$f_{cutoff} = \frac{1}{2\pi RC}$$
+		With $R=1k\Omega$ and $C=100nF$
+		$$f_{cutoff} = \frac{1}{2\pi(1000)(100\times10^{-9})} = 1.59kHz$$
+		This will allow us to block all frequencies below about $1.5kHz$ which will functionally block DC and unwanted low frequencies.
+		\begin{figure}[h]
+			\centering
+			\includegraphics[scale = 0.75]{"Figures/dcBlock".jpg}
+			\caption*{DC Block}
+		\end{figure}
+		
+		\subsubsection{Amplifier Calculations}
+		$$\frac{V_o}{V_i} =\frac{R_1}{R_2} = \frac{47k\Omega}{10k\omega} = 4.7$$
+		This will give us a five times amplification of the signal.
+	
+		\begin{figure}[h]
+			\centering
+			\includegraphics[scale = 0.75]{"Figures/amp".jpg}
+			\caption*{Amplifying Circuit}
+		\end{figure}
+		
+		\newpage
+		\subsubsection{Band Pass Calculations}
+		A high pass filter and a low pass filter in series (see diagram below) will form a band pass filter with upper and lower limits determined by:
+		$$f_{cutoff} = \frac{1}{2\pi RC}$$
+		We want both cutoff frequencies to be $10kHz$ so that the band around the desired frequency is as narrow as possible. Therefore, the capacitors and resistors used in each section of the band pass filter will be the same. \newline \\
+		Using $R = 3.3k\Omega$ and $C = 4.7nF$ we get:
+		$$f_{cutoff} = \frac{1}{2\pi(3700)(4.7\times10^{-9})} = 10.26kHz$$
+		as desired.
+		
+		\begin{figure}[h]
+			\centering
+			\includegraphics[scale = 0.75]{"Figures/bandPass".jpg}
+			\caption*{Band Pass Filter}
+		\end{figure}
+		
+		\newpage
+		\subsubsection{Peak Detector Calculations}
+		So that the input to the TINAH is a non-oscillatory analog signal, we will need a peak detector. This will be a rectifying circuit consisting of a resistor and a capacitor. Since the charge/discharge time of an RC circuit is
+		$$\tau = RC$$
+		we need to pick these values so that the charge time is as short as possible and the discharge time is long enough to compensate for the voltage drop due to the oscillation of the IR signal. We chose $R = 33k\Omega$ and $C = 100 nF$ so that $\tau = 33000(100\times 10^(-9)) = 3.3ms$ so that the discharge time would be longer than the period of the wave, keeping voltage relatively constant, and short enough that IR following will be functional.
+		
+		\begin{figure}[h]
+			\centering
+			\includegraphics[scale = 0.75]{"Figures/peakDetector".jpg}
+			\caption*{Peak Detector}
+		\end{figure}
+\newpage
+	
 \section{Appendix: Circuit Schematics}
 \label{AppendixB}
 \begin{figure}[h]
@@ -46,7 +96,7 @@ Left QRD1114 is for general tape following; right QRD1114 is for detecting tape 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[scale = 1, angle = 90]{"Figures/Schematic_C-IR".png}
-	\caption*{Schematic C: Circuitry for 10kHz IR beacon detector}
+	\caption*{Schemtic C: Circuitry for 10kHz IR beacon detector}
 	\label{sch:C}
 \end{figure}
 
@@ -60,7 +110,7 @@ Left QRD1114 is for general tape following; right QRD1114 is for detecting tape 
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[scale = 1, angle = 90]{"Figures/Schematic_E-petpickup".png}
+	\includegraphics[scale = .5, angle = 90]{"Figures/Schematic_E-petpickup".png}
 	\caption*{Schematic E: circuit for microswitch detecting pet pick up}
 	\label{sch:E}
 \end{figure}

@@ -127,7 +127,7 @@ The robot will start following the tape in the starting location and follow it u
 
 After collecting the elevated pet, the robot will continue to follow the IR beacon until the intensity from the beacon reaches a certain threshold, to be determined empirically. Based on encoder data, the robot will pivot 90 degrees to position the retrieval arm along the edge of the box. The retrieval arm will be used to push the Styrofoam rubble aside and retrieve the last pet.
 
-At this point, the robot should be positioned below and facing away from the zipline. An arm located on the left side of the robot opposite the pet retrieval arm and containing a magnetically attached zipline trolley will swing in the plane parallel to the side of the robot to attach the trolley to the zipline. A  in the centre of the robot and attached to the bottom side of the trolley will simultaneously detach the trolley from the zipline arm and lift the robot off the ground. Once off the ground, the robot will roll down the zipline to the Safe Area by virtue of gravity.
+At this point, the robot should be positioned below and facing away from the zipline. An arm located on the left side of the robot opposite the pet retrieval arm and containing a magnetically attached zipline trolley will swing in the plane parallel to the side of the robot to attach the trolley to the zipline. A sensor will be used to determine when the trolley is on the zipline (sensor type to be determined). A winch in the centre of the robot and attached to the bottom side of the trolley will simultaneously detach the trolley from the zipline arm and lift the robot off the ground. Once off the ground, the robot will roll down the zipline to the Safe Area by virtue of gravity.
 
 \begin{figure}[h]
 	\centering
@@ -343,9 +343,9 @@ The drive and actuator systems will consist of five Barber-Coleman geared DC mot
 	
 	The wheel encoders will be mounted on the drive train, and will be used to calculate position and also attempt to recover from the loss of tape.
 	
-	\subsection{Pickup Microswitches}
+	\subsection{Microswitches}
 	
-	Two microswitches attached to the actuator arm's will be triggered when a pet is attached.
+	Two microswitches attached to the actuator arm's will be triggered when a pet is attached. An additional microswitch may be used for zipline detection, the type of sensor used for zipline detection has not be finalized.
 	
 %--------------------------------------------
 %Electrical Design
@@ -400,6 +400,8 @@ Wires will be routed along the center of the robot, up along the front of the bo
 			4 & Wheel Encoder Left \\
 			\hline
 			5 & Wheel Encoder Right\\
+			\hline
+			6 & Zipline Detection\\
 			\hline
 		\end{tabular}
 		\quad

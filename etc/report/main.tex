@@ -14,12 +14,14 @@
 \usepackage{tabularx}
 \usepackage{array}
 \usepackage{hyperref}
+\usepackage{xcolor}
+\definecolor{link}{rgb}{0, 0, 0.5}
 \hypersetup{
 	colorlinks,
-	citecolor=blue,
-	filecolor=blue,
-	linkcolor=blue,
-	urlcolor=blue
+	citecolor=link,
+	filecolor=link,
+	linkcolor=link,
+	urlcolor=link
 }
 \newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
 \renewcommand{\arraystretch}{1.5}
@@ -131,7 +133,7 @@ At this point, the robot should be positioned below and facing away from the zip
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[scale=0.5]{"Figures/Software State Diag".jpg}
+	\includegraphics[scale=0.5]{"Figures/Software State Diag".png}
 	\caption[Software State Diagram]{Software State Diagram}
 	\label{fig:SoftStates}
 \end{figure}
@@ -140,7 +142,7 @@ At this point, the robot should be positioned below and facing away from the zip
 %Mechanical Design
 \section{Mechanical Design}
 
-Our robot will consist of four main mechanical sub-assemblies: The Chassis, The Retrieval Arm, and The Zipline Apparatus. These assemblies have been designed such that they are independent modules that can be built and tested at a basic level in parallel. This design section has been broken into sections to show each element individually before being combined into the complete version of the robot.
+Our robot will consist of three main mechanical sub-assemblies: The Chassis, The Retrieval Arm, and The Zipline Apparatus. These assemblies have been designed such that they are independent modules that can be built and tested at a basic level in parallel. This design section has been broken into sections to show each element individually before being combined into the complete version of the robot.
 
 	\subsection{The Chassis}
 
@@ -254,13 +256,13 @@ Our robot will consist of four main mechanical sub-assemblies: The Chassis, The 
 	The zipline apparatus is contained in a body similar to the pet retrieval arm body. This body houses the motors for the zipline delivery system and the winch system, the gears for these systems the zipline delivery arm and the zipline trolley (\autoref{fig:zipModule}). The body will be made from 20 gauge aluminum and the gears will be made ot of acrylic.
 	
 		\subsubsection{Zipline Delivery System}
-		The zipline delivery system consists of a guide that swings the zipline trolley into place. The guide has flanges around all sides to prevent the trolley from falling out before the trolley is deployed. The trolley frame and guide will be made of aluminum and will have small magnets attached to prevent premature separation.
+		The zipline delivery system consists of a guide that swings the zipline trolley into place. The guide has flanges around all sides to prevent the trolley from falling out before the trolley is deployed. The trolley frame and guide will be made of aluminium and will have small magnets attached to prevent premature separation.
 		
 		\subsubsection{The Zipline Trolley}
-		The zipline trolley consists of a frame, winch attachment axle and roller (\autoref{fig:zipTrolley}). The frame was designed with flanges all the way around to improve rigidity. A basic FEA was carried out in Solidworks. The results showed stresses much below the plastic limit and deflections of a fraction of a millimeter (See \autoref{fig:zipFEA}). Although the validity of the FEA is questionable, the results would have to be off by two orders of magnitude for deflections to be concerning so we are confident our design is sufficient. The winch belt will be attached to the trolley via a pin at the bottom of the frame. The pin bracket will be manufactured from 20 gauge aluminum. The top of trolley supports the roller which will sit on the zipline, allowing the robot to use the force of gravity to slide to safety once lifted by the winch. The roller will be lathed out of Ultra High Molecular Weight Polyethylene.
+		The zipline trolley consists of a frame, winch attachment axle and roller (\autoref{fig:zipTrolley}). The frame was designed with flanges all the way around to improve rigidity. A finite element analysis was carried out in Solidworks. The results showed stresses much below the plastic limit and deflections of a fraction of a millimetre (See \autoref{fig:zipFEA}). Although the validity of the FEA is questionable, the results would have to be off by two orders of magnitude for deflections to be concerning so we are confident our design is sufficient. The winch belt will be attached to the trolley via a pin at the bottom of the frame. The pin bracket will be manufactured from 20~gauge aluminium. The top of trolley supports the roller which will sit on the zipline, allowing the robot to use the force of gravity to slide to safety once lifted by the winch. The roller will be lathed out of Ultra High Molecular Weight Polyethylene.
 		
 		\subsubsection{The Winch System}
-		The robot will be lifted off the ground by the winch system. The winch will be driven by a worm gear system with a 1:40 gear ratio to ensure ample torque and prevent back driving (\autoref{fig:winch}). The winch will be connected to the trolley by a 1.5" wide fabric (exact material to be determined). 
+		The robot will be lifted off the ground by the winch system, which attaches to the zipline trolley. The winch will be driven by a worm gear system with a 1:40 gear ratio to ensure ample torque and prevent back-driving (\autoref{fig:winch}). The winch will be connected to the trolley by a 1.5" wide material that is to be determined.
 		
 		\begin{figure}[h]
 			\centering
@@ -319,13 +321,13 @@ The drive and actuator systems will consist of five Barber-Coleman geared DC mot
 	The retrieval arm will be actuated by a single, H-bridge controlled DC motor. The gear ratio between the arm and the motor will be 5:1 as calculated in \autoref{AppendixA}. The gears for the retrieval arm will be contained within the retrieval arm body.
 	
 	\subsection{Zipline Apparatus Actuation}
-	The zipline apparatus will consist of two actuation systems. One for the delivery system and one for the winch. See \autoref{fig:zipModule} for the location of these motors.
+	The zipline apparatus will consist of one actuator for the delivery system and another for the winch. See \autoref{fig:zipModule} for the location of these motors.
 		
 		\subsubsection{Zipline Delivery System Actuation}
-		The zipline delivery system will be actuated by a single DC motor controlled by an H-bridge. The motor will be supported at the top of the zipline body. The gear ratio between the delivery system and the motor will be 1:1 as calculated in \autoref{AppendixA}.
+		The zipline delivery system will be actuated by a single DC motor controlled by an H-bridge. The motor will be mounted at the top of the body of the zipline system. The gear ratio between the delivery arm and the motor will be 1:1 as calculated in \autoref{AppendixA}.
 		
 		\subsubsection{Zipline Winch Actuation}
-		The winch will be actuated by a single direction DC motor as we will only ever need to lift the robot, not return it to the ground. This motor will be located in the bottom of the zipline body and will be controlled by a single MOSFET. The motor will be connected to the winch my a worm gear and a gear with a 40:1 gear ratio to ensure plenty of torque and to prevent back driving (as determined in \autoref{AppendixA}).
+		The winch will be actuated by a unidirectional DC motor. This motor will be located in the bottom of the zipline body and will be controlled by a single MOSFET. The motor will be connected to the winch by a worm gear with a 40:1 ratio to ensure sufficient torque and to prevent back-driving (as determined in \autoref{AppendixA}).
 
 %--------------------------------------------
 %Sensor System
@@ -345,14 +347,14 @@ The drive and actuator systems will consist of five Barber-Coleman geared DC mot
 	
 	\subsection{Microswitches}
 	
-	Two microswitches attached to the actuator arm's will be triggered when a pet is attached. An additional microswitch may be used for zipline detection, the type of sensor used for zipline detection has not be finalized.
+	Two microswitches attached to the actuator arm's will be triggered when a pet is attached to the arm. This will be used to determine whether the pet has been picked up and when it is removed by the shearing pole. An additional microswitch may be used for zipline detection, the type of sensor used for zipline detection has not be finalized.
 	
 %--------------------------------------------
 %Electrical Design
 
 \section{Electrical Design}
 
-Wires will be routed along the center of the robot, up along the front of the board storage space and to the shelf where the circuitry will reside. Wire routes are shown in red in \autoref{fig:wire routing}). Microswitch wires from the retrieval arm will run along the arms, through the retrieval arm body and to the connection points on the TINAH. Motor wires for the zipline sub-assembly will be kept within the zipline body whenever possible so that the aluminum body doubles as EMR shields. Motor control circuits will be on the lower shelf of the board storage space wile IR detection circuits will be on the top shelf. As mentioned in the mechanical design section, the shelves will be constructed from aluminum so they will also act as EMR shields between the motor circuits and sensitive detection circuits for QRDs an IR sensors. Shielded wires will be used for sensitive signal wires to further protect against noise from power wires and circuits.
+Wires will be routed along the centre of the robot, up along the front of the board storage space and to the shelf where the circuitry will reside. Wire routes are shown in red in \autoref{fig:wire routing}). Microswitch wires from the retrieval arm will run along the arms, through the retrieval arm body and to the connection points on the TINAH. Motor wires for the zipline sub-assembly will be kept within the zipline body whenever possible so that the aluminium body doubles as an EMR shield. Motor control circuits will be on the lower shelf of the board storage space while IR detection circuits will be on the top shelf. Shielded wires will be used for sensitive signal wires to further protect against noise from power wires and circuits.
 
 \begin{figure}[h]
 	\centering
@@ -564,7 +566,7 @@ A more detailed description of the modes is shown in \autoref{AppendixC}.
 	9& Zipline & Zipline Code \newline Testing Retrieval & Other Circuits & Zipline \newline Rubble Excavation \\ \hline
 	10& Testing \newline Rebuilding? & Testing \newline Rebuilding? & Testing \newline Rebuilding? & Testing \newline Rebuilding? \newline Dead Reckoning? \\ \hline
 	11 \newline 12 \newline 13 &
-	\multicolumn{4}{l|}{\parbox{10cm}{Shared Goals: \newline Retrieves pets on ground \newline Retrieves pet on rafters \newline Retrieves pet in rubble \newline Can zipline back intact \newline Test dead reckoning}} \\ \hline
+	\multicolumn{4}{l|}{\parbox{10cm}{Shared Goals: \newline Retrieves pets on ground \newline Retrieves pet on rafters \newline Retrieves pet in rubble \newline Can zipline back intact \newline Integrate dead reckoning into tape following}} \\ \hline
 	\end{tabular}
 	\label{table:Task Schedule}
 \end{table}

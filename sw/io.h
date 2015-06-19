@@ -19,9 +19,9 @@ namespace io
 				In() = delete;
 				In(const In&) = delete;
 
-				inline In(volatile uint8_t* port, volatile uint8_t* dd, volatile uint8_t* pin, uint8_t bit) : _pin(pin), _bit(bit)
+				inline In(volatile uint8_t* port, volatile uint8_t* ddr, volatile uint8_t* pin, uint8_t bit) : _pin(pin), _bit(bit)
 				{
-					*dd &= ~bit;
+					*ddr &= ~bit;
 					*port &= ~bit;
 				}
 
@@ -40,10 +40,9 @@ namespace io
 				Out() = delete;
 				Out(const Out&) = delete;
 
-				inline Out(volatile uint8_t* port, volatile uint8_t* dd, volatile uint8_t* pin, uint8_t bit) : _pin(pin), _bit(bit)
+				inline Out(volatile uint8_t* port, volatile uint8_t* ddr, volatile uint8_t* pin, uint8_t bit) : _port(port), _pin(pin), _bit(bit)
 				{
-					*dd &= ~bit;
-					*port &= ~bit;
+					*ddr |= bit;
 				}
 
 				inline void write(bool value) const
@@ -70,8 +69,8 @@ namespace io
 		};
 
 
-#define DIGITAL_INPUT(NAME, PORTx, NUM) const io::Digital::In NAME(&PORT ## PORTx, &DDR ## PORTx, &PIN ## PORTx, NUM)
-#define DIGITAL_OUTPUT(NAME, PORTx, NUM) const io::Digital::Out NAME(&PORT ## PORTx, &DDR ## PORTx, &PIN ## PORTx, NUM)
+#define DIGITAL_INPUT(NAME, PORTx, NUM) const io::Digital::In NAME(&PORT ## PORTx, &DDR ## PORTx, &PIN ## PORTx, 1 << PIN ## NUM)
+#define DIGITAL_OUTPUT(NAME, PORTx, NUM) const io::Digital::Out NAME(&PORT ## PORTx, &DDR ## PORTx, &PIN ## PORTx, 1 << PIN ## NUM)
 
 		const extern In start;
 		const extern In stop;

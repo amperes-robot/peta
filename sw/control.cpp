@@ -38,8 +38,11 @@ namespace control
 	void init()
 	{
 		Serial.begin(9600);
-		menu::init();
 		current_mode = &idle_mode;
+		menu::init();
+
+		// isr::attach_adc();
+
 		set_mode(&menu::main_mode);
 	}
 

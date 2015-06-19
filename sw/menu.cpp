@@ -1,4 +1,5 @@
 #include "menu.h"
+#include "course.h"
 #include "pid.h"
 
 namespace menu
@@ -12,9 +13,10 @@ namespace menu
 
 		String main_names[] =
 		{
-			"run",
-			"flw",
-			"opt"
+			"course",
+			"select",
+			"opt",
+			"follow"
 		};
 		const size_t main_count = sizeof(main_names) / sizeof(*main_names);
 		int8_t prev_index;
@@ -43,17 +45,20 @@ namespace menu
 				switch (index)
 				{
 					case 0:
+						control::set_mode(&course::begin_mode);
 						break;
 					case 1:
-						control::set_mode(&pid::follow_mode);
 						break;
 					case 2:
 						control::set_mode(&menu::opt_mode);
 						break;
+					case 3:
+						control::set_mode(&pid::follow_mode);
+						break;
 				}
 			}
 
-			delay(80);
+			delay(100);
 		}
 		void main_mode_end()
 		{
@@ -132,7 +137,7 @@ namespace menu
 				}
 			}
 
-			delay(80);
+			delay(120);
 		}
 		void opt_mode_end()
 		{

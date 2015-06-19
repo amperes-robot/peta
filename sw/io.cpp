@@ -4,7 +4,6 @@
 
 namespace io
 {
-	uint16_t digital_pins = 0;
 	uint16_t analog_pins[N_ANALOG] = { };
 
 	uint16_t analog_in(uint8_t pin)

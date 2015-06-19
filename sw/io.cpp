@@ -7,19 +7,9 @@ namespace io
 	uint16_t digital_pins = 0;
 	uint16_t analog_pins[N_ANALOG] = { };
 
-	bool digital_in(uint8_t pin)
-	{
-		// TODO
-		digitalRead(pin);
-	}
-
-	void digital_out(uint8_t pin, bool value)
-	{
-		digitalWrite(pin, value);
-	}
-
 	uint16_t analog_in(uint8_t pin)
 	{
+		// TODO
 		return analogRead(pin);
 	}
 
@@ -55,5 +45,11 @@ namespace io
 
 		// start the conversion
 		sbi(ADCSRA, ADSC);
+	}
+
+	namespace Digital
+	{
+		DIGITAL_INPUT(start, G, 2);
+		DIGITAL_INPUT(stop, G, 1);
 	}
 }

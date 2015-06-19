@@ -11,6 +11,72 @@ extern LiquidCrystal LCD;
 
 namespace io
 {
+	namespace Digital
+	{
+		struct In final
+		{
+			public:
+				In() = delete;
+				In(const In&) = delete;
+
+				inline In(volatile uint8_t* port, volatile uint8_t* dd, volatile uint8_t* pin, uint8_t bit) : _pin(pin), _bit(bit)
+				{
+					*dd &= ~bit;
+					*port &= ~bit;
+				}
+
+				inline bool read() const
+				{
+					return *_pin & _bit;
+				}
+
+			private:
+				const volatile uint8_t* _pin;
+				const uint8_t _bit;
+		};
+		struct Out final
+		{
+			public:
+				Out() = delete;
+				Out(const Out&) = delete;
+
+				inline Out(volatile uint8_t* port, volatile uint8_t* dd, volatile uint8_t* pin, uint8_t bit) : _pin(pin), _bit(bit)
+				{
+					*dd &= ~bit;
+					*port &= ~bit;
+				}
+
+				inline void write(bool value) const
+				{
+					if (value)
+					{
+						*_port |= _bit;
+					}
+					else
+					{
+						*_port &= ~_bit;
+					}
+				}
+
+				inline bool read() const
+				{
+					return *_pin & _bit;
+				}
+
+			private:
+				volatile uint8_t* _port;
+				const volatile uint8_t* _pin;
+				const uint8_t _bit;
+		};
+
+
+#define DIGITAL_INPUT(NAME, PORTx, NUM) const io::Digital::In NAME(&PORT ## PORTx, &DDR ## PORTx, &PIN ## PORTx, NUM)
+#define DIGITAL_OUTPUT(NAME, PORTx, NUM) const io::Digital::Out NAME(&PORT ## PORTx, &DDR ## PORTx, &PIN ## PORTx, NUM)
+
+		const extern In start;
+		const extern In stop;
+	}
+
 #ifdef IO_SIM
 	typedef std::string string;
 #else
@@ -50,18 +116,6 @@ namespace io
 			SELECT = 7
 		};
 	}
-
-	namespace Digital
-	{
-		enum Digital_t : uint8_t
-		{
-			STOP = 49,
-			START = 50
-		};
-	}
-
-	bool digital_in(uint8_t pin);
-	void digital_out(uint8_t pin, bool value);
 
 	uint16_t analog_in(uint8_t pin);
 	void start_adc(uint8_t pin);

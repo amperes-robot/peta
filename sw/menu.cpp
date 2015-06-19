@@ -167,7 +167,7 @@ namespace menu
 	bool stop_falling()
 	{
 		static bool prev_state = false;
-		bool state = !io::digital_in(io::Digital::STOP);
+		bool state = !io::Digital::stop.read();
 		bool ret = false;
 
 		if (state && !prev_state)
@@ -182,7 +182,7 @@ namespace menu
 	bool start_falling()
 	{
 		static bool prev_state = false;
-		bool state = !io::digital_in(io::Digital::START);
+		bool state = !io::Digital::start.read();
 		bool ret = false;
 
 		if (state && !prev_state)

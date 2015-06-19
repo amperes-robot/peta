@@ -11,6 +11,30 @@ extern LiquidCrystal LCD;
 
 namespace io
 {
+	namespace Analog
+	{
+		struct In final
+		{
+			public:
+				In() = delete;
+				In(const In&) = delete;
+
+				inline In(volatile uint8_t* port, volatile uint8_t* ddr, volatile uint8_t* pin, uint8_t bit) : _pin(pin), _bit(bit)
+				{
+					*ddr &= ~bit;
+					*port &= ~bit;
+				}
+
+				inline bool read() const
+				{
+					return *_pin & _bit;
+				}
+
+			private:
+				const volatile uint8_t* _pin;
+				const uint8_t _bit;
+		};
+	}
 	namespace Digital
 	{
 		struct In final
@@ -76,34 +100,16 @@ namespace io
 		const extern In stop;
 	}
 
-#ifdef IO_SIM
-	typedef std::string string;
-#else
 	typedef String string;
-#endif
 
-	template<typename T>
-	string to_string(T t)
-	{
-#ifdef IO_SIM
-		std::ostringstream os;
-		os << t;
-		return os.str();
-#else
-		return string(t);
-#endif
-	}
+	void init();
 
 	template<typename T>
 	inline void log(T msg)
 	{
-#ifdef IO_SIM
-		std::cout << msg << std::endl;
-#else
 		LCD.clear();
 		LCD.home();
-		LCD.print(to_string(msg));
-#endif
+		LCD.print(string(msg));
 	}
 
 	namespace Analog
@@ -118,10 +124,4 @@ namespace io
 
 	uint16_t analog_in(uint8_t pin);
 	void start_adc(uint8_t pin);
-
-#ifdef IO_SIM
-	void set_input(uint8_t pin, bool value);
-
-	extern TestCallback test_suite[];
-#endif
 }

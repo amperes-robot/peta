@@ -1,5 +1,6 @@
 #include "menu.h"
 #include "course.h"
+#include "motion.h"
 #include "pid.h"
 
 namespace menu
@@ -11,7 +12,7 @@ namespace menu
 			return (uint16_t) io::analog_in(io::Analog::SELECT) * n / 1024;
 		}
 
-		String main_names[] =
+		io::string main_names[] =
 		{
 			"course",
 			"select",
@@ -247,7 +248,7 @@ namespace menu
 
 	uint8_t Opt::opt_count = 0;
 
-	Opt::Opt(String name, uint16_t def) : _addr_eep((uint16_t*) (2 * opt_count)), _name(name), _default(def)
+	Opt::Opt(io::string name, uint16_t def) : _addr_eep((uint16_t*) (2 * opt_count)), _name(name), _default(def)
 	{
 		opts[opt_count++] = this;
 		_value = eeprom_read_word(_addr_eep);

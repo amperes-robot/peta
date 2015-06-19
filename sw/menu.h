@@ -13,7 +13,7 @@ namespace menu
 	{
 		public:
 			static uint8_t opt_count;
-			Opt(String name, uint16_t def);
+			Opt(io::string name, uint16_t def);
 
 			Opt() = delete;
 			Opt(const Opt& other) = delete;
@@ -23,7 +23,7 @@ namespace menu
 				return _value;
 			}
 
-			inline String name() const
+			inline io::string name() const
 			{
 				return _name;
 			}
@@ -41,7 +41,7 @@ namespace menu
 		private:
 			uint16_t _value;
 			uint16_t* const _addr_eep;
-			const String _name;
+			const io::string _name;
 			const uint16_t _default;
 	};
 

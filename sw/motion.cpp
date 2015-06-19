@@ -20,6 +20,13 @@ namespace motion
 		}
 	}
 
+	void halt()
+	{
+		velocity = 0;
+		direction = 0;
+		refresh();
+	}
+
 	void dir(int16_t x)
 	{
 		direction = x;

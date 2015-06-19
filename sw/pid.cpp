@@ -6,7 +6,7 @@ namespace pid
 {
 	namespace
 	{
-		Controller controller(70, 1, 80); // default value
+		Controller controller(0, 0, 0);
 
 		void follow_mode_begin()
 		{
@@ -69,8 +69,8 @@ namespace pid
 
 	const control::Mode follow_mode
 	{
-		follow_mode_begin,
-		follow_mode_tick,
-		follow_mode_end,
+		&follow_mode_begin,
+		&follow_mode_tick,
+		&follow_mode_end,
 	};
 }

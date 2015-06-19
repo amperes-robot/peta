@@ -51,10 +51,10 @@ namespace menu
 					case 1:
 						break;
 					case 2:
-						control::set_mode(&menu::opt_restore_mode);
+						control::set_mode(&menu::opt_mode);
 						break;
 					case 3:
-						control::set_mode(&menu::opt_mode);
+						control::set_mode(&menu::opt_restore_mode);
 						break;
 					case 4:
 						control::set_mode(&pid::follow_mode);
@@ -70,6 +70,7 @@ namespace menu
 		}
 
 		uint8_t restore_ticker;
+		uint8_t restore_bar;
 		Opt* opts[N_OPTS];
 		int8_t opt_editing = 0;
 
@@ -80,27 +81,47 @@ namespace menu
 		void opt_restore_mode_begin()
 		{
 			LCD.clear();
+			LCD.setCursor(0, 1);
+			LCD.print("opt-restore");
+			LCD.home();
 			restore_ticker = 0;
+			restore_bar = 0;
 		}
 		void opt_restore_mode_tick()
 		{
-			if (io::Digital::start.read())
+			if (restore_ticker == restore_bar)
+			{
+				LCD.write((uint8_t) 0);
+
+				if (restore_ticker < 0x80)
+				{
+					restore_bar += 8;
+				}
+			}
+
+			if (restore_ticker < 0x80 && io::Digital::start.read())
 			{
 				control::set_mode(&main_mode);
 			}
-			else if (++restore_ticker == 0xFF)
+			else if (restore_ticker == 0x80)
 			{
 				for (uint8_t i = 0; i < Opt::opt_count; i++)
 				{
 					opts[i]->restore();
 				}
+				LCD.setCursor(12, 1);
+				LCD.print("done");
+			}
+			else if (restore_ticker == 0xFF)
+			{
 				control::set_mode(&main_mode);
 			}
-			delay(50);
+
+			restore_ticker++;
+			delay(6);
 		}
 		void opt_restore_mode_end()
 		{
-			LCD.clear();
 		}
 
 		/**
@@ -226,8 +247,9 @@ namespace menu
 
 	uint8_t Opt::opt_count = 0;
 
-	Opt::Opt(String name, uint16_t def) : _addr_eep((uint16_t*) (2 * opt_count++)), _name(name), _default(def)
+	Opt::Opt(String name, uint16_t def) : _addr_eep((uint16_t*) (2 * opt_count)), _name(name), _default(def)
 	{
+		opts[opt_count++] = this;
 		_value = eeprom_read_word(_addr_eep);
 	}
 

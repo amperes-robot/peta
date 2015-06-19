@@ -1,5 +1,9 @@
 #pragma once
+
+#ifdef _WIN32
 #include <avr/EEPROM.h>
+#endif
+
 #include "control.h"
 #include "io.h"
 
@@ -17,7 +21,6 @@ namespace menu
 
 			Opt() = delete;
 			Opt(const Opt& other) = delete;
-			Opt(String name, float scale);
 
 			inline uint16_t value() const
 			{

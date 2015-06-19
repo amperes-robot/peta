@@ -16,16 +16,14 @@ namespace pid
 		}
 		void follow_mode_tick()
 		{
-			int16_t thresh = 360;
 			int16_t in = analogRead(0);
+			int16_t thresh = 360;
 
-			controller.in((analogRead(0) - thresh));
+			controller.in((in - thresh));
 			int16_t out = controller.out();
 
-			// default 95
-			io::log(menu::flw_vel.value());
 			motion::vel(menu::flw_vel.value());
-			motion::dir(controller.out());
+			motion::dir(out);
 
 			if (menu::stop_falling())
 			{
@@ -42,7 +40,7 @@ namespace pid
 	}
 
 	Controller::Controller(uint16_t gain_p, uint16_t gain_i, uint16_t gain_d)
-		: _prev(0), _now(0), gain_p(gain_p), gain_i(gain_i), gain_d(gain_d) { }
+		: gain_p(gain_p), gain_i(gain_i), gain_d(gain_d), _prev(0), _now(0) { }
 
 	void Controller::in(int16_t entry)
 	{

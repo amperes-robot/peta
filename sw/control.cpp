@@ -40,6 +40,7 @@ namespace control
 		Serial.begin(9600);
 		current_mode = &idle_mode;
 		menu::init();
+		io::init();
 
 		// isr::attach_adc();
 

@@ -6,7 +6,7 @@ namespace pid
 {
 	namespace
 	{
-		Controller controller(70, 1, 80); // default value
+		Controller controller(0, 0, 0);
 
 		void follow_mode_begin()
 		{
@@ -17,7 +17,7 @@ namespace pid
 		void follow_mode_tick()
 		{
 			int16_t in = analogRead(0);
-			int16_t thresh = 360;
+			int16_t thresh = menu::flw_thresh.value();
 
 			controller.in((in - thresh));
 			int16_t out = controller.out();
@@ -69,8 +69,8 @@ namespace pid
 
 	const control::Mode follow_mode
 	{
-		follow_mode_begin,
-		follow_mode_tick,
-		follow_mode_end,
+		&follow_mode_begin,
+		&follow_mode_tick,
+		&follow_mode_end,
 	};
 }

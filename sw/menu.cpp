@@ -16,6 +16,7 @@ namespace menu
 			"course",
 			"select",
 			"opt",
+			"opt-restore",
 			"follow"
 		};
 		const size_t main_count = sizeof(main_names) / sizeof(*main_names);
@@ -50,9 +51,12 @@ namespace menu
 					case 1:
 						break;
 					case 2:
-						control::set_mode(&menu::opt_mode);
+						control::set_mode(&menu::opt_restore_mode);
 						break;
 					case 3:
+						control::set_mode(&menu::opt_mode);
+						break;
+					case 4:
 						control::set_mode(&pid::follow_mode);
 						break;
 				}
@@ -65,15 +69,43 @@ namespace menu
 			LCD.clear();
 		}
 
-		Opt* opts[] =
-		{
-			&flw_gain_p,
-			&flw_gain_i,
-			&flw_gain_d,
-			&flw_vel
-		};
-		const size_t opts_count = sizeof(opts) / sizeof(*opts);
+		uint8_t restore_ticker;
+		Opt* opts[N_OPTS];
 		int8_t opt_editing = 0;
+
+		/**
+		 * OPT_RESTORE_MODE
+		 */
+
+		void opt_restore_mode_begin()
+		{
+			LCD.clear();
+			restore_ticker = 0;
+		}
+		void opt_restore_mode_tick()
+		{
+			if (io::Digital::start.read())
+			{
+				control::set_mode(&main_mode);
+			}
+			else if (++restore_ticker == 0xFF)
+			{
+				for (uint8_t i = 0; i < Opt::opt_count; i++)
+				{
+					opts[i]->restore();
+				}
+				control::set_mode(&main_mode);
+			}
+			delay(50);
+		}
+		void opt_restore_mode_end()
+		{
+			LCD.clear();
+		}
+
+		/**
+		 * OPT_MODE
+		 */
 
 		void opt_mode_begin()
 		{
@@ -83,7 +115,7 @@ namespace menu
 		}
 		void opt_mode_tick()
 		{
-			uint8_t index = get_index(opts_count);
+			uint8_t index = get_index(Opt::opt_count);
 			uint16_t tweak = io::analog_in(io::Analog::TWEAK);
 
 			if (prev_index != index || opt_editing >= 0)
@@ -145,11 +177,6 @@ namespace menu
 		}
 	}
 
-	Opt flw_gain_p("flw.p", 1.0 / 255);
-	Opt flw_gain_i("flw.i", 1.0 / 255);
-	Opt flw_gain_d("flw.d", 1.0 / 255);
-	Opt flw_vel("flw.vel", 1.0);
-
 	byte cross[8] =
 	{
 		B00100,
@@ -161,8 +188,6 @@ namespace menu
 		B01101,
 		B00100,
 	};
-
-	extern uint8_t opt_count;
 
 	void init()
 	{
@@ -201,6 +226,17 @@ namespace menu
 
 	uint8_t Opt::opt_count = 0;
 
+	Opt::Opt(String name, uint16_t def) : _addr_eep((uint16_t*) (2 * opt_count++)), _name(name), _default(def)
+	{
+		_value = eeprom_read_word(_addr_eep);
+	}
+
+	Opt flw_gain_p("flw.p", 70);
+	Opt flw_gain_i("flw.i", 1);
+	Opt flw_gain_d("flw.d", 60);
+	Opt flw_vel("flw.vel", 100);
+	Opt flw_thresh("flw.thresh", 360);
+
 	const control::Mode main_mode
 	{
 		main_mode_begin,
@@ -213,5 +249,12 @@ namespace menu
 		opt_mode_begin,
 		opt_mode_tick,
 		opt_mode_end
+	};
+
+	const control::Mode opt_restore_mode
+	{
+		opt_restore_mode_begin,
+		opt_restore_mode_tick,
+		opt_restore_mode_end
 	};
 }

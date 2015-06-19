@@ -13,11 +13,7 @@ namespace menu
 	{
 		public:
 			static uint8_t opt_count;
-			inline Opt(String name, float scale) : _name(name), _scale(scale)
-			{
-				_addr_eep = (uint16_t*)(2 * opt_count++);
-				_value = eeprom_read_word(_addr_eep);
-			}
+			Opt(String name, uint16_t def);
 
 			Opt() = delete;
 			Opt(const Opt& other) = delete;
@@ -27,14 +23,14 @@ namespace menu
 				return _value;
 			}
 
-			inline float scale() const
-			{
-				return _scale;
-			}
-
 			inline String name() const
 			{
 				return _name;
+			}
+
+			inline void restore()
+			{
+				write(_default);
 			}
 
 			inline void write(uint16_t value)
@@ -43,21 +39,24 @@ namespace menu
 				eeprom_write_word(_addr_eep, value);
 			}
 		private:
-			String _name;
-			float _scale;
-			uint16_t* _addr_eep;
 			uint16_t _value;
+			uint16_t* const _addr_eep;
+			const String _name;
+			const uint16_t _default;
 	};
 
+	const size_t N_OPTS = 5;
 	extern Opt flw_gain_p;
 	extern Opt flw_gain_i;
 	extern Opt flw_gain_d;
 	extern Opt flw_vel;
+	extern Opt flw_thresh;
 
 	/**
 	 * Menu modes.
 	 */
 	extern const control::Mode main_mode;
+	extern const control::Mode opt_restore_mode;
 	extern const control::Mode opt_mode;
 
 	void init();

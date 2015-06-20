@@ -3,20 +3,29 @@
 
 namespace isr
 {
-	/* Configures Timer1 to call an interrupt routine with the desired frequency  */
-	/* The interrupt routine that is called is ISR(TIMER1_COMPA_vect)             */
-	/* Valid interrupt frequencies: 1Hz to 65535 Hz                               */
-	/* If the frequency is impossible to achieve, no interrupt will be configured */
+	/* 
+	 * Attaches ISR(TIMER1_COMPA_vect) at the speficied frequency
+	 * Valid interrupt frequencies: 1Hz to 65535 Hz
+	 */
 	void attach_timer1(uint16_t freq);
 	void detach_timer1();
 
+	/* 
+	 * Attaches ISR(TIMER3_COMPA_vect) at the speficied frequency
+	 * Valid interrupt frequencies: 1Hz to 65535 Hz
+	 *
+	 * Note: may not work as intended
+	 */
+	void attach_timer3(uint16_t freq);
+	void detach_timer3();
+
 	/* Enables an external interrupt pin
-	 * INTX: Which interrupt should be configured?
-	 * mode: Which pin state should trigger the interrupt?
+	 * pin: which pin to trigger
+	 * mode: which pin state should trigger the interrupt
 	 * LOW     - trigger whenever pin state is LOW
 	 * FALLING - trigger when pin state changes from HIGH to LOW
 	 * RISING  - trigger when pin state changes from LOW  to HIGH 
-	*/
+	 */
 	void attach_pin(uint8_t pin, uint8_t mode);
 	void detach_pin(uint8_t pin);
 

@@ -8,7 +8,7 @@ namespace pid
 	{
 		Controller controller(0, 0, 0);
 
-		void follow_mode_begin()
+		void follow_mode_begin(void*)
 		{
 			controller.gain_p = menu::flw_gain_p.value();
 			controller.gain_i = menu::flw_gain_i.value();

@@ -10,14 +10,12 @@ namespace course
 	{
 		pid::Controller controller(0, 0, 0);
 
-		void nop() { }
-
 		void begin_tick()
 		{
 			control::set_mode(&follow_retrieval_mode);
 		}
 
-		void follow_retrieval_begin()
+		void follow_retrieval_begin(void*)
 		{
 			io::log("follow/retrieval");
 			controller.gain_p = menu::flw_gain_p.value();
@@ -46,36 +44,36 @@ namespace course
 
 	const control::Mode begin_mode
 	{
-		&nop,
+		&control::nop_void,
 		&begin_tick,
-		&nop
+		&control::nop
 	};
 
 	const control::Mode follow_retrieval_mode
 	{
 		&follow_retrieval_begin,
 		&follow_retrieval_tick,
-		&nop
+		&control::nop
 	};
 
 	const control::Mode beacon_homing_mode
 	{
-		[]() { io::log("beacon/homing"); },
-		&nop,
-		&nop
+		[](void*) { io::log("beacon/homing"); },
+		&control::nop,
+		&control::nop
 	};
 
 	const control::Mode rubble_excavation_mode
 	{
-		&nop,
-		&nop,
-		&nop
+		&control::nop_void,
+		&control::nop,
+		&control::nop
 	};
 
 	const control::Mode return_mode
 	{
-		&nop,
-		&nop,
-		&nop
+		&control::nop_void,
+		&control::nop,
+		&control::nop
 	};
 }

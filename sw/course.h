@@ -4,6 +4,10 @@
 
 namespace course
 {
+	/**
+	 * Control modes for the course.
+	 */
+
 	extern const control::Mode begin_mode;
 	extern const control::Mode follow_retrieval_mode;
 	extern const control::Mode beacon_homing_mode;

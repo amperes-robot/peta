@@ -23,7 +23,7 @@ namespace menu
 		const size_t main_count = sizeof(main_names) / sizeof(*main_names);
 		int8_t prev_index;
 
-		void main_mode_begin()
+		void main_mode_begin(void*)
 		{
 			prev_index = -1;
 			LCD.clear();
@@ -79,7 +79,7 @@ namespace menu
 		 * OPT_RESTORE_MODE
 		 */
 
-		void opt_restore_mode_begin()
+		void opt_restore_mode_begin(void*)
 		{
 			LCD.clear();
 			LCD.setCursor(0, 1);
@@ -129,7 +129,7 @@ namespace menu
 		 * OPT_MODE
 		 */
 
-		void opt_mode_begin()
+		void opt_mode_begin(void*)
 		{
 			LCD.clear();
 			opt_editing = -1;

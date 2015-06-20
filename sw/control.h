@@ -7,20 +7,26 @@
 namespace control
 {
 	/**
-	 * Interface that controls the robot at any given point in time.
+	 * Interface that performs the main handling of everything.
 	 */
 	struct Mode final
 	{
 		public:
-			void (*begin)();
+			void (*begin)(void* args);
 			void (*tick)();
 			void (*end)();
 	};
 
 	extern const Mode idle_mode;
 
-	void set_mode(const Mode* mode);
+	/**
+	 * Sets the current mode to the given mode with the given arguments.
+	 */
+	void set_mode(const Mode* mode, void* args = nullptr);
 
 	void init();
 	void loop();
+
+	inline void nop() { }
+	inline void nop_void(void*) { }
 }

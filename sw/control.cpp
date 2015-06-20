@@ -9,20 +9,16 @@ namespace control
 	namespace
 	{
 		const Mode* current_mode;
-
-		void idle_mode_begin() { }
-		void idle_mode_tick() { }
-		void idle_mode_end() { }
 	}
 
 	const Mode idle_mode
 	{
-		idle_mode_begin,
-		idle_mode_tick,
-		idle_mode_end,
+		&nop_void,
+		&nop,
+		&nop,
 	};
 
-	void set_mode(const Mode* mode)
+	void set_mode(const Mode* mode, void* args)
 	{
 		if (!mode)
 		{
@@ -32,7 +28,7 @@ namespace control
 
 		current_mode->end();
 		current_mode = mode;
-		current_mode->begin();
+		current_mode->begin(args);
 	}
 
 	void init()

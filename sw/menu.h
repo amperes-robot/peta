@@ -9,14 +9,16 @@
 
 namespace menu
 {
+	/**
+	 * Represents an EEPROM-saved parameter.
+	 */
 	struct Opt final
 	{
 		public:
 			static uint8_t opt_count;
-			Opt(io::string name, uint16_t def);
-
 			Opt() = delete;
 			Opt(const Opt& other) = delete;
+			Opt(io::string name, uint16_t def);
 
 			inline uint16_t value() const
 			{
@@ -59,15 +61,20 @@ namespace menu
 	extern const control::Mode opt_restore_mode;
 	extern const control::Mode opt_mode;
 
+	/**
+	 * Initialize the menu module.
+	 */
 	void init();
 
 	/**
 	 * Returns true if the stop button is on falling edge.
+	 * Needs to be called once per tick in order to work.
 	 */
 	bool stop_falling();
 
 	/**
 	 * Retruns true if start button is on falling edge.
+	 * Needs to be called once per tick in order to work.
 	 */
 	bool start_falling();
 }

@@ -7,11 +7,10 @@
 
 extern LiquidCrystal LCD;
 
-#define N_ANALOG 8
-
 namespace io
 {
-	extern volatile uint16_t analog_pins[N_ANALOG];
+	extern volatile uint16_t analog_pins[8];
+	extern uint8_t analog_attached;
 
 	namespace Analog
 	{
@@ -21,7 +20,10 @@ namespace io
 				In() = delete;
 				In(const In&) = delete;
 
-				inline In(uint8_t pin) : _pin(pin) { }
+				inline In(uint8_t pin) : _pin(pin)
+				{
+					analog_attached |= 1 << pin;
+				}
 
 				inline bool read() const
 				{
@@ -33,6 +35,10 @@ namespace io
 		};
 
 #define ANALOG_INPUT(NAME, NUM) const io::Analog::In NAME(NUM)
+		/* WARNING:
+		 * there must be at least one analog input
+		 * otherwise the ADC interrupt will never end! 
+		 */
 		const extern In select;
 		const extern In tweak;
 		const extern In qrd_tape;

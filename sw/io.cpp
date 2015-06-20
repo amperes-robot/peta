@@ -33,7 +33,8 @@ namespace io
 		}
 	}
 
-	volatile uint16_t analog_pins[N_ANALOG] = { };
+	volatile uint16_t analog_pins[8] = { };
+	uint8_t analog_attached = 0;
 
 	void init()
 	{
@@ -62,10 +63,12 @@ namespace io
 		high = ADCH;
 		analog_pins[analog_roundrobin] = (high << 8) | low;
 		
-		analog_roundrobin++;
-		if (analog_roundrobin > N_ANALOG)
+		while (!(analog_attached & (1 << analog_roundrobin)))
 		{
-			analog_roundrobin = 0;
+			if (++analog_roundrobin >= 8)
+			{
+				analog_roundrobin = 0;
+			}
 		}
 
 		start_adc();

@@ -27,7 +27,7 @@ namespace course
 
 		void follow_retrieval_tick()
 		{
-			int16_t in = analogRead(0);
+			int16_t in = io::Analog::qrd_tape.read();
 			int16_t thresh = menu::flw_thresh.value();
 
 			controller.in((in - thresh));

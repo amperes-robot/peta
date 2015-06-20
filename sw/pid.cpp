@@ -29,7 +29,7 @@ namespace pid
 			{
 				control::set_mode(&menu::main_mode);
 			}
-			delay(10);
+			io::delay_ms(10);
 		}
 		void follow_mode_end()
 		{

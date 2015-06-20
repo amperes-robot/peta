@@ -63,7 +63,7 @@ namespace menu
 				}
 			}
 
-			delay(100);
+			io::delay_ms(100);
 		}
 		void main_mode_end()
 		{
@@ -119,7 +119,7 @@ namespace menu
 			}
 
 			restore_ticker++;
-			delay(6);
+			io::delay_ms(6);
 		}
 		void opt_restore_mode_end()
 		{
@@ -191,7 +191,7 @@ namespace menu
 				}
 			}
 
-			delay(120);
+			io::delay_ms(120);
 		}
 		void opt_mode_end()
 		{

@@ -42,8 +42,6 @@ namespace control
 		menu::init();
 		io::init();
 
-		// isr::attach_adc();
-
 		set_mode(&menu::main_mode);
 	}
 

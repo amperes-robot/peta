@@ -9,7 +9,7 @@ namespace menu
 	{
 		uint8_t get_index(uint8_t n)
 		{
-			return (uint16_t) io::analog_in(io::Analog::SELECT) * n / 1024;
+			return (uint16_t) io::Analog::select.read() * n / 1024;
 		}
 
 		io::string main_names[] =
@@ -138,7 +138,7 @@ namespace menu
 		void opt_mode_tick()
 		{
 			uint8_t index = get_index(Opt::opt_count);
-			uint16_t tweak = io::analog_in(io::Analog::TWEAK);
+			uint16_t tweak = io::Analog::tweak.read();
 
 			if (prev_index != index || opt_editing >= 0)
 			{

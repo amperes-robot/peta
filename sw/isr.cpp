@@ -72,7 +72,5 @@ ISR(INT2_vect) { }
 ISR(INT3_vect) { }
 ISR(ADC_vect)
 {
-	LCD.clear();
-	LCD.home();
-	LCD.print(ADCSRA);
+	io::end_adc();
 }

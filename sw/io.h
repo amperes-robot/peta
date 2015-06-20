@@ -11,6 +11,8 @@ extern LiquidCrystal LCD;
 
 namespace io
 {
+	extern volatile uint16_t analog_pins[N_ANALOG];
+
 	namespace Analog
 	{
 		struct In final
@@ -19,21 +21,21 @@ namespace io
 				In() = delete;
 				In(const In&) = delete;
 
-				inline In(volatile uint8_t* port, volatile uint8_t* ddr, volatile uint8_t* pin, uint8_t bit) : _pin(pin), _bit(bit)
-				{
-					*ddr &= ~bit;
-					*port &= ~bit;
-				}
+				inline In(uint8_t pin) : _pin(pin) { }
 
 				inline bool read() const
 				{
-					return *_pin & _bit;
+					return analog_pins[_pin];
 				}
 
 			private:
-				const volatile uint8_t* _pin;
-				const uint8_t _bit;
+				const uint8_t _pin;
 		};
+
+#define ANALOG_INPUT(NAME, NUM) const io::Analog::In NAME(NUM)
+		const extern In select;
+		const extern In tweak;
+		const extern In qrd_tape;
 	}
 	namespace Digital
 	{
@@ -112,16 +114,8 @@ namespace io
 		LCD.print(string(msg));
 	}
 
-	namespace Analog
-	{
-		enum Analog_t : uint8_t
-		{
-			FOLLOW = 0,
-			TWEAK = 6,
-			SELECT = 7
-		};
-	}
-
-	uint16_t analog_in(uint8_t pin);
-	void start_adc(uint8_t pin);
+	void delay_ms(uint16_t ms);
+	void delay_us(uint16_t us);
+	void start_adc();
+	void end_adc();
 }

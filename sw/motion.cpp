@@ -1,13 +1,13 @@
 #include "motion.h"
 
-extern motorClass motor;
-
 namespace motion
 {
 	namespace
 	{
-		const uint8_t motor_left = 0;
-		const uint8_t motor_right = 1;
+		const uint8_t dirs[] = { 24, 25, 38, 39 };
+		const uint8_t digital_enables[] = { 29, 30, 36, 37 }; //digital input/output values
+		const uint8_t enables[] = { 5,  4,  1,  0 }; // PWM output values
+
 		const bool reverse_left = true;
 		const bool reverse_right = true;
 
@@ -15,8 +15,42 @@ namespace motion
 
 		void refresh()
 		{
-			motor.speed(motor_left, reverse_left ? -(velocity - direction) : velocity - direction);
-			motor.speed(motor_right, reverse_right ? -(velocity + direction) : velocity + direction);
+			left.speed(reverse_left ? -(velocity - direction) : velocity - direction);
+			right.speed(reverse_right ? -(velocity + direction) : velocity + direction);
+		}
+	}
+
+	Motor left(0);
+	Motor right(1);
+	Motor retrieval(2);
+	Motor zipline(3);
+
+	Motor::Motor(uint8_t id) : _id(id)
+	{
+		pinMode(dirs[_id], OUTPUT);
+		pinMode(digital_enables[_id], OUTPUT);
+		digitalWrite(dirs[_id], HIGH);
+
+		analogWrite(digital_enables[_id], 1); //make the motor glitch, force it to be zero.
+		analogWrite(enables[_id], 0);
+	}
+	void Motor::speed(int16_t speed)
+	{
+		if (speed > 255) speed = 255;
+		if (speed < -255) speed = -255;
+		uint8_t abs = speed > 0 ? speed : -speed;
+
+		if (speed >= 0)
+		{
+			digitalWrite(dirs[_id], HIGH);
+			analogWrite(digital_enables[_id], abs);
+			// digitalWrite(digital_enables[_id], HIGH);
+		}
+		else
+		{
+			digitalWrite(dirs[_id], LOW);
+			analogWrite(digital_enables[_id], abs);
+			// digitalWrite(digital_enables[_id], HIGH);
 		}
 	}
 

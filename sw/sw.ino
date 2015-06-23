@@ -1,10 +1,13 @@
-#include <phys253.h>
 #include <LiquidCrystal.h>
 #include "loop.cpp"
 
 void setup()
 {
-#include <phys253setup.txt>
+	/*
+	RCServo0.attach(RCServo0Output);
+	RCServo1.attach(RCServo1Output);
+	RCServo2.attach(RCServo2Output);
+	*/
 	init_c();
 }
 

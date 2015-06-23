@@ -26,19 +26,19 @@ namespace menu
 		void main_mode_begin(void*)
 		{
 			prev_index = -1;
-			LCD.clear();
+			io::lcd.clear();
 		}
 		void main_mode_tick()
 		{
 			uint8_t index = get_index(main_count);
 			if (prev_index != index)
 			{
-				LCD.clear();
-				LCD.home();
-				LCD.setCursor(0, 0);
-				LCD.write((uint8_t) 0);
-				LCD.setCursor(0, 1);
-				LCD.print(main_names[index]);
+				io::lcd.clear();
+				io::lcd.home();
+				io::lcd.setCursor(0, 0);
+				io::lcd.write((uint8_t) 0);
+				io::lcd.setCursor(0, 1);
+				io::lcd.print(main_names[index]);
 			}
 			prev_index = index;
 
@@ -67,7 +67,7 @@ namespace menu
 		}
 		void main_mode_end()
 		{
-			LCD.clear();
+			io::lcd.clear();
 		}
 
 		uint8_t restore_ticker;
@@ -81,10 +81,10 @@ namespace menu
 
 		void opt_restore_mode_begin(void*)
 		{
-			LCD.clear();
-			LCD.setCursor(0, 1);
-			LCD.print("opt-restore");
-			LCD.home();
+			io::lcd.clear();
+			io::lcd.setCursor(0, 1);
+			io::lcd.print("opt-restore");
+			io::lcd.home();
 			restore_ticker = 0;
 			restore_bar = 0;
 		}
@@ -92,7 +92,7 @@ namespace menu
 		{
 			if (restore_ticker == restore_bar)
 			{
-				LCD.write((uint8_t) 0);
+				io::lcd.write((uint8_t) 0);
 
 				if (restore_ticker < 0x80)
 				{
@@ -110,8 +110,8 @@ namespace menu
 				{
 					opts[i]->restore();
 				}
-				LCD.setCursor(12, 1);
-				LCD.print("done");
+				io::lcd.setCursor(12, 1);
+				io::lcd.print("done");
 			}
 			else if (restore_ticker == 0xFF)
 			{
@@ -131,7 +131,7 @@ namespace menu
 
 		void opt_mode_begin(void*)
 		{
-			LCD.clear();
+			io::lcd.clear();
 			opt_editing = -1;
 			prev_index = -1;
 		}
@@ -142,25 +142,25 @@ namespace menu
 
 			if (prev_index != index || opt_editing >= 0)
 			{
-				LCD.clear();
-				LCD.home();
-				LCD.setCursor(0, 0);
-				LCD.print("opt ");
+				io::lcd.clear();
+				io::lcd.home();
+				io::lcd.setCursor(0, 0);
+				io::lcd.print("opt ");
 
 				if (opt_editing >= 0)
 				{
-					LCD.print(opts[opt_editing]->name());
-					LCD.setCursor(0, 1);
-					LCD.print("*");
-					//LCD.print(tweak * opts[opt_editing]->scale());
-					LCD.print(tweak);
+					io::lcd.print(opts[opt_editing]->name());
+					io::lcd.setCursor(0, 1);
+					io::lcd.print("*");
+					//io::lcd.print(tweak * opts[opt_editing]->scale());
+					io::lcd.print(tweak);
 				}
 				else
 				{
-					LCD.print(opts[index]->name());
-					LCD.setCursor(0, 1);
-					//LCD.print(opts[index].value() * opts[index]->scale());
-					LCD.print(opts[index]->value());
+					io::lcd.print(opts[index]->name());
+					io::lcd.setCursor(0, 1);
+					//io::lcd.print(opts[index].value() * opts[index]->scale());
+					io::lcd.print(opts[index]->value());
 				}
 			}
 			prev_index = index;
@@ -195,7 +195,7 @@ namespace menu
 		}
 		void opt_mode_end()
 		{
-			LCD.clear();
+			io::lcd.clear();
 		}
 	}
 
@@ -213,7 +213,7 @@ namespace menu
 
 	void init()
 	{
-		LCD.createChar(0, cross);
+		io::lcd.createChar(0, cross);
 	}
 	
 	bool stop_falling()

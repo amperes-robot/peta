@@ -9,6 +9,8 @@ namespace io
 		uint8_t analog_roundrobin = 0;
 	}
 
+	LiquidCrystal lcd(26,27,28,16, 17, 18, 19,20,21,22,23);
+
 	void delay_ms(uint16_t ms)
 	{
 		uint16_t start = (uint16_t) micros();
@@ -38,6 +40,8 @@ namespace io
 
 	void init()
 	{
+		lcd.begin(16, 2);
+
 		// turn off ADC free-running
 		ADCSRA &= ~(1 << ADFR);
 

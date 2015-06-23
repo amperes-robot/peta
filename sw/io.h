@@ -1,11 +1,6 @@
 #pragma once
 #include <Arduino.h>
-#include <motor.h>
-#include <phys253pins.h>
-#include <ServoTimer2.h>
 #include <LiquidCrystal.h>
-
-extern LiquidCrystal LCD;
 
 namespace io
 {
@@ -13,6 +8,7 @@ namespace io
 
 	extern volatile uint16_t analog_pins[8];
 	extern uint8_t analog_attached;
+	extern LiquidCrystal lcd;
 
 	/**
 	 * Initializes the IO module.
@@ -47,9 +43,9 @@ namespace io
 	template<typename T>
 	inline void log(T msg)
 	{
-		LCD.clear();
-		LCD.home();
-		LCD.print(string(msg));
+		lcd.clear();
+		lcd.home();
+		lcd.print(string(msg));
 	}
 
 	namespace Analog

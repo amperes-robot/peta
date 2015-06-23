@@ -13,11 +13,6 @@ namespace motion
 	};
 
 	/*
-	 * Initialize the motion module.
-	 */
-	void init();
-
-	/*
 	 * Move in a direction, with -255 being right, 255 being left.
 	 */
 	void dir(int16_t x);

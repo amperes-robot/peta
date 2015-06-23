@@ -66,7 +66,7 @@ namespace io
 				/**
 				 * Read this pin's value.
 				 */
-				inline bool read() const
+				inline uint16_t read() const
 				{
 					return analog_pins[_pin];
 				}

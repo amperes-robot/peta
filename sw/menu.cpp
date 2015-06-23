@@ -9,7 +9,7 @@ namespace menu
 	{
 		uint8_t get_index(uint8_t n)
 		{
-			return (uint16_t) io::Analog::select.read() * n / 1024;
+			return io::Analog::select.read() * n / 1024;
 		}
 
 		io::string main_names[] =

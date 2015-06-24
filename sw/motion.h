@@ -8,6 +8,7 @@ namespace motion
 		public:
 			Motor(uint8_t id);
 			void speed(int16_t id);
+			void halt();
 		private:
 			const uint8_t _id;
 	};

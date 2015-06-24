@@ -84,11 +84,14 @@ namespace io
 	{
 		DIGITAL_INPUT(start, G, 2);
 		DIGITAL_INPUT(stop, G, 1);
+		DIGITAL_INPUT(qrd_side, D, 2);
 	}
 	namespace Analog
 	{
 		ANALOG_INPUT(select, 7);
 		ANALOG_INPUT(tweak, 6);
 		ANALOG_INPUT(qrd_tape, 0);
+		ANALOG_INPUT(pd_left, 1);
+		ANALOG_INPUT(pd_right, 2);
 	}
 }

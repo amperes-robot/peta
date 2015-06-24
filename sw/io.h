@@ -83,6 +83,8 @@ namespace io
 		const extern In select;
 		const extern In tweak;
 		const extern In qrd_tape;
+		const extern In pd_left;
+		const extern In pd_right;
 	}
 	namespace Digital
 	{
@@ -143,5 +145,6 @@ namespace io
 #define DIGITAL_OUTPUT(NAME, PORTx, NUM) const io::Digital::Out NAME(&PORT ## PORTx, &DDR ## PORTx, &PIN ## PORTx, 1 << PIN ## NUM)
 		const extern In start;
 		const extern In stop;
+		const extern In qrd_side;
 	}
 }

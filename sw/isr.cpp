@@ -96,6 +96,7 @@ namespace isr
 }
 
 ISR(TIMER1_COMPA_vect) { }
+ISR(TIMER3_COMPA_vect) { }
 ISR(INT0_vect) { }
 ISR(INT1_vect) { }
 ISR(INT2_vect) { }

@@ -10,6 +10,7 @@ namespace pid
 
 		void follow_mode_begin()
 		{
+			controller.reset();
 			controller.gain_p = menu::flw_gain_p.value();
 			controller.gain_i = menu::flw_gain_i.value();
 			controller.gain_d = menu::flw_gain_d.value();
@@ -30,10 +31,6 @@ namespace pid
 				control::set_mode(&menu::main_mode);
 			}
 			io::delay_ms(10);
-		}
-		void follow_mode_end()
-		{
-			controller.reset();
 		}
 	}
 
@@ -69,6 +66,6 @@ namespace pid
 	{
 		&follow_mode_begin,
 		&follow_mode_tick,
-		&follow_mode_end,
+		&control::nop,
 	};
 }

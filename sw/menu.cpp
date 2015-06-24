@@ -265,6 +265,12 @@ namespace menu
 	Opt flw_thresh("flw.thresh", 360);
 	Opt flw_mark_lat("flw.mark.lat", 10);
 
+	Opt home_gain_p("home.p", 70);
+	Opt home_gain_i("home.i", 1);
+	Opt home_gain_d("home.d", 60);
+	Opt home_thresh("home.thresh", 60);
+	Opt home_vel("home.vel", 100);
+
 	const control::Mode main_mode
 	{
 		main_mode_begin,

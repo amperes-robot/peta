@@ -8,27 +8,26 @@ namespace control
 {
 	namespace
 	{
-		const Mode* current_mode;
+		const volatile Mode* current_mode;
 	}
 
 	const Mode idle_mode
 	{
-		&nop_void,
+		&nop,
 		&nop,
 		&nop,
 	};
 
-	void set_mode(const Mode* mode, void* args)
+	void set_mode(const Mode* mode)
 	{
 		if (!mode)
 		{
-			io::log("Null mode set!");
 			mode = &idle_mode;
 		}
 
 		current_mode->end();
 		current_mode = mode;
-		current_mode->begin(args);
+		current_mode->begin();
 	}
 
 	void init()

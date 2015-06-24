@@ -23,10 +23,14 @@ namespace menu
 		const size_t main_count = sizeof(main_names) / sizeof(*main_names);
 		int8_t prev_index;
 
-		void main_mode_begin(void*)
+		void main_mode_begin()
 		{
 			prev_index = -1;
 			io::lcd.clear();
+			motion::left.halt();
+			motion::right.halt();
+			motion::zipline.halt();
+			motion::retrieval.halt();
 		}
 		void main_mode_tick()
 		{
@@ -79,7 +83,7 @@ namespace menu
 		 * OPT_RESTORE_MODE
 		 */
 
-		void opt_restore_mode_begin(void*)
+		void opt_restore_mode_begin()
 		{
 			io::lcd.clear();
 			io::lcd.setCursor(0, 1);
@@ -129,7 +133,7 @@ namespace menu
 		 * OPT_MODE
 		 */
 
-		void opt_mode_begin(void*)
+		void opt_mode_begin()
 		{
 			io::lcd.clear();
 			opt_editing = -1;
@@ -259,6 +263,7 @@ namespace menu
 	Opt flw_gain_d("flw.d", 60);
 	Opt flw_vel("flw.vel", 100);
 	Opt flw_thresh("flw.thresh", 360);
+	Opt flw_mark_lat("flw.mark.lat", 10);
 
 	const control::Mode main_mode
 	{

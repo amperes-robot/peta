@@ -143,5 +143,6 @@ namespace io
 #define DIGITAL_OUTPUT(NAME, PORTx, NUM) const io::Digital::Out NAME(&PORT ## PORTx, &DDR ## PORTx, &PIN ## PORTx, 1 << PIN ## NUM)
 		const extern In start;
 		const extern In stop;
+		const extern In qrd_side;
 	}
 }

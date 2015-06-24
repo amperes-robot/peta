@@ -8,7 +8,7 @@ namespace pid
 	{
 		Controller controller(0, 0, 0);
 
-		void follow_mode_begin(void*)
+		void follow_mode_begin()
 		{
 			controller.gain_p = menu::flw_gain_p.value();
 			controller.gain_i = menu::flw_gain_i.value();
@@ -34,8 +34,6 @@ namespace pid
 		void follow_mode_end()
 		{
 			controller.reset();
-			motion::vel(0);
-			motion::dir(0);
 		}
 	}
 

@@ -4,7 +4,12 @@ namespace motion
 {
 	namespace
 	{
-		const uint8_t dirs[] = { 24, 25, 38, 39 };
+		DIGITAL_OUTPUT(dir_0, B, 0);
+		DIGITAL_OUTPUT(dir_1, B, 1);
+		DIGITAL_OUTPUT(dir_2, E, 6);
+		DIGITAL_OUTPUT(dir_3, E, 7);
+		const io::Digital::Out* dirs[] = { &dir_0, &dir_1, &dir_2, &dir_3 };
+
 		const uint8_t digital_enables[] = { 29, 30, 36, 37 }; //digital input/output values
 		const uint8_t enables[] = { 5,  4,  1,  0 }; // PWM output values
 
@@ -27,9 +32,8 @@ namespace motion
 
 	Motor::Motor(uint8_t id) : _id(id)
 	{
-		pinMode(dirs[_id], OUTPUT);
+		dirs[_id]->write(true);
 		pinMode(digital_enables[_id], OUTPUT);
-		digitalWrite(dirs[_id], HIGH);
 
 		analogWrite(digital_enables[_id], 1); //make the motor glitch, force it to be zero.
 		analogWrite(enables[_id], 0);
@@ -42,23 +46,26 @@ namespace motion
 
 		if (speed >= 0)
 		{
-			digitalWrite(dirs[_id], HIGH);
+			dirs[_id]->write(true);
 			analogWrite(digital_enables[_id], abs);
-			// digitalWrite(digital_enables[_id], HIGH);
 		}
 		else
 		{
-			digitalWrite(dirs[_id], LOW);
+			dirs[_id]->write(false);
 			analogWrite(digital_enables[_id], abs);
-			// digitalWrite(digital_enables[_id], HIGH);
 		}
+	}
+	void Motor::halt()
+	{
+		analogWrite(digital_enables[_id], 0);
 	}
 
 	void halt()
 	{
 		velocity = 0;
 		direction = 0;
-		refresh();
+		left.halt();
+		right.halt();
 	}
 
 	void dir(int16_t x)

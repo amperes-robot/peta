@@ -95,7 +95,10 @@ namespace course
 			{
 				motion::retrieval.speed(0);
 				control::set_mode(&follow_mode);
+				return;
 			}
+
+			timer++;
 		}
 	}
 

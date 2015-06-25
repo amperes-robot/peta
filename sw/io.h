@@ -1,11 +1,6 @@
 #pragma once
 #include <Arduino.h>
-#include <motor.h>
-#include <phys253pins.h>
-#include <ServoTimer2.h>
 #include <LiquidCrystal.h>
-
-extern LiquidCrystal LCD;
 
 namespace io
 {
@@ -13,6 +8,7 @@ namespace io
 
 	extern volatile uint16_t analog_pins[8];
 	extern uint8_t analog_attached;
+	extern LiquidCrystal lcd;
 
 	/**
 	 * Initializes the IO module.
@@ -47,9 +43,9 @@ namespace io
 	template<typename T>
 	inline void log(T msg)
 	{
-		LCD.clear();
-		LCD.home();
-		LCD.print(string(msg));
+		lcd.clear();
+		lcd.home();
+		lcd.print(string(msg));
 	}
 
 	namespace Analog
@@ -70,7 +66,7 @@ namespace io
 				/**
 				 * Read this pin's value.
 				 */
-				inline bool read() const
+				inline uint16_t read() const
 				{
 					return analog_pins[_pin];
 				}
@@ -87,6 +83,8 @@ namespace io
 		const extern In select;
 		const extern In tweak;
 		const extern In qrd_tape;
+		const extern In pd_left;
+		const extern In pd_right;
 	}
 	namespace Digital
 	{
@@ -147,5 +145,6 @@ namespace io
 #define DIGITAL_OUTPUT(NAME, PORTx, NUM) const io::Digital::Out NAME(&PORT ## PORTx, &DDR ## PORTx, &PIN ## PORTx, 1 << PIN ## NUM)
 		const extern In start;
 		const extern In stop;
+		const extern In qrd_side;
 	}
 }

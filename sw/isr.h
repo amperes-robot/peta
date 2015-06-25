@@ -6,6 +6,8 @@ namespace isr
 	/* 
 	 * Attaches ISR(TIMER1_COMPA_vect) at the speficied frequency
 	 * Valid interrupt frequencies: 1Hz to 65535 Hz
+	 *
+	 * WARNING: Will interfere with Motor 1.
 	 */
 	void attach_timer1(uint16_t freq);
 	void detach_timer1();

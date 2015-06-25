@@ -47,12 +47,19 @@ namespace menu
 			const uint16_t _default;
 	};
 
-	const size_t N_OPTS = 5;
+	const size_t N_OPTS = 11;
 	extern Opt flw_gain_p;
 	extern Opt flw_gain_i;
 	extern Opt flw_gain_d;
 	extern Opt flw_vel;
 	extern Opt flw_thresh;
+	extern Opt flw_mark_lat;
+
+	extern Opt home_gain_p;
+	extern Opt home_gain_i;
+	extern Opt home_gain_d;
+	extern Opt home_thresh;
+	extern Opt home_vel;
 
 	/**
 	 * Menu modes.

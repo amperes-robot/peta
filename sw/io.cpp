@@ -4,10 +4,15 @@
 
 namespace io
 {
+	volatile uint16_t analog_pins[8] = { };
+	uint8_t analog_attached = 0;
+
 	namespace
 	{
-		uint8_t analog_roundrobin = 0;
+		volatile uint8_t analog_roundrobin = 0;
 	}
+
+	LiquidCrystal lcd(26,27,28,16, 17, 18, 19,20,21,22,23);
 
 	void delay_ms(uint16_t ms)
 	{
@@ -33,11 +38,10 @@ namespace io
 		}
 	}
 
-	volatile uint16_t analog_pins[8] = { };
-	uint8_t analog_attached = 0;
-
 	void init()
 	{
+		lcd.begin(16, 2);
+
 		// turn off ADC free-running
 		ADCSRA &= ~(1 << ADFR);
 
@@ -61,7 +65,9 @@ namespace io
 		uint8_t low, high;
 		low = ADCL;
 		high = ADCH;
-		analog_pins[analog_roundrobin] = (high << 8) | low;
+
+		// io::log(io::string(analog_roundrobin) + " " + io::string((high << 8) | low));
+		analog_pins[analog_roundrobin++] = (high << 8) | low;
 		
 		while (!(analog_attached & (1 << analog_roundrobin)))
 		{
@@ -78,11 +84,14 @@ namespace io
 	{
 		DIGITAL_INPUT(start, G, 2);
 		DIGITAL_INPUT(stop, G, 1);
+		DIGITAL_INPUT(qrd_side, D, 2);
 	}
 	namespace Analog
 	{
 		ANALOG_INPUT(select, 7);
 		ANALOG_INPUT(tweak, 6);
 		ANALOG_INPUT(qrd_tape, 0);
+		ANALOG_INPUT(pd_left, 1);
+		ANALOG_INPUT(pd_right, 2);
 	}
 }

@@ -9,7 +9,7 @@ namespace menu
 	{
 		uint8_t get_index(uint8_t n)
 		{
-			return (uint16_t) io::Analog::select.read() * n / 1024;
+			return io::Analog::select.read() * n / 1024;
 		}
 
 		io::string main_names[] =
@@ -23,22 +23,26 @@ namespace menu
 		const size_t main_count = sizeof(main_names) / sizeof(*main_names);
 		int8_t prev_index;
 
-		void main_mode_begin(void*)
+		void main_mode_begin()
 		{
 			prev_index = -1;
-			LCD.clear();
+			io::lcd.clear();
+			motion::left.halt();
+			motion::right.halt();
+			motion::zipline.halt();
+			motion::retrieval.halt();
 		}
 		void main_mode_tick()
 		{
 			uint8_t index = get_index(main_count);
 			if (prev_index != index)
 			{
-				LCD.clear();
-				LCD.home();
-				LCD.setCursor(0, 0);
-				LCD.write((uint8_t) 0);
-				LCD.setCursor(0, 1);
-				LCD.print(main_names[index]);
+				io::lcd.clear();
+				io::lcd.home();
+				io::lcd.setCursor(0, 0);
+				io::lcd.write((uint8_t) 0);
+				io::lcd.setCursor(0, 1);
+				io::lcd.print(main_names[index]);
 			}
 			prev_index = index;
 
@@ -67,7 +71,7 @@ namespace menu
 		}
 		void main_mode_end()
 		{
-			LCD.clear();
+			io::lcd.clear();
 		}
 
 		uint8_t restore_ticker;
@@ -79,12 +83,12 @@ namespace menu
 		 * OPT_RESTORE_MODE
 		 */
 
-		void opt_restore_mode_begin(void*)
+		void opt_restore_mode_begin()
 		{
-			LCD.clear();
-			LCD.setCursor(0, 1);
-			LCD.print("opt-restore");
-			LCD.home();
+			io::lcd.clear();
+			io::lcd.setCursor(0, 1);
+			io::lcd.print("opt-restore");
+			io::lcd.home();
 			restore_ticker = 0;
 			restore_bar = 0;
 		}
@@ -92,7 +96,7 @@ namespace menu
 		{
 			if (restore_ticker == restore_bar)
 			{
-				LCD.write((uint8_t) 0);
+				io::lcd.write((uint8_t) 0);
 
 				if (restore_ticker < 0x80)
 				{
@@ -110,8 +114,8 @@ namespace menu
 				{
 					opts[i]->restore();
 				}
-				LCD.setCursor(12, 1);
-				LCD.print("done");
+				io::lcd.setCursor(12, 1);
+				io::lcd.print("done");
 			}
 			else if (restore_ticker == 0xFF)
 			{
@@ -129,9 +133,9 @@ namespace menu
 		 * OPT_MODE
 		 */
 
-		void opt_mode_begin(void*)
+		void opt_mode_begin()
 		{
-			LCD.clear();
+			io::lcd.clear();
 			opt_editing = -1;
 			prev_index = -1;
 		}
@@ -142,25 +146,25 @@ namespace menu
 
 			if (prev_index != index || opt_editing >= 0)
 			{
-				LCD.clear();
-				LCD.home();
-				LCD.setCursor(0, 0);
-				LCD.print("opt ");
+				io::lcd.clear();
+				io::lcd.home();
+				io::lcd.setCursor(0, 0);
+				io::lcd.print("opt ");
 
 				if (opt_editing >= 0)
 				{
-					LCD.print(opts[opt_editing]->name());
-					LCD.setCursor(0, 1);
-					LCD.print("*");
-					//LCD.print(tweak * opts[opt_editing]->scale());
-					LCD.print(tweak);
+					io::lcd.print(opts[opt_editing]->name());
+					io::lcd.setCursor(0, 1);
+					io::lcd.print("*");
+					//io::lcd.print(tweak * opts[opt_editing]->scale());
+					io::lcd.print(tweak);
 				}
 				else
 				{
-					LCD.print(opts[index]->name());
-					LCD.setCursor(0, 1);
-					//LCD.print(opts[index].value() * opts[index]->scale());
-					LCD.print(opts[index]->value());
+					io::lcd.print(opts[index]->name());
+					io::lcd.setCursor(0, 1);
+					//io::lcd.print(opts[index].value() * opts[index]->scale());
+					io::lcd.print(opts[index]->value());
 				}
 			}
 			prev_index = index;
@@ -195,7 +199,7 @@ namespace menu
 		}
 		void opt_mode_end()
 		{
-			LCD.clear();
+			io::lcd.clear();
 		}
 	}
 
@@ -213,7 +217,7 @@ namespace menu
 
 	void init()
 	{
-		LCD.createChar(0, cross);
+		io::lcd.createChar(0, cross);
 	}
 	
 	bool stop_falling()
@@ -259,6 +263,13 @@ namespace menu
 	Opt flw_gain_d("flw.d", 60);
 	Opt flw_vel("flw.vel", 100);
 	Opt flw_thresh("flw.thresh", 360);
+	Opt flw_mark_lat("flw.mark.lat", 10);
+
+	Opt home_gain_p("home.p", 70);
+	Opt home_gain_i("home.i", 1);
+	Opt home_gain_d("home.d", 60);
+	Opt home_thresh("home.thresh", 60);
+	Opt home_vel("home.vel", 100);
 
 	const control::Mode main_mode
 	{

@@ -12,7 +12,7 @@ namespace control
 	struct Mode final
 	{
 		public:
-			void (*begin)(void* args);
+			void (*begin)();
 			void (*tick)();
 			void (*end)();
 	};
@@ -22,11 +22,10 @@ namespace control
 	/**
 	 * Sets the current mode to the given mode with the given arguments.
 	 */
-	void set_mode(const Mode* mode, void* args = nullptr);
+	void set_mode(const Mode* mode);
 
 	void init();
 	void loop();
 
 	inline void nop() { }
-	inline void nop_void(void*) { }
 }

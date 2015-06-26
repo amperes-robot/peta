@@ -1,4 +1,5 @@
 #include "isr.h"
+#include "motion.h"
 
 #include <avr/interrupt.h>
 
@@ -96,9 +97,18 @@ namespace isr
 }
 
 ISR(TIMER1_COMPA_vect) { }
-ISR(TIMER3_COMPA_vect) { }
-ISR(INT0_vect) { }
-ISR(INT1_vect) { }
+ISR(TIMER3_COMPA_vect)
+{
+	motion::update_100hz();
+}
+ISR(INT0_vect)
+{
+	motion::enc0();
+}
+ISR(INT1_vect)
+{
+	motion::enc1();
+}
 ISR(INT2_vect) { }
 ISR(INT3_vect) { }
 ISR(ADC_vect)

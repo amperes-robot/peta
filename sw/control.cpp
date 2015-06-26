@@ -2,6 +2,7 @@
 #include "io.h"
 #include "menu.h"
 #include "pid.h"
+#include "motion.h"
 #include "isr.h"
 
 namespace control
@@ -34,8 +35,10 @@ namespace control
 	{
 		Serial.begin(9600);
 		current_mode = &idle_mode;
+
 		menu::init();
 		io::init();
+		motion::init();
 
 		set_mode(&menu::main_mode);
 	}

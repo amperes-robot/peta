@@ -13,6 +13,8 @@ namespace motion
 			const uint8_t _id;
 	};
 
+	void init();
+
 	/*
 	 * Move in a direction, with -255 being right, 255 being left.
 	 */
@@ -22,6 +24,13 @@ namespace motion
 	 * Speed.
 	 */
 	void vel(int16_t x);
+
+	/**
+	 * Update encoder state.
+	 */
+	void enc0();
+	void enc1();
+	void update_100hz();
 
 	extern Motor left;
 	extern Motor right;

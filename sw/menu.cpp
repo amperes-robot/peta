@@ -40,7 +40,7 @@ namespace menu
 				io::lcd.clear();
 				io::lcd.home();
 				io::lcd.setCursor(0, 0);
-				io::lcd.write((uint8_t) 0);
+				io::lcd.write('x');
 				io::lcd.setCursor(0, 1);
 				io::lcd.print(main_names[index]);
 			}
@@ -96,7 +96,7 @@ namespace menu
 		{
 			if (restore_ticker == restore_bar)
 			{
-				io::lcd.write((uint8_t) 0);
+				io::lcd.write('X');
 
 				if (restore_ticker < 0x80)
 				{
@@ -203,21 +203,8 @@ namespace menu
 		}
 	}
 
-	byte cross[8] =
-	{
-		B00100,
-		B10110,
-		B01101,
-		B00110,
-		B01100,
-		B10110,
-		B01101,
-		B00100,
-	};
-
 	void init()
 	{
-		io::lcd.createChar(0, cross);
 	}
 	
 	bool stop_falling()

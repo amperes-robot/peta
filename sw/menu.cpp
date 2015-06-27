@@ -1,4 +1,5 @@
 #include "menu.h"
+#include "math.h"
 #include "course.h"
 #include "motion.h"
 #include "pid.h"
@@ -18,7 +19,8 @@ namespace menu
 			"select",
 			"opt",
 			"opt-restore",
-			"follow"
+			"follow",
+			"dbg"
 		};
 		const size_t main_count = sizeof(main_names) / sizeof(*main_names);
 		int8_t prev_index;
@@ -56,14 +58,16 @@ namespace menu
 					case 1:
 						break;
 					case 2:
-						control::set_mode(&menu::opt_mode);
+						control::set_mode(&opt_mode);
 						break;
 					case 3:
-						control::set_mode(&menu::opt_restore_mode);
+						control::set_mode(&opt_restore_mode);
 						break;
 					case 4:
 						control::set_mode(&pid::follow_mode);
 						break;
+					case 5:
+						control::set_mode(&dbg_mode);
 				}
 			}
 
@@ -201,6 +205,23 @@ namespace menu
 		{
 			io::lcd.clear();
 		}
+
+		void dbg_mode_tick()
+		{
+			if (menu::stop_falling())
+			{
+				control::set_mode(&menu::main_mode);
+			}
+			static uint16_t theta = 0;
+
+			io::lcd.home();
+			io::lcd.clear();
+			io::lcd.print(theta);
+			io::lcd.setCursor(0, 1);
+			io::lcd.print(math::sin(theta));
+			theta += 100;
+			delay(1);
+		}
 	}
 
 	void init()
@@ -245,6 +266,9 @@ namespace menu
 		_value = eeprom_read_word(_addr_eep);
 	}
 
+	Opt dr_wheel_d("dr.d", 150 /* wheel dist (mm) */ / (56 /* wheel diam (mm) */ * 3.14159 / 24));
+	Opt dr_vscl("dr.vscl", 3); // velocity scale factor
+
 	Opt flw_gain_p("flw.p", 70);
 	Opt flw_gain_i("flw.i", 1);
 	Opt flw_gain_d("flw.d", 60);
@@ -277,5 +301,12 @@ namespace menu
 		opt_restore_mode_begin,
 		opt_restore_mode_tick,
 		opt_restore_mode_end
+	};
+
+	const control::Mode dbg_mode
+	{
+		control::nop,
+		dbg_mode_tick,
+		control::nop
 	};
 }

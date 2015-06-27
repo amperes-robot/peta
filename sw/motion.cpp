@@ -1,4 +1,6 @@
 #include "motion.h"
+#include "math.h"
+#include "menu.h"
 #include "isr.h"
 
 namespace motion
@@ -45,6 +47,7 @@ namespace motion
 
 	Motor::Motor(uint8_t id) : _id(id)
 	{
+		_dir = 1;
 		dirs[_id]->write(true);
 		pinMode(digital_enables[_id], OUTPUT);
 
@@ -59,11 +62,13 @@ namespace motion
 
 		if (speed >= 0)
 		{
+			_dir = 1;
 			dirs[_id]->write(true);
 			analogWrite(digital_enables[_id], abs);
 		}
 		else
 		{
+			_dir = -1;
 			dirs[_id]->write(false);
 			analogWrite(digital_enables[_id], abs);
 		}
@@ -94,7 +99,13 @@ namespace motion
 	}
 	void update_100hz()
 	{
-		
+		int8_t enc0 = enc0_counts * left.dir();
+		int8_t enc1 = enc1_counts * right.dir();
+		uint16_t vv = (enc0 + enc1) / 2 * menu::dr_vscl.value(); // velocity
+		uint16_t dth = (enc1 - enc0) / menu::dr_wheel_d.value(); // angular velocity
+
+		theta += dth;
+		x += math::cos(theta) * vv / math::full;
 
 		enc0_counts = 0;
 		enc1_counts = 0;

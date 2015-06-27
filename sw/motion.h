@@ -9,8 +9,13 @@ namespace motion
 			Motor(uint8_t id);
 			void speed(int16_t id);
 			void halt();
+			inline int8_t dir() const
+			{
+				return _dir;
+			}
 		private:
 			const uint8_t _id;
+			int8_t _dir;
 	};
 
 	void init();

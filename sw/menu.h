@@ -47,7 +47,10 @@ namespace menu
 			const uint16_t _default;
 	};
 
-	const size_t N_OPTS = 11;
+	const size_t N_OPTS = 13;
+	extern Opt dr_vscl;
+	extern Opt dr_wheel_d;
+
 	extern Opt flw_gain_p;
 	extern Opt flw_gain_i;
 	extern Opt flw_gain_d;
@@ -65,6 +68,7 @@ namespace menu
 	 * Menu modes.
 	 */
 	extern const control::Mode main_mode;
+	extern const control::Mode dbg_mode;
 	extern const control::Mode opt_restore_mode;
 	extern const control::Mode opt_mode;
 

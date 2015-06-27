@@ -140,22 +140,33 @@ namespace math
 
 	int16_t sin(uint16_t theta)
 	{
-		uint8_t sign = 1;
+		uint8_t sign = 0;
 
 		if (theta > pi)
 		{
 			theta -= pi;
-			sign = -1;
+			sign = 1;
 		}
 		if (theta > pi / 2)
 		{
-			theta = pi / 2 - theta;
+			theta = pi - theta;
 		}
 
-		uint8_t ind = (uint8_t) ((uint32_t) (theta * SINETABLE_SIZE) / (pi / 2));
-		if (ind >= SINETABLE_SIZE) ind = SINETABLE_SIZE - 1;
+		uint8_t ind = (uint8_t) ((uint32_t) theta * SINETABLE_SIZE * 2 / pi);
+		uint16_t r;
+		if (ind == SINETABLE_SIZE - 1)
+		{
+			r = sinetable[SINETABLE_SIZE - 1];
+		}
+		else
+		{
+			uint16_t lower = sinetable[ind];
+			uint16_t upper = sinetable[ind + 1];
 
-		return sinetable[ind] * sign;
+			r = lower + (upper - lower) * (theta % (pi / 2 / SINETABLE_SIZE)) / (pi / 2 / SINETABLE_SIZE);
+		}
+
+		return sign ? -r : r;
 	}
 
 	int16_t cos(uint16_t theta)

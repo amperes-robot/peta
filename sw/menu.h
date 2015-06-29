@@ -1,8 +1,6 @@
 #pragma once
 
-#ifdef _WIN32
 #include <avr/EEPROM.h>
-#endif
 
 #include "control.h"
 #include "io.h"

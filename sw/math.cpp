@@ -1,11 +1,12 @@
 #include "math.h"
+#include <avr/pgmspace.h>
 
 namespace math
 {
 	namespace
 	{
 		const uint8_t SINETABLE_SIZE = 128;
-		const int16_t sinetable[] =
+		const PROGMEM int16_t sinetable[] =
 		{
 			0,
 			402,
@@ -160,8 +161,8 @@ namespace math
 		}
 		else
 		{
-			uint16_t lower = sinetable[ind];
-			uint16_t upper = sinetable[ind + 1];
+			uint16_t lower = pgm_read_word(sinetable + ind);
+			uint16_t upper = pgm_read_word(sinetable + ind + 1);
 
 			r = lower + (upper - lower) * (theta % (pi / 2 / SINETABLE_SIZE)) / (pi / 2 / SINETABLE_SIZE);
 		}

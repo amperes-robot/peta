@@ -4,8 +4,6 @@
 
 namespace io
 {
-	typedef String string;
-
 	extern volatile uint16_t analog_pins[8];
 	extern uint8_t analog_attached;
 	extern LiquidCrystal lcd;
@@ -36,17 +34,6 @@ namespace io
 	 * called outside of ISR(ADC_vect).
 	 */
 	void end_adc();
-
-	/**
-	 * Writes the argument to the LCD screen.
-	 */
-	template<typename T>
-	inline void log(T msg)
-	{
-		lcd.clear();
-		lcd.home();
-		lcd.print(string(msg));
-	}
 
 	namespace Analog
 	{

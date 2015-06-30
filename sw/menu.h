@@ -1,11 +1,10 @@
 #pragma once
 
-#ifdef _WIN32
-#include <avr/EEPROM.h>
-#endif
+#include <avr/eeprom.h>
 
 #include "control.h"
 #include "io.h"
+#include "strings.h"
 
 namespace menu
 {
@@ -18,14 +17,14 @@ namespace menu
 			static uint8_t opt_count;
 			Opt() = delete;
 			Opt(const Opt& other) = delete;
-			Opt(io::string name, uint16_t def);
+			Opt(FSTR name, uint16_t def);
 
 			inline uint16_t value() const
 			{
 				return _value;
 			}
 
-			inline io::string name() const
+			inline FSTR name() const
 			{
 				return _name;
 			}
@@ -43,7 +42,7 @@ namespace menu
 		private:
 			uint16_t _value;
 			uint16_t* const _addr_eep;
-			const io::string _name;
+			const FSTR _name;
 			const uint16_t _default;
 	};
 

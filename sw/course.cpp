@@ -19,7 +19,6 @@ namespace course
 		uint8_t mark_hold = 0;
 		void follow_begin()
 		{
-			io::log("follow/retrieval");
 
 			if (pet_id == 0)
 			{

@@ -1,6 +1,5 @@
 #include "io.h"
 #include "isr.h"
-// #include <wiring_private.h>
 
 namespace io
 {
@@ -20,7 +19,6 @@ namespace io
 
 		while (ms)
 		{
-			yield();
 			if ((uint16_t) micros() - start >= 1000)
 			{
 				ms--;
@@ -34,7 +32,6 @@ namespace io
 
 		while (micros() > start + us)
 		{
-			yield();
 		}
 	}
 

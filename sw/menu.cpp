@@ -1,6 +1,7 @@
 #include "menu.h"
 #include "math.h"
 #include "course.h"
+#include "strings.h"
 #include "motion.h"
 #include "pid.h"
 
@@ -13,14 +14,14 @@ namespace menu
 			return io::Analog::select.read() * n / 1024;
 		}
 
-		io::string main_names[] =
+		FSTR main_names[] =
 		{
-			"course",
-			"select",
-			"opt",
-			"opt-restore",
-			"follow",
-			"dbg"
+			TO_FSTR(strings::course),
+			TO_FSTR(strings::select),
+			TO_FSTR(strings::opt),
+			TO_FSTR(strings::opt_restore),
+			TO_FSTR(strings::follow),
+			TO_FSTR(strings::dbg),
 		};
 		const size_t main_count = sizeof(main_names) / sizeof(*main_names);
 		int8_t prev_index;
@@ -44,7 +45,7 @@ namespace menu
 				io::lcd.setCursor(0, 0);
 				io::lcd.write('x');
 				io::lcd.setCursor(0, 1);
-				io::lcd.print(main_names[index]);
+				io::lcd.print(TO_FSTR(main_names[index]));
 			}
 			prev_index = index;
 
@@ -91,7 +92,7 @@ namespace menu
 		{
 			io::lcd.clear();
 			io::lcd.setCursor(0, 1);
-			io::lcd.print("opt-restore");
+			io::lcd.print(TO_FSTR(strings::opt_restore));
 			io::lcd.home();
 			restore_ticker = 0;
 			restore_bar = 0;
@@ -260,27 +261,26 @@ namespace menu
 
 	uint8_t Opt::opt_count = 0;
 
-	Opt::Opt(io::string name, uint16_t def) : _addr_eep((uint16_t*) (2 * opt_count)), _name(name), _default(def)
+	Opt::Opt(FSTR name, uint16_t def) : _addr_eep((uint16_t*) (2 * opt_count)), _name(name), _default(def)
 	{
 		opts[opt_count++] = this;
 		_value = eeprom_read_word(_addr_eep);
 	}
 
-	Opt dr_wheel_d("dr.d", 150 /* wheel dist (mm) */ / (56 /* wheel diam (mm) */ * 3.14159 / 24));
-	Opt dr_vscl("dr.vscl", 3); // velocity scale factor
+	Opt dr_wheel_d(TO_FSTR(strings::dr_d), 150 /* wheel dist (mm) */ / (56 /* wheel diam (mm) */ * 3.14159 / 24));
+	Opt dr_vscl(TO_FSTR(strings::dr_vscl), 3); // velocity scale factor
 
-	Opt flw_gain_p("flw.p", 70);
-	Opt flw_gain_i("flw.i", 1);
-	Opt flw_gain_d("flw.d", 60);
-	Opt flw_vel("flw.vel", 100);
-	Opt flw_thresh("flw.thresh", 360);
-	Opt flw_mark_lat("flw.mark.lat", 10);
-
-	Opt home_gain_p("home.p", 70);
-	Opt home_gain_i("home.i", 1);
-	Opt home_gain_d("home.d", 60);
-	Opt home_thresh("home.thresh", 60);
-	Opt home_vel("home.vel", 100);
+	Opt flw_gain_p(TO_FSTR(strings::flw_p), 70);
+	Opt flw_gain_i(TO_FSTR(strings::flw_i), 1);
+	Opt flw_gain_d(TO_FSTR(strings::flw_d), 60);
+	Opt flw_vel(TO_FSTR(strings::flw_vel), 100);
+	Opt flw_thresh(TO_FSTR(strings::flw_thresh), 360);
+	Opt flw_mark_lat(TO_FSTR(strings::flw_mark_lat), 10);
+	Opt home_gain_p(TO_FSTR(strings::home_p), 70);
+	Opt home_gain_i(TO_FSTR(strings::home_i), 1);
+	Opt home_gain_d(TO_FSTR(strings::home_d), 60);
+	Opt home_thresh(TO_FSTR(strings::home_thresh), 60);
+	Opt home_vel(TO_FSTR(strings::home_vel), 100);
 
 	const control::Mode main_mode
 	{

@@ -52,7 +52,7 @@ namespace menu
 			const uint16_t _default;
 	};
 
-	const size_t N_OPTS = 13;
+	const size_t N_OPTS = 15;
 	extern Opt dr_vscl;
 	extern Opt dr_wheel_d;
 

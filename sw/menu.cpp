@@ -31,6 +31,8 @@ namespace menu
 		{
 			prev_index = -1;
 			io::lcd.clear();
+			motion::dir(0);
+			motion::vel(0);
 			motion::left.halt();
 			motion::right.halt();
 			motion::zipline.halt();

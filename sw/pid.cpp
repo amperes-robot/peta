@@ -17,15 +17,15 @@ namespace pid
 		}
 		void follow_mode_tick()
 		{
-			if (menu::stop_falling())
-			{
-				control::set_mode(&menu::main_mode);
-			}
-
 			int16_t in = follow_value();
 
 			controller.in(in);
 			int16_t out = controller.out();
+
+			if (menu::stop_falling())
+			{
+				control::set_mode(&menu::main_mode);
+			}
 
 			motion::vel(menu::flw_vel.value());
 			motion::dir(out);
@@ -42,11 +42,11 @@ namespace pid
 
 		if (left < 0)
 		{
-			previous = menu::flw_recover.value();
+			previous = -menu::flw_recover.value();
 		}
 		else if (right < 0)
 		{
-			previous = -menu::flw_recover.value();
+			previous = menu::flw_recover.value();
 		}
 
 		if (left > 0 && right > 0) // both lost

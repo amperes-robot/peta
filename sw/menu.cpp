@@ -325,7 +325,7 @@ namespace menu
 	Opt flw_vel(TO_FSTR(strings::flw_vel), 100, 4);
 	Opt flw_thresh_left(TO_FSTR(strings::flw_thresh_left), 360);
 	Opt flw_thresh_right(TO_FSTR(strings::flw_thresh_right), 360);
-	Opt flw_recover(TO_FSTR(strings::flw_recover), 20, 5);
+	Opt flw_recover(TO_FSTR(strings::flw_recover), 20, 1);
 	Opt flw_mark_lat(TO_FSTR(strings::flw_mark_lat), 10, 5);
 
 	Opt home_gain_p(TO_FSTR(strings::home_p), 70);

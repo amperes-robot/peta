@@ -37,25 +37,33 @@ namespace pid
 
 	int16_t follow_value()
 	{
+		io::lcd.home();
+		io::lcd.clear();
 		static int16_t previous = 0;
 		int16_t left = io::Analog::qrd_tape_left.read() - menu::flw_thresh_left.value();
 		int16_t right = io::Analog::qrd_tape_right.read() - menu::flw_thresh_right.value();
 
-		if (left < 0)
+		if (left > 0) // previous sensor on tape
 		{
+			io::lcd.print("left");
 			previous = -menu::flw_recover.value();
 		}
-		else if (right < 0)
+		else if (right > 0)
 		{
+			io::lcd.print("right");
 			previous = menu::flw_recover.value();
 		}
 
-		if (left > 0 && right > 0) // both lost
+		io::lcd.setCursor(0, 1);
+
+		if (left < 0 && right < 0) // both lost
 		{
+			io::lcd.print("both off");
 			return right - left + previous;
 		}
 		else
 		{
+			io::lcd.print("both not off");
 			return right - left;
 		}
 	}

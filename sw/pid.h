@@ -19,6 +19,8 @@ namespace pid
 			int16_t _int, _prev, _now;
 	};
 
+	int16_t follow_value();
+
 	extern const control::Mode follow_mode;
 
 #ifdef IO_SIM

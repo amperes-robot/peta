@@ -69,7 +69,8 @@ namespace io
 		 */
 		const extern In select;
 		const extern In tweak;
-		const extern In qrd_tape;
+		const extern In qrd_tape_left;
+		const extern In qrd_tape_right;
 		const extern In pd_left;
 		const extern In pd_right;
 	}

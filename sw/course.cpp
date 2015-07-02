@@ -57,10 +57,9 @@ namespace course
 				control::set_mode(&side_retrieval_mode);
 			}
 
-			int16_t in = io::Analog::qrd_tape.read();
-			int16_t thresh = menu::flw_thresh.value();
+			int16_t in = pid::follow_value();
 
-			controller.in(in - thresh);
+			controller.in(in);
 			int16_t out = controller.out();
 
 			motion::vel(menu::flw_vel.value());

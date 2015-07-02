@@ -87,8 +87,9 @@ namespace io
 	{
 		ANALOG_INPUT(select, 7);
 		ANALOG_INPUT(tweak, 6);
-		ANALOG_INPUT(qrd_tape, 0);
-		ANALOG_INPUT(pd_left, 1);
-		ANALOG_INPUT(pd_right, 2);
+		ANALOG_INPUT(qrd_tape_left, 0);
+		ANALOG_INPUT(qrd_tape_right, 1);
+		ANALOG_INPUT(pd_left, 2);
+		ANALOG_INPUT(pd_right, 3);
 	}
 }

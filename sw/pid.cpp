@@ -17,20 +17,45 @@ namespace pid
 		}
 		void follow_mode_tick()
 		{
-			int16_t in = io::Analog::qrd_tape.read();
-			int16_t thresh = menu::flw_thresh.value();
+			if (menu::stop_falling())
+			{
+				control::set_mode(&menu::main_mode);
+			}
 
-			controller.in((in - thresh));
+			int16_t in = follow_value();
+
+			controller.in(in);
 			int16_t out = controller.out();
 
 			motion::vel(menu::flw_vel.value());
 			motion::dir(out);
 
-			if (menu::stop_falling())
-			{
-				control::set_mode(&menu::main_mode);
-			}
 			io::delay_ms(10);
+		}
+	}
+
+	int16_t follow_value()
+	{
+		static int16_t previous = 0;
+		int16_t left = io::Analog::qrd_tape_left.read() - menu::flw_thresh_left.value();
+		int16_t right = io::Analog::qrd_tape_right.read() - menu::flw_thresh_right.value();
+
+		if (left < 0)
+		{
+			previous = menu::flw_recover.value();
+		}
+		else if (right < 0)
+		{
+			previous = -menu::flw_recover.value();
+		}
+
+		if (left > 0 && right > 0) // both lost
+		{
+			return right - left + previous;
+		}
+		else
+		{
+			return right - left;
 		}
 	}
 

@@ -22,6 +22,7 @@ namespace menu
 			TO_FSTR(strings::opt_restore),
 			TO_FSTR(strings::follow),
 			TO_FSTR(strings::dbg),
+			TO_FSTR(strings::view)
 		};
 		const size_t main_count = sizeof(main_names) / sizeof(*main_names);
 		int8_t prev_index;
@@ -69,6 +70,10 @@ namespace menu
 						break;
 					case 5:
 						control::set_mode(&dbg_mode);
+						break;
+					case 6:
+						control::set_mode(&view_mode);
+						break;
 				}
 			}
 
@@ -130,8 +135,47 @@ namespace menu
 			restore_ticker++;
 			io::delay_ms(6);
 		}
-		void opt_restore_mode_end()
+
+		/**
+		 * VIEW_MODE
+		 */
+
+		void view_mode_tick()
 		{
+			if (menu::stop_falling())
+			{
+				control::set_mode(&menu::main_mode);
+			}
+
+			uint8_t index = get_index(24);
+			io::lcd.home();
+			io::lcd.clear();
+			io::lcd.print(TO_FSTR(strings::view));
+			io::lcd.setCursor(0, 1);
+
+			if (index < 8)
+			{
+				io::lcd.print('D');
+				io::lcd.print(index);
+				io::lcd.print(' ');
+				io::lcd.print(PIND & (1 << index));
+			}
+			if (index < 16)
+			{
+				io::lcd.print('C');
+				io::lcd.print(index - 8);
+				io::lcd.print(' ');
+				io::lcd.print(PINC & (1 << (index - 8)));
+			}
+			else
+			{
+				io::lcd.print('F');
+				io::lcd.print(index - 16);
+				io::lcd.print(' ');
+				io::lcd.print(io::analog_pins[index - 16]);
+			}
+
+			io::delay_ms(100);
 		}
 
 		/**
@@ -161,14 +205,12 @@ namespace menu
 					io::lcd.print(opts[opt_editing]->name());
 					io::lcd.setCursor(0, 1);
 					io::lcd.print("*");
-					//io::lcd.print(tweak * opts[opt_editing]->scale());
-					io::lcd.print(tweak);
+					io::lcd.print(tweak / opts[opt_editing]->scale());
 				}
 				else
 				{
 					io::lcd.print(opts[index]->name());
 					io::lcd.setCursor(0, 1);
-					//io::lcd.print(opts[index].value() * opts[index]->scale());
 					io::lcd.print(opts[index]->value());
 				}
 			}
@@ -178,7 +220,7 @@ namespace menu
 			{
 				if (opt_editing >= 0)
 				{
-					opts[opt_editing]->write(tweak);
+					opts[opt_editing]->write(tweak / opts[opt_editing]->scale());
 					opt_editing = -1;
 				}
 				else
@@ -261,23 +303,26 @@ namespace menu
 
 	uint8_t Opt::opt_count = 0;
 
-	Opt::Opt(FSTR name, uint16_t def) : _addr_eep((uint16_t*) (2 * opt_count)), _name(name), _default(def)
+	Opt::Opt(FSTR name, uint16_t def, uint8_t scale) : _scale(scale), _addr_eep((uint16_t*) (2 * opt_count)), _name(name), _default(def)
 	{
 		opts[opt_count++] = this;
 		_value = eeprom_read_word(_addr_eep);
 	}
 
 	Opt dr_wheel_d(TO_FSTR(strings::dr_d), 150 /* wheel dist (mm) */ / (56 /* wheel diam (mm) */ * 3.14159 / 24));
-	Opt dr_vscl(TO_FSTR(strings::dr_vscl), 3); // velocity scale factor
+	Opt dr_vscl(TO_FSTR(strings::dr_vscl), 3, 10); // velocity scale factor
 
 	Opt flw_gain_p(TO_FSTR(strings::flw_p), 70);
-	Opt flw_gain_i(TO_FSTR(strings::flw_i), 1);
+	Opt flw_gain_i(TO_FSTR(strings::flw_i), 0);
 	Opt flw_gain_d(TO_FSTR(strings::flw_d), 60);
 	Opt flw_vel(TO_FSTR(strings::flw_vel), 100);
-	Opt flw_thresh(TO_FSTR(strings::flw_thresh), 360);
-	Opt flw_mark_lat(TO_FSTR(strings::flw_mark_lat), 10);
+	Opt flw_thresh_left(TO_FSTR(strings::flw_thresh_left), 360);
+	Opt flw_thresh_right(TO_FSTR(strings::flw_thresh_right), 360);
+	Opt flw_recover(TO_FSTR(strings::flw_recover), 20, 5);
+	Opt flw_mark_lat(TO_FSTR(strings::flw_mark_lat), 10, 5);
+
 	Opt home_gain_p(TO_FSTR(strings::home_p), 70);
-	Opt home_gain_i(TO_FSTR(strings::home_i), 1);
+	Opt home_gain_i(TO_FSTR(strings::home_i), 0);
 	Opt home_gain_d(TO_FSTR(strings::home_d), 60);
 	Opt home_thresh(TO_FSTR(strings::home_thresh), 60);
 	Opt home_vel(TO_FSTR(strings::home_vel), 100);
@@ -300,13 +345,20 @@ namespace menu
 	{
 		opt_restore_mode_begin,
 		opt_restore_mode_tick,
-		opt_restore_mode_end
+		control::nop
 	};
 
 	const control::Mode dbg_mode
 	{
 		control::nop,
 		dbg_mode_tick,
+		control::nop
+	};
+
+	const control::Mode view_mode
+	{
+		control::nop,
+		view_mode_tick,
 		control::nop
 	};
 }

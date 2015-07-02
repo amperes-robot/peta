@@ -23,11 +23,16 @@ namespace strings
 	DECL_FSTR(flw_i);
 	DECL_FSTR(flw_d);
 	DECL_FSTR(flw_vel);
-	DECL_FSTR(flw_thresh);
+	DECL_FSTR(flw_thresh_left);
+	DECL_FSTR(flw_thresh_right);
+	DECL_FSTR(flw_recover);
 	DECL_FSTR(flw_mark_lat);
+
 	DECL_FSTR(home_p);
 	DECL_FSTR(home_i);
 	DECL_FSTR(home_d);
 	DECL_FSTR(home_thresh);
 	DECL_FSTR(home_vel);
+
+	DECL_FSTR(view);
 }

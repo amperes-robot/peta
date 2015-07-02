@@ -17,15 +17,16 @@ namespace pid
 		}
 		void follow_mode_tick()
 		{
+			if (menu::stop_falling())
+			{
+				control::set_mode(&menu::main_mode);
+				return;
+			}
+
 			int16_t in = follow_value();
 
 			controller.in(in);
 			int16_t out = controller.out();
-
-			if (menu::stop_falling())
-			{
-				control::set_mode(&menu::main_mode);
-			}
 
 			motion::vel(menu::flw_vel.value());
 			motion::dir(out);

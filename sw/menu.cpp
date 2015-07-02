@@ -119,6 +119,7 @@ namespace menu
 			if (restore_ticker < 0x80 && io::Digital::start.read())
 			{
 				control::set_mode(&main_mode);
+				return;
 			}
 			else if (restore_ticker == 0x80)
 			{
@@ -132,6 +133,7 @@ namespace menu
 			else if (restore_ticker == 0xFF)
 			{
 				control::set_mode(&main_mode);
+				return;
 			}
 
 			restore_ticker++;
@@ -147,6 +149,7 @@ namespace menu
 			if (menu::stop_falling())
 			{
 				control::set_mode(&menu::main_mode);
+				return;
 			}
 
 			uint8_t index = get_index(24);
@@ -206,7 +209,7 @@ namespace menu
 				{
 					io::lcd.print(opts[opt_editing]->name());
 					io::lcd.setCursor(0, 1);
-					io::lcd.print("*");
+					io::lcd.print('*');
 					io::lcd.print(tweak / opts[opt_editing]->scale());
 				}
 				else
@@ -241,6 +244,7 @@ namespace menu
 				else
 				{
 					control::set_mode(&main_mode);
+					return;
 				}
 			}
 
@@ -256,6 +260,7 @@ namespace menu
 			if (menu::stop_falling())
 			{
 				control::set_mode(&menu::main_mode);
+				return;
 			}
 			static uint16_t theta = 0;
 
@@ -314,10 +319,10 @@ namespace menu
 	Opt dr_wheel_d(TO_FSTR(strings::dr_d), 150 /* wheel dist (mm) */ / (56 /* wheel diam (mm) */ * 3.14159 / 24));
 	Opt dr_vscl(TO_FSTR(strings::dr_vscl), 3, 10); // velocity scale factor
 
-	Opt flw_gain_p(TO_FSTR(strings::flw_p), 70);
-	Opt flw_gain_i(TO_FSTR(strings::flw_i), 0);
-	Opt flw_gain_d(TO_FSTR(strings::flw_d), 60);
-	Opt flw_vel(TO_FSTR(strings::flw_vel), 100);
+	Opt flw_gain_p(TO_FSTR(strings::flw_p), 70, 2);
+	Opt flw_gain_i(TO_FSTR(strings::flw_i), 0, 2);
+	Opt flw_gain_d(TO_FSTR(strings::flw_d), 60, 2);
+	Opt flw_vel(TO_FSTR(strings::flw_vel), 100, 4);
 	Opt flw_thresh_left(TO_FSTR(strings::flw_thresh_left), 360);
 	Opt flw_thresh_right(TO_FSTR(strings::flw_thresh_right), 360);
 	Opt flw_recover(TO_FSTR(strings::flw_recover), 20, 5);

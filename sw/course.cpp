@@ -19,7 +19,6 @@ namespace course
 		uint8_t mark_hold = 0;
 		void follow_begin()
 		{
-
 			if (pet_id == 0)
 			{
 				controller.gain_p = menu::flw_gain_p.value();
@@ -39,6 +38,7 @@ namespace course
 			if (menu::stop_falling())
 			{
 				control::set_mode(&menu::main_mode);
+				return;
 			}
 
 			bool qrd = io::Digital::qrd_side.read();
@@ -55,6 +55,7 @@ namespace course
 			if (mark_hold == menu::flw_mark_lat.value())
 			{
 				control::set_mode(&side_retrieval_mode);
+				return;
 			}
 
 			int16_t in = pid::follow_value();
@@ -81,6 +82,7 @@ namespace course
 			if (menu::stop_falling())
 			{
 				control::set_mode(&menu::main_mode);
+				return;
 			}
 
 			// TODO
@@ -117,6 +119,7 @@ namespace course
 			if (menu::stop_falling())
 			{
 				control::set_mode(&menu::main_mode);
+				return;
 			}
 
 			int16_t in = io::Analog::pd_left.read() - io::Analog::pd_right.read();

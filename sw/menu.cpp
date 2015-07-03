@@ -319,13 +319,13 @@ namespace menu
 	Opt dr_wheel_d(TO_FSTR(strings::dr_d), 150 /* wheel dist (mm) */ / (56 /* wheel diam (mm) */ * 3.14159 / 24));
 	Opt dr_vscl(TO_FSTR(strings::dr_vscl), 3, 10); // velocity scale factor
 
-	Opt flw_gain_p(TO_FSTR(strings::flw_p), 70, 2);
-	Opt flw_gain_i(TO_FSTR(strings::flw_i), 0, 2);
+	Opt flw_gain_p(TO_FSTR(strings::flw_p), 70, 1);
+	Opt flw_gain_i(TO_FSTR(strings::flw_i), 0, 5);
 	Opt flw_gain_d(TO_FSTR(strings::flw_d), 60, 2);
 	Opt flw_vel(TO_FSTR(strings::flw_vel), 100, 4);
 	Opt flw_thresh_left(TO_FSTR(strings::flw_thresh_left), 360);
 	Opt flw_thresh_right(TO_FSTR(strings::flw_thresh_right), 360);
-	Opt flw_recover(TO_FSTR(strings::flw_recover), 20, 1);
+	Opt flw_recover(TO_FSTR(strings::flw_recover), 400, 1);
 	Opt flw_mark_lat(TO_FSTR(strings::flw_mark_lat), 10, 5);
 
 	Opt home_gain_p(TO_FSTR(strings::home_p), 70);

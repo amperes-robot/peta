@@ -95,23 +95,3 @@ namespace isr
 		EIMSK &= ~(1 << pin);
 	}
 }
-
-ISR(TIMER1_COMPA_vect) { }
-ISR(TIMER3_COMPA_vect)
-{
-	motion::update_100hz();
-}
-ISR(INT0_vect)
-{
-	motion::enc0();
-}
-ISR(INT1_vect)
-{
-	motion::enc1();
-}
-ISR(INT2_vect) { }
-ISR(INT3_vect) { }
-ISR(ADC_vect)
-{
-	io::end_adc();
-}

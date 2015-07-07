@@ -93,3 +93,8 @@ namespace io
 		ANALOG_INPUT(pd_right, 3);
 	}
 }
+
+ISR(ADC_vect)
+{
+	io::end_adc();
+}

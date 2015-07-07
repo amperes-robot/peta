@@ -41,4 +41,11 @@ namespace motion
 	extern Motor right;
 	extern Motor retrieval;
 	extern Motor zipline;
+
+	extern volatile uint8_t enc0_counts;
+	extern volatile uint8_t enc1_counts;
+	extern volatile uint8_t enc2_counts;
+	extern volatile uint32_t x;
+	extern volatile uint32_t y;
+	extern volatile uint16_t theta;
 }

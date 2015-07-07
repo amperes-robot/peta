@@ -29,12 +29,6 @@ namespace io
 	 */
 	void start_adc();
 
-	/**
-	 * Callback for ADC conversion completion. Should never be
-	 * called outside of ISR(ADC_vect).
-	 */
-	void end_adc();
-
 	namespace Analog
 	{
 		/**

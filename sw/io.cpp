@@ -81,7 +81,14 @@ namespace io
 	{
 		DIGITAL_INPUT(start, G, 2);
 		DIGITAL_INPUT(stop, G, 1);
-		DIGITAL_INPUT(qrd_side, D, 2);
+
+		DIGITAL_INPUT(enc_left, D, 0);
+		DIGITAL_INPUT(enc_right, D, 1);
+		DIGITAL_INPUT(enc_arm, D, 2);
+		DIGITAL_INPUT(qrd_side, D, 3);
+
+		DIGITAL_INPUT(switch_upper, D, 4);
+		DIGITAL_INPUT(switch_lower, D, 5);
 	}
 	namespace Analog
 	{

@@ -36,7 +36,7 @@ namespace menu
 			motion::left.halt();
 			motion::right.halt();
 			motion::zipline.halt();
-			motion::retrieval.halt();
+			motion::arm.halt();
 		}
 		void main_mode_tick()
 		{
@@ -262,15 +262,8 @@ namespace menu
 				control::set_mode(&menu::main_mode);
 				return;
 			}
-			static uint16_t theta = 0;
 
-			io::lcd.home();
-			io::lcd.clear();
-			io::lcd.print(theta);
-			io::lcd.setCursor(0, 1);
-			io::lcd.print(math::sin(theta));
-			theta += 100;
-			delay(1);
+			control::set_mode(&course::side_retrieval_mode);
 		}
 	}
 

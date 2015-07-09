@@ -1,4 +1,5 @@
 #include "course.h"
+#include "isr.h"
 #include "io.h"
 #include "menu.h"
 #include "motion.h"
@@ -8,6 +9,8 @@ namespace course
 {
 	namespace
 	{
+		enum { ARM_LO_THRESH = -10, ARM_HI_THRESH = 10 };
+
 		pid::Controller controller(0, 0, 0);
 
 		void begin_tick()
@@ -17,6 +20,10 @@ namespace course
 
 		uint8_t pet_id = 0;
 		uint8_t mark_hold = 0;
+		uint16_t timer;
+		uint8_t retry_count;
+		uint8_t state;
+
 		void follow_begin()
 		{
 			if (pet_id == 0)
@@ -31,6 +38,11 @@ namespace course
 				control::set_mode(&beacon_homing_mode);
 				return;
 			}
+
+			if (motion::arm_theta < ARM_HI_THRESH)
+			{
+				motion::arm.speed(200);
+			}
 		}
 
 		void follow_tick()
@@ -39,6 +51,11 @@ namespace course
 			{
 				control::set_mode(&menu::main_mode);
 				return;
+			}
+
+			if (motion::arm_theta > ARM_HI_THRESH)
+			{
+				motion::arm.halt();
 			}
 
 			bool qrd = io::Digital::qrd_side.read();
@@ -74,36 +91,113 @@ namespace course
 
 		void side_retrieval_begin()
 		{
+			motion::update_enc(); // clear queue
+			motion::arm_theta = 0;
+
+			retry_count = 0;
+			state = 0;
 			pet_id++;
 		}
 
 		void side_retrieval_tick()
 		{
+			enum { N_RETRIES = 2 };
+			enum
+			{
+				DROPPING_BEGIN = 0,
+				DROPPING,
+				LIFTING_BEGIN,
+				LIFTING,
+				RETRY_BEGIN,
+				RETRY,
+				DONE
+			};
+			io::lcd.clear();
+			io::lcd.home();
+			io::lcd.print(state);
+			io::lcd.setCursor(0, 1);
+			io::lcd.print(motion::arm_theta);
+
 			if (menu::stop_falling())
 			{
 				control::set_mode(&menu::main_mode);
 				return;
 			}
 
-			// TODO
-			static int timer = 0;
+			switch (state) // dropping arm
+			{
+				case DROPPING_BEGIN:
+				{
+					motion::arm.speed(-150);
+					state++;
+					// fall through
+				}
+				case DROPPING:
+				{
+					if (motion::arm_theta < ARM_LO_THRESH) // dropped
+					{
+						if (io::Digital::switch_upper.read()) // got it
+						{
+							state++;
+						}
+						else // not detected, abort
+						{
+							state = DONE;
+						}
+					}
+					break;
+				}
+				case LIFTING_BEGIN:
+				{
+					motion::arm.speed(255);
+					state++;
+					timer = 0;
+					// fall through
+				}
+				case LIFTING:
+				{
+					timer++;
+					if (!io::Digital::switch_upper.read() || motion::arm_theta > ARM_HI_THRESH) // detached or lost or up
+					{
+						state = DONE;
+					}
+					else if (timer > 250 && retry_count < N_RETRIES) // timeout
+					{
+						if (retry_count < N_RETRIES)
+						{
+							state = RETRY_BEGIN;
+						}
+						else
+						{
+							state = DONE;
+						}
+					}
+					break;
+				}
+				case RETRY_BEGIN:
+				{
+					retry_count++;
+					state++;
+					motion::arm.speed(-128);
+					// fall through
+				}
+				case RETRY:
+				{
+					if (motion::arm_theta < ARM_LO_THRESH)
+					{
+						state = LIFTING_BEGIN;
+					}
+					break;
+				}
+				case DONE:
+				{
+					control::set_mode(&follow_mode);
+					return;
+				}
+			}
 
-			if (timer == 0) 
-			{
-				motion::retrieval.speed(-20);
-			}
-			else if (timer == 50)
-			{
-				motion::retrieval.speed(20);
-			}
-			else if (timer == 100)
-			{
-				motion::retrieval.speed(0);
-				control::set_mode(&follow_mode);
-				return;
-			}
-
-			timer++;
+			motion::update_enc();
+			io::delay_ms(10);
 		}
 
 		void beacon_homing_begin()

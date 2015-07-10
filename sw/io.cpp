@@ -99,6 +99,11 @@ namespace io
 		ANALOG_INPUT(pd_left, 2);
 		ANALOG_INPUT(pd_right, 3);
 	}
+
+	namespace Timer
+	{
+		uint32_t _start;
+	}
 }
 
 ISR(ADC_vect)

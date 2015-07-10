@@ -29,6 +29,20 @@ namespace io
 	 */
 	void start_adc();
 
+	namespace Timer
+	{
+		extern uint32_t _start;
+
+		inline void start()
+		{
+			_start = millis();
+		}
+		inline uint16_t time()
+		{
+			return millis() - _start;
+		}
+	}
+
 	namespace Analog
 	{
 		/**

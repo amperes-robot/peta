@@ -165,7 +165,7 @@ namespace menu
 				io::lcd.print(' ');
 				io::lcd.print(PIND & (1 << index));
 			}
-			if (index < 16)
+			else if (index < 16)
 			{
 				io::lcd.print('C');
 				io::lcd.print(index - 8);

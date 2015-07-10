@@ -5,12 +5,12 @@
 
 namespace motion
 {
+	volatile uint8_t enc0_counts;
+	volatile uint8_t enc1_counts;
+	volatile uint8_t enc2_counts;
+		
 	namespace
 	{
-		volatile uint8_t enc0_counts;
-		volatile uint8_t enc1_counts;
-		volatile uint8_t enc2_counts;
-		
 		DIGITAL_OUTPUT(dir_0, B, 0);
 		DIGITAL_OUTPUT(dir_1, B, 1);
 		DIGITAL_OUTPUT(dir_2, E, 6);
@@ -48,6 +48,12 @@ namespace motion
 	}
 	void Motor::speed(int16_t speed)
 	{
+		if (speed == 0)
+		{
+			halt();
+			return;
+		}
+
 		if (speed > 255) speed = 255;
 		if (speed < -255) speed = -255;
 		uint8_t abs = speed > 0 ? speed : -speed;
@@ -85,7 +91,7 @@ namespace motion
 	{
 		isr::attach_pin(0, RISING);
 		isr::attach_pin(1, RISING);
-		isr::attach_pin(2, RISING);
+		isr::attach_pin(2, FALLING);
 	}
 
 	void halt()
@@ -138,5 +144,10 @@ ISR(INT1_vect)
 }
 ISR(INT2_vect)
 {
+	/*
+	io::lcd.clear();
+	io::lcd.home();
+	io::lcd.print(motion::enc2_counts);
+	*/
 	motion::enc2_counts++;
 }

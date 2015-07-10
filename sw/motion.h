@@ -3,6 +3,10 @@
 
 namespace motion
 {
+	extern volatile uint8_t enc0_counts;
+	extern volatile uint8_t enc1_counts;
+	extern volatile uint8_t enc2_counts;
+
 	struct Motor final
 	{
 		public:

@@ -9,7 +9,7 @@ namespace course
 {
 	namespace
 	{
-		enum { ARM_LO_THRESH = -10, ARM_HI_THRESH = 10 };
+		enum { ARM_LO_THRESH = -20, ARM_HI_THRESH = -5 };
 
 		pid::Controller controller(0, 0, 0);
 
@@ -20,7 +20,6 @@ namespace course
 
 		uint8_t pet_id = 0;
 		uint8_t mark_hold = 0;
-		uint16_t timer;
 		uint8_t retry_count;
 		uint8_t state;
 
@@ -82,6 +81,9 @@ namespace course
 
 			motion::vel(menu::flw_vel.value());
 			motion::dir(out);
+
+			motion::update_enc();
+			io::delay_ms(10);
 		}
 
 		void follow_end()
@@ -110,11 +112,12 @@ namespace course
 				LIFTING,
 				RETRY_BEGIN,
 				RETRY,
+				DONE_BEGIN,
 				DONE
 			};
+
 			io::lcd.clear();
 			io::lcd.home();
-			io::lcd.print(state);
 			io::lcd.setCursor(0, 1);
 			io::lcd.print(motion::arm_theta);
 
@@ -128,40 +131,50 @@ namespace course
 			{
 				case DROPPING_BEGIN:
 				{
-					motion::arm.speed(-150);
+					motion::arm.speed(-200);
 					state++;
 					// fall through
 				}
 				case DROPPING:
 				{
-					if (motion::arm_theta < ARM_LO_THRESH) // dropped
+					if (motion::arm_theta < ARM_LO_THRESH || io::Digital::switch_upper.read()) // dropped
 					{
-						if (io::Digital::switch_upper.read()) // got it
-						{
-							state++;
-						}
-						else // not detected, abort
-						{
-							state = DONE;
-						}
+						state = LIFTING_BEGIN;
+					}
+					else if (motion::arm_theta < ARM_LO_THRESH)
+					{
+						state = DONE_BEGIN; // not detected, abort
 					}
 					break;
 				}
 				case LIFTING_BEGIN:
 				{
+					motion::arm.halt();
+					motion::update_enc();
+
+					io::delay_ms(1000);
+
+					io::lcd.print(' ');
+					io::lcd.print(motion::enc2_counts);
+
+					motion::update_enc();
+					io::lcd.print(' ');
+					io::lcd.print(motion::arm_theta);
+
+					io::delay_ms(500);
+
 					motion::arm.speed(255);
 					state++;
-					timer = 0;
+					io::Timer::start();
 					// fall through
 				}
 				case LIFTING:
 				{
-					timer++;
 					if (!io::Digital::switch_upper.read() || motion::arm_theta > ARM_HI_THRESH) // detached or lost or up
 					{
-						state = DONE;
+						state = DONE_BEGIN;
 					}
-					else if (timer > 250 && retry_count < N_RETRIES) // timeout
+					else if (io::Timer::time() > 5000) // timeout
 					{
 						if (retry_count < N_RETRIES)
 						{
@@ -169,7 +182,7 @@ namespace course
 						}
 						else
 						{
-							state = DONE;
+							state = DONE_BEGIN;
 						}
 					}
 					break;
@@ -189,10 +202,17 @@ namespace course
 					}
 					break;
 				}
+				case DONE_BEGIN:
+				{
+					motion::arm.halt();
+					state++;
+					// fall through
+				}
 				case DONE:
 				{
-					control::set_mode(&follow_mode);
-					return;
+					io::lcd.print(' ');
+					io::lcd.print(motion::arm_theta);
+					break;
 				}
 			}
 

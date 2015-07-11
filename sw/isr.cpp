@@ -85,8 +85,8 @@ namespace isr
 		EICRA &= ~(1 << (pin * 2));
 		EICRA &= ~(1 << (pin * 2 + 1));
 		/* Set new interrupt configuration bits   */
-		EICRA |= (mode & (1 << 0)) << (pin * 2);
-		EICRA |= (mode & (1 << 1)) << (pin * 2 + 1);
+		EICRA |= (mode & (1 << 1)) << (pin * 2);
+		EICRA |= (mode & (1 << 0)) << (pin * 2 + 1);
 		sei();
 	}
 

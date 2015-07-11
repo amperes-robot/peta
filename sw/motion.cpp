@@ -91,7 +91,7 @@ namespace motion
 	{
 		isr::attach_pin(0, RISING);
 		isr::attach_pin(1, RISING);
-		isr::attach_pin(2, FALLING);
+		isr::attach_pin(2, RISING);
 	}
 
 	void halt()

@@ -137,7 +137,7 @@ namespace course
 				}
 				case DROPPING:
 				{
-					if (motion::arm_theta < ARM_LO_THRESH || io::Digital::switch_upper.read()) // dropped
+					if (motion::arm_theta < ARM_LO_THRESH /*|| io::Digital::switch_upper.read()*/) // dropped
 					{
 						state = LIFTING_BEGIN;
 					}
@@ -170,7 +170,7 @@ namespace course
 				}
 				case LIFTING:
 				{
-					if (!io::Digital::switch_upper.read() || motion::arm_theta > ARM_HI_THRESH) // detached or lost or up
+					if (motion::arm_theta > ARM_HI_THRESH /* || !io::Digital::switch_upper.read()*/) // detached or lost or up
 					{
 						state = DONE_BEGIN;
 					}
@@ -210,8 +210,10 @@ namespace course
 				}
 				case DONE:
 				{
-					io::lcd.print(' ');
-					io::lcd.print(motion::arm_theta);
+					io::delay_ms(1000);
+					motion::update_enc();
+
+					state = DROPPING_BEGIN;
 					break;
 				}
 			}

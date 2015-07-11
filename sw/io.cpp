@@ -87,7 +87,7 @@ namespace io
 		DIGITAL_INPUT(enc_arm, D, 2);
 		DIGITAL_INPUT(qrd_side, D, 3);
 
-		DIGITAL_INPUT(switch_upper, D, 4);
+		DIGITAL_INPUT(switch_upper, G, 2);
 		DIGITAL_INPUT(switch_lower, D, 5);
 	}
 	namespace Analog

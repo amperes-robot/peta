@@ -254,6 +254,11 @@ namespace menu
 		{
 			io::lcd.clear();
 		}
+		
+		void dbg_mode_begin()
+		{
+			motion::arm_theta = 0;
+		}
 
 		void dbg_mode_tick()
 		{
@@ -263,7 +268,10 @@ namespace menu
 				return;
 			}
 
-			control::set_mode(&course::side_retrieval_mode);
+			io::lcd.clear();
+			io::lcd.home();
+			io::lcd.print(motion::arm_theta);
+			motion::update_enc();
 		}
 	}
 
@@ -350,7 +358,7 @@ namespace menu
 
 	const control::Mode dbg_mode
 	{
-		control::nop,
+		dbg_mode_begin,
 		dbg_mode_tick,
 		control::nop
 	};

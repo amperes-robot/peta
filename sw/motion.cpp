@@ -30,6 +30,8 @@ namespace motion
 		}
 	}
 
+	volatile int16_t left_theta;
+	volatile int16_t right_theta;
 	volatile int8_t arm_theta;
 
 	Motor left(0, true);
@@ -116,6 +118,8 @@ namespace motion
 
 	void update_enc()
 	{
+		left_theta += enc0_counts * left.dir();
+		right_theta += enc1_counts * right.dir();
 		arm_theta += enc2_counts * arm.dir();
 
 		// int8_t enc0 = enc0_counts * left.dir();

@@ -50,5 +50,7 @@ namespace motion
 	extern volatile uint32_t y;
 	extern volatile uint16_t theta;
 
+	extern volatile int16_t left_theta;
+	extern volatile int16_t right_theta;
 	extern volatile int8_t arm_theta;
 }

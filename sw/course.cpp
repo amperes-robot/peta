@@ -120,11 +120,6 @@ namespace course
 				DONE
 			};
 
-			io::lcd.clear();
-			io::lcd.home();
-			io::lcd.setCursor(0, 1);
-			io::lcd.print(motion::arm_theta);
-
 			if (menu::stop_falling())
 			{
 				control::set_mode(&menu::main_mode);
@@ -231,12 +226,87 @@ namespace course
 				case DONE:
 				{
 					control::set_mode(&menu::main_mode);
+					// control::set_mode(&parallel_park_mode);
 					break;
 				}
 			}
 
 			motion::update_enc();
 			io::delay_ms(20);
+		}
+
+		void parallel_park_begin()
+		{
+			state = 0;
+		}
+
+		void parallel_park_tick()
+		{
+			enum
+			{
+				ENTRY_BEGIN,
+				ENTRY,
+				BACK_BEGIN,
+				BACK,
+				FORWARD_BEGIN,
+				FORWARD
+			};
+
+			switch (state)
+			{
+				case ENTRY_BEGIN:
+				{
+					state++;
+					motion::left.halt();
+					motion::right.speed(50);
+					motion::right_theta = 0;
+					// fall through
+				}
+				case ENTRY: // go in
+				{
+					if (motion::right_theta > 100)
+					{
+						state = BACK_BEGIN;
+					}
+					break;
+				}
+				case BACK_BEGIN:
+				{
+					state++;
+					motion::left.speed(-50);
+					motion::right.speed(-70);
+					motion::right_theta = 0;
+					motion::left_theta = 0;
+					// fall through
+				}
+				case BACK:
+				{
+					if ((motion::right_theta + motion::left_theta) / 2 > 100)
+					{
+						state = FORWARD_BEGIN;
+					}
+					break;
+				}
+				case FORWARD_BEGIN:
+				{
+					state++;
+					motion::left.speed(50);
+					motion::right.halt();
+					motion::left_theta = 0;
+					// fall through
+				}
+				case FORWARD:
+				{
+					if (motion::left_theta > 50)
+					{
+						control::set_mode(&rubble_excavation_mode);
+					}
+					break;
+				}
+			}
+
+			io::delay_ms(20);
+			motion::update_enc();
 		}
 
 		void beacon_homing_begin()
@@ -263,6 +333,15 @@ namespace course
 
 			motion::vel(menu::home_vel.value());
 			motion::dir(out);
+		}
+
+		void rubble_excavation_begin()
+		{
+			state = 0;
+		}
+
+		void rubble_excavation_tick()
+		{
 		}
 	}
 
@@ -294,10 +373,17 @@ namespace course
 		&control::nop
 	};
 
+	const control::Mode parallel_park_mode
+	{
+		&parallel_park_begin,
+		&parallel_park_tick,
+		&control::nop
+	};
+
 	const control::Mode rubble_excavation_mode
 	{
-		&control::nop,
-		&control::nop,
+		&rubble_excavation_begin,
+		&rubble_excavation_tick,
 		&control::nop
 	};
 

@@ -108,6 +108,8 @@ namespace course
 			{
 				DROPPING_BEGIN = 0,
 				DROPPING,
+				BRAKE_BEGIN,
+				BRAKE,
 				LIFTING_BEGIN,
 				LIFTING,
 				RETRY_BEGIN,
@@ -141,7 +143,7 @@ namespace course
 				{
 					if (motion::arm_theta < ARM_LO_THRESH /*|| io::Digital::switch_upper.read()*/) // dropped
 					{
-						state = LIFTING_BEGIN;
+						state = BRAKE_BEGIN;
 					}
 					else if (motion::arm_theta < ARM_LO_THRESH)
 					{
@@ -149,12 +151,23 @@ namespace course
 					}
 					break;
 				}
-				case LIFTING_BEGIN:
+				case BRAKE_BEGIN:
 				{
 					motion::arm.halt();
-
-					io::delay_ms(750);
-
+					state++;
+					io::Timer::start();
+					// fall through
+				}
+				case BRAKE:
+				{
+					if (io::Timer::time() > 750)
+					{
+						state = LIFTING_BEGIN;
+					}
+					break;
+				}
+				case LIFTING_BEGIN:
+				{
 					motion::arm.speed(255);
 					state++;
 					io::Timer::start();
@@ -190,7 +203,7 @@ namespace course
 				{
 					if (motion::arm_theta < ARM_LO_THRESH)
 					{
-						state = LIFTING_BEGIN;
+						state = BRAKE_BEGIN;
 					}
 					break;
 				}

@@ -112,6 +112,8 @@ namespace course
 				LIFTING,
 				RETRY_BEGIN,
 				RETRY,
+				ZERO_BEGIN,
+				ZERO,
 				DONE_BEGIN,
 				DONE
 			};
@@ -150,18 +152,8 @@ namespace course
 				case LIFTING_BEGIN:
 				{
 					motion::arm.halt();
-					motion::update_enc();
 
-					io::delay_ms(1000);
-
-					io::lcd.print(' ');
-					io::lcd.print(motion::enc2_counts);
-
-					motion::update_enc();
-					io::lcd.print(' ');
-					io::lcd.print(motion::arm_theta);
-
-					io::delay_ms(500);
+					io::delay_ms(750);
 
 					motion::arm.speed(255);
 					state++;
@@ -172,9 +164,9 @@ namespace course
 				{
 					if (motion::arm_theta > ARM_HI_THRESH /* || !io::Digital::switch_upper.read()*/) // detached or lost or up
 					{
-						state = DONE_BEGIN;
+						state = ZERO_BEGIN;
 					}
-					else if (io::Timer::time() > 5000) // timeout
+					else if (io::Timer::time() > 2000) // timeout
 					{
 						if (retry_count < N_RETRIES)
 						{
@@ -182,7 +174,7 @@ namespace course
 						}
 						else
 						{
-							state = DONE_BEGIN;
+							state = ZERO_BEGIN;
 						}
 					}
 					break;
@@ -202,6 +194,21 @@ namespace course
 					}
 					break;
 				}
+				case ZERO_BEGIN:
+				{
+					motion::arm.speed(255);
+					io::Timer::start();
+					state++;
+					// fall through
+				}
+				case ZERO:
+				{
+					if (io::Timer::time() > 1000)
+					{
+						state = DONE_BEGIN;
+					}
+					break;
+				}
 				case DONE_BEGIN:
 				{
 					motion::arm.halt();
@@ -210,16 +217,13 @@ namespace course
 				}
 				case DONE:
 				{
-					io::delay_ms(1000);
-					motion::update_enc();
-
-					state = DROPPING_BEGIN;
+					control::set_mode(&menu::main_mode);
 					break;
 				}
 			}
 
 			motion::update_enc();
-			io::delay_ms(10);
+			io::delay_ms(20);
 		}
 
 		void beacon_homing_begin()

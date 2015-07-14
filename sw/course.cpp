@@ -65,7 +65,7 @@ namespace course
 				state = 0; // debouncer failed
 			}
 
-			int16_t in = pid::follow_value();
+			int16_t in = pid::follow_value_digital();
 
 			controller.in(in);
 			int16_t out = controller.out();

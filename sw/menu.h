@@ -52,16 +52,15 @@ namespace menu
 			const uint16_t _default;
 	};
 
-	const size_t N_OPTS = 15;
-	extern Opt dr_vscl;
-	extern Opt dr_wheel_d;
-
+	const size_t N_OPTS = 14;
 	extern Opt flw_gain_p;
 	extern Opt flw_gain_i;
 	extern Opt flw_gain_d;
 	extern Opt flw_vel;
 	extern Opt flw_thresh_left;
 	extern Opt flw_thresh_right;
+	extern Opt flw_thresh_side;
+
 	extern Opt flw_recover;
 
 	extern Opt home_gain_p;

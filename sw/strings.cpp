@@ -9,15 +9,15 @@ namespace strings
 	DEFN_FSTR(follow);
 	DEFN_FSTR(dbg);
 
-	DEFN_FSTR(dr_d);
-	DEFN_FSTR(dr_vscl);
 	DEFN_FSTR(flw_p);
 	DEFN_FSTR(flw_i);
 	DEFN_FSTR(flw_d);
 	DEFN_FSTR(flw_vel);
 	DEFN_FSTR(flw_thresh_left);
+	DEFN_FSTR(flw_thresh_side);
 	DEFN_FSTR(flw_thresh_right);
 	DEFN_FSTR(flw_recover);
+
 	DEFN_FSTR(home_p);
 	DEFN_FSTR(home_i);
 	DEFN_FSTR(home_d);
@@ -26,5 +26,7 @@ namespace strings
 
 	DEFN_FSTR(beacon_thresh);
 
+	DEFN_FSTR(home);
+	DEFN_FSTR(retrieval);
 	DEFN_FSTR(view);
 }

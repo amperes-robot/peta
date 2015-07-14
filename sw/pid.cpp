@@ -10,6 +10,10 @@ namespace pid
 
 		void follow_mode_begin()
 		{
+			io::lcd.clear();
+			io::lcd.home();
+			io::lcd.print(TO_FSTR(strings::retrieval));
+
 			controller.reset();
 			controller.gain_p = menu::flw_gain_p.value();
 			controller.gain_i = menu::flw_gain_i.value();

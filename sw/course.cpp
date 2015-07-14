@@ -24,6 +24,10 @@ namespace course
 
 		void follow_begin()
 		{
+			io::lcd.home();
+			io::lcd.clear();
+			io::lcd.print(TO_FSTR(strings::follow));
+
 			state = 0;
 			if (pet_id == 0)
 			{
@@ -49,14 +53,14 @@ namespace course
 				return;
 			}
 
-			bool qrd = io::Digital::qrd_side.read();
+			bool qrd = io::Analog::qrd_side.read() > menu::flw_thresh_side.value();
 
 			if (state > DELAY_AMT)
 			{
 				control::set_mode(&side_retrieval_mode);
 				return;
 			}
-			else if (state > HOLD_AMT || !qrd)
+			else if (state > HOLD_AMT || qrd)
 			{
 				state++;
 			}
@@ -84,7 +88,11 @@ namespace course
 
 		void side_retrieval_begin()
 		{
-			motion::update_enc(); // clear queue
+			io::lcd.clear();
+			io::lcd.home();
+			io::lcd.print(TO_FSTR(strings::retrieval));
+
+			motion::update_enc(); // clear accumulator
 			motion::arm_theta = 0;
 
 			retry_count = 0;
@@ -227,6 +235,10 @@ namespace course
 
 		void beacon_homing_begin()
 		{
+			io::lcd.clear();
+			io::lcd.home();
+			io::lcd.print(TO_FSTR(strings::home));
+			
 			controller.reset();
 			controller.gain_p = menu::home_gain_p.value();
 			controller.gain_i = menu::home_gain_i.value();
@@ -262,6 +274,9 @@ namespace course
 
 		void parallel_park_begin()
 		{
+			io::lcd.clear();
+			io::lcd.home();
+
 			state = 0;
 		}
 

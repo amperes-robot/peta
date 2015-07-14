@@ -313,15 +313,18 @@ namespace menu
 		_value = eeprom_read_word(_addr_eep);
 	}
 
-	Opt dr_wheel_d(TO_FSTR(strings::dr_d), 150 /* wheel dist (mm) */ / (56 /* wheel diam (mm) */ * 3.14159 / 24));
+	/*
+	Opt dr_wheel_d(TO_FSTR(strings::dr_d), 150 / (56 wheel diam (mm) * 3.14159 / 24));
 	Opt dr_vscl(TO_FSTR(strings::dr_vscl), 3, 10); // velocity scale factor
+	*/
 
-	Opt flw_gain_p(TO_FSTR(strings::flw_p), 800, 1);
+	Opt flw_gain_p(TO_FSTR(strings::flw_p), 900, 1);
 	Opt flw_gain_i(TO_FSTR(strings::flw_i), 0, 5);
-	Opt flw_gain_d(TO_FSTR(strings::flw_d), 0, 2);
+	Opt flw_gain_d(TO_FSTR(strings::flw_d), 50, 2);
 	Opt flw_vel(TO_FSTR(strings::flw_vel), 100, 4);
 	Opt flw_thresh_left(TO_FSTR(strings::flw_thresh_left), 360);
 	Opt flw_thresh_right(TO_FSTR(strings::flw_thresh_right), 360);
+	Opt flw_thresh_side(TO_FSTR(strings::flw_thresh_side), 360);
 	Opt flw_recover(TO_FSTR(strings::flw_recover), 400, 1);
 
 	Opt beacon_thresh(TO_FSTR(strings::beacon_thresh), 800);

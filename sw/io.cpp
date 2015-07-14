@@ -85,7 +85,6 @@ namespace io
 		DIGITAL_INPUT(enc_left, D, 0);
 		DIGITAL_INPUT(enc_right, D, 1);
 		DIGITAL_INPUT(enc_arm, D, 2);
-		DIGITAL_INPUT(qrd_side, D, 3);
 
 		DIGITAL_INPUT(switch_upper, G, 2);
 		DIGITAL_INPUT(switch_lower, D, 5);
@@ -98,6 +97,7 @@ namespace io
 		ANALOG_INPUT(qrd_tape_right, 1);
 		ANALOG_INPUT(pd_left, 2);
 		ANALOG_INPUT(pd_right, 3);
+		ANALOG_INPUT(qrd_side, 4);
 	}
 
 	namespace Timer

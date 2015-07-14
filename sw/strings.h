@@ -17,13 +17,12 @@ namespace strings
 	DECL_FSTR(follow);
 	DECL_FSTR(dbg);
 
-	DECL_FSTR(dr_d);
-	DECL_FSTR(dr_vscl);
 	DECL_FSTR(flw_p);
 	DECL_FSTR(flw_i);
 	DECL_FSTR(flw_d);
 	DECL_FSTR(flw_vel);
 	DECL_FSTR(flw_thresh_left);
+	DECL_FSTR(flw_thresh_side);
 	DECL_FSTR(flw_thresh_right);
 	DECL_FSTR(flw_recover);
 
@@ -35,5 +34,7 @@ namespace strings
 
 	DECL_FSTR(beacon_thresh);
 
+	DECL_FSTR(home);
+	DECL_FSTR(retrieval);
 	DECL_FSTR(view);
 }

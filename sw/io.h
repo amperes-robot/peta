@@ -81,6 +81,7 @@ namespace io
 		const extern In qrd_tape_right;
 		const extern In pd_left;
 		const extern In pd_right;
+		const extern In qrd_side;
 	}
 	namespace Digital
 	{
@@ -142,7 +143,6 @@ namespace io
 		const extern In start;
 		const extern In stop;
 
-		const extern In qrd_side;
 		const extern In switch_upper;
 		const extern In switch_lower;
 		const extern In enc_left;

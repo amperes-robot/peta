@@ -63,7 +63,6 @@ namespace menu
 	extern Opt flw_thresh_left;
 	extern Opt flw_thresh_right;
 	extern Opt flw_recover;
-	extern Opt flw_mark_lat;
 
 	extern Opt home_gain_p;
 	extern Opt home_gain_i;

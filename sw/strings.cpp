@@ -18,7 +18,6 @@ namespace strings
 	DEFN_FSTR(flw_thresh_left);
 	DEFN_FSTR(flw_thresh_right);
 	DEFN_FSTR(flw_recover);
-	DEFN_FSTR(flw_mark_lat);
 	DEFN_FSTR(home_p);
 	DEFN_FSTR(home_i);
 	DEFN_FSTR(home_d);

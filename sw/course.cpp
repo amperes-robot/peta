@@ -19,12 +19,12 @@ namespace course
 		}
 
 		uint8_t pet_id = 0;
-		uint8_t mark_hold = 0;
 		uint8_t retry_count;
 		uint8_t state;
 
 		void follow_begin()
 		{
+			state = 0;
 			if (pet_id == 0)
 			{
 				controller.gain_p = menu::flw_gain_p.value();
@@ -37,41 +37,32 @@ namespace course
 				control::set_mode(&beacon_homing_mode);
 				return;
 			}
-
-			if (motion::arm_theta < ARM_HI_THRESH)
-			{
-				motion::arm.speed(200);
-			}
 		}
 
 		void follow_tick()
 		{
+			enum { HOLD_AMT = 5, DELAY_AMT = 15 };
+
 			if (menu::stop_falling())
 			{
 				control::set_mode(&menu::main_mode);
 				return;
 			}
 
-			if (motion::arm_theta > ARM_HI_THRESH)
-			{
-				motion::arm.halt();
-			}
-
 			bool qrd = io::Digital::qrd_side.read();
 
-			if (!qrd && mark_hold < menu::flw_mark_lat.value())
-			{
-				mark_hold++;
-			}
-			else if (qrd)
-			{
-				mark_hold = 0;
-			}
-
-			if (mark_hold == menu::flw_mark_lat.value())
+			if (state > DELAY_AMT)
 			{
 				control::set_mode(&side_retrieval_mode);
 				return;
+			}
+			else if (state > HOLD_AMT || !qrd)
+			{
+				state++;
+			}
+			else
+			{
+				state = 0; // debouncer failed
 			}
 
 			int16_t in = pid::follow_value();

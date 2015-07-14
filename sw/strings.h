@@ -33,5 +33,7 @@ namespace strings
 	DECL_FSTR(home_thresh);
 	DECL_FSTR(home_vel);
 
+	DECL_FSTR(beacon_thresh);
+
 	DECL_FSTR(view);
 }

@@ -70,6 +70,8 @@ namespace menu
 	extern Opt home_thresh;
 	extern Opt home_vel;
 
+	extern Opt beacon_thresh;
+
 	/**
 	 * Menu modes.
 	 */

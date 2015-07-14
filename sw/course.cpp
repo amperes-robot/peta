@@ -154,7 +154,7 @@ namespace course
 				}
 				case LIFTING_BEGIN:
 				{
-					motion::arm.speed(255);
+					motion::arm.speed(150);
 					state++;
 					io::Timer::start();
 					// fall through
@@ -182,7 +182,7 @@ namespace course
 				{
 					retry_count++;
 					state++;
-					motion::arm.speed(-128);
+					motion::arm.speed(-100);
 					// fall through
 				}
 				case RETRY:
@@ -195,7 +195,7 @@ namespace course
 				}
 				case ZERO_BEGIN:
 				{
-					motion::arm.speed(255);
+					motion::arm.speed(180);
 					io::Timer::start();
 					state++;
 					// fall through
@@ -216,14 +216,48 @@ namespace course
 				}
 				case DONE:
 				{
-					control::set_mode(&menu::main_mode);
-					// control::set_mode(&parallel_park_mode);
+					control::set_mode(&follow_mode);
 					break;
 				}
 			}
 
 			motion::update_enc();
 			io::delay_ms(20);
+		}
+
+		void beacon_homing_begin()
+		{
+			controller.reset();
+			controller.gain_p = menu::home_gain_p.value();
+			controller.gain_i = menu::home_gain_i.value();
+			controller.gain_d = menu::home_gain_d.value();
+		}
+
+		void beacon_homing_tick()
+		{
+			if (menu::stop_falling())
+			{
+				control::set_mode(&menu::main_mode);
+				return;
+			}
+
+			uint16_t left = io::Analog::pd_left.read();
+			uint16_t right = io::Analog::pd_right.read();
+
+			if ((left + right) / 2 > menu::beacon_thresh.value()) // close enough to the beacon
+			{
+				control::set_mode(&parallel_park_mode);
+				return;
+			}
+
+			int16_t in = left - right;
+			int16_t thresh = menu::home_thresh.value();
+
+			controller.in(in - thresh);
+			int16_t out = controller.out();
+
+			motion::vel(menu::home_vel.value());
+			motion::dir(out);
 		}
 
 		void parallel_park_begin()
@@ -298,32 +332,6 @@ namespace course
 
 			io::delay_ms(20);
 			motion::update_enc();
-		}
-
-		void beacon_homing_begin()
-		{
-			controller.reset();
-			controller.gain_p = menu::home_gain_p.value();
-			controller.gain_i = menu::home_gain_i.value();
-			controller.gain_d = menu::home_gain_d.value();
-		}
-
-		void beacon_homing_tick()
-		{
-			if (menu::stop_falling())
-			{
-				control::set_mode(&menu::main_mode);
-				return;
-			}
-
-			int16_t in = io::Analog::pd_left.read() - io::Analog::pd_right.read();
-			int16_t thresh = menu::home_thresh.value();
-
-			controller.in(in - thresh);
-			int16_t out = controller.out();
-
-			motion::vel(menu::home_vel.value());
-			motion::dir(out);
 		}
 
 		void rubble_excavation_begin()

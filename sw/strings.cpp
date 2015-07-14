@@ -24,5 +24,7 @@ namespace strings
 	DEFN_FSTR(home_thresh);
 	DEFN_FSTR(home_vel);
 
+	DEFN_FSTR(beacon_thresh);
+
 	DEFN_FSTR(view);
 }

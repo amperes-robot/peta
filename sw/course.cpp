@@ -10,6 +10,7 @@ namespace course
 	namespace
 	{
 		enum { ARM_LO_THRESH = -26, ARM_HI_THRESH = -5 };
+		enum { ONE_TWIST_THETA = 20 };
 
 		pid::DigitalController controller(0, 0, 0);
 
@@ -119,7 +120,7 @@ namespace course
 					}
 					case ONE_TURN:
 					{
-						if (motion::left_theta > 10)
+						if (motion::left_theta > ONE_TWIST_THETA)
 						{
 							control::set_mode(&side_retrieval_mode);
 							return;
@@ -322,7 +323,7 @@ namespace course
 					}
 					case ONE_TURN:
 					{
-						if (motion::left_theta > 10)
+						if (motion::left_theta < -ONE_TWIST_THETA)
 						{
 							control::set_mode(&follow_mode);
 							return;
@@ -441,7 +442,7 @@ namespace course
 				}
 				case BACK:
 				{
-					if ((motion::right_theta + motion::left_theta) / 2 > 100)
+					if ((motion::right_theta + motion::left_theta) / 2 < -100)
 					{
 						state = FORWARD_BEGIN;
 					}

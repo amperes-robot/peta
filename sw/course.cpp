@@ -9,8 +9,8 @@ namespace course
 {
 	namespace
 	{
-		enum { ARM_LO_THRESH = -26, ARM_HI_THRESH = -5 };
-		enum { ONE_TWIST_THETA = 20 };
+		enum { ARM_LO_THRESH = -23, ARM_HI_THRESH = -5 };
+		enum { ZERO_TWIST_THETA = 80, ONE_TWIST_THETA = 20, THREE_BACKUP_THETA = -10 };
 
 		pid::DigitalController controller(0, 0, 0);
 
@@ -50,7 +50,7 @@ namespace course
 
 		void follow_tick()
 		{
-			enum { HOLD_AMT = 3, DELAY_AMT = 6 };
+			enum { HOLD_AMT = 1, DELAY_AMT = 2 };
 			enum { PICKUP_COOLDOWN = 300 };
 
 			if (menu::stop_falling())
@@ -93,40 +93,100 @@ namespace course
 
 		void adjust_begin()
 		{
+			io::lcd.clear();
+			io::lcd.home();
+			io::lcd.print("adjust");
+
 			state = 0;
 			motion::left.halt();
 			motion::right.halt();
-			motion::left_theta = 0;
-			motion::right_theta = 0;
 		}
+
+		enum
+		{
+			ZERO_TURN_BEGIN = 0,
+			ZERO_TURN
+		};
+		enum
+		{
+			ONE_TURN_BEGIN = 0,
+			ONE_TURN
+		};
+		enum
+		{
+			THREE_BACKUP_BEGIN = 0,
+			THREE_BACKUP
+		};
 
 		void adjust_tick()
 		{
-			enum
-			{
-				ONE_TURN_BEGIN = 0,
-				ONE_TURN
-			};
-			
 			if (menu::stop_falling())
 			{
 				control::set_mode(&menu::main_mode);
 				return;
 			}
 
-			if (pet_id == 1)
+			if (pet_id == 0)
+			{
+				switch (state)
+				{
+					case ZERO_TURN_BEGIN:
+					{
+						state++;
+						motion::left.speed(150);
+						motion::right.speed(-100);
+						motion::left_theta = 0;
+						// fall through
+					}
+					case ZERO_TURN:
+					{
+						if (motion::left_theta > ZERO_TWIST_THETA)
+						{
+							control::set_mode(&side_retrieval_mode);
+							return;
+						}
+						break;
+					}
+				}
+			}
+			else if (pet_id == 1)
 			{
 				switch (state)
 				{
 					case ONE_TURN_BEGIN:
 					{
 						state++;
-						motion::left.speed(100);
+						motion::left.speed(150);
+						motion::right.speed(80);
+						motion::left_theta = 0;
 						// fall through
 					}
 					case ONE_TURN:
 					{
 						if (motion::left_theta > ONE_TWIST_THETA)
+						{
+							control::set_mode(&side_retrieval_mode);
+							return;
+						}
+						break;
+					}
+				}
+			}
+			else if (pet_id == 3)
+			{
+				switch (state)
+				{
+					case THREE_BACKUP_BEGIN:
+					{
+						state++;
+						motion::left.speed(-150);
+						motion::right.speed(-150);
+						motion::left_theta = 0;
+						// fall through
+					}
+					case THREE_BACKUP:
+					{
+						if (motion::left_theta > -THREE_BACKUP_THETA)
 						{
 							control::set_mode(&side_retrieval_mode);
 							return;
@@ -147,6 +207,11 @@ namespace course
 
 		void side_retrieval_begin()
 		{
+			if (pet_id == 0) // we don't use the arm
+			{
+				control::set_mode(&recover_mode);
+			}
+
 			motion::left.halt();
 			motion::right.halt();
 
@@ -190,6 +255,8 @@ namespace course
 			{
 				case DROPPING_BEGIN:
 				{
+					io::lcd.setCursor(0, 1);
+					io::lcd.print("drp");
 					motion::arm.speed(-200);
 					state++;
 					// fall through
@@ -208,6 +275,8 @@ namespace course
 				}
 				case BRAKE_BEGIN:
 				{
+					io::lcd.setCursor(0, 1);
+					io::lcd.print("brk");
 					motion::arm.halt();
 					state++;
 					io::Timer::start();
@@ -223,6 +292,8 @@ namespace course
 				}
 				case LIFTING_BEGIN:
 				{
+					io::lcd.setCursor(0, 1);
+					io::lcd.print("lft");
 					motion::arm.speed(150);
 					state++;
 					io::Timer::start();
@@ -249,6 +320,8 @@ namespace course
 				}
 				case RETRY_BEGIN:
 				{
+					io::lcd.setCursor(0, 1);
+					io::lcd.print("rty");
 					retry_count++;
 					state++;
 					motion::arm.speed(-100);
@@ -264,6 +337,9 @@ namespace course
 				}
 				case ZERO_BEGIN:
 				{
+					io::lcd.setCursor(0, 1);
+					io::lcd.print("zro");
+
 					motion::arm.speed(180);
 					io::Timer::start();
 					state++;
@@ -271,7 +347,7 @@ namespace course
 				}
 				case ZERO:
 				{
-					if (io::Timer::time() > 1000)
+					if (io::Timer::time() > 500)
 					{
 						state = DONE_BEGIN;
 					}
@@ -279,6 +355,9 @@ namespace course
 				}
 				case DONE_BEGIN:
 				{
+					io::lcd.setCursor(0, 1);
+					io::lcd.print("dne");
+
 					motion::arm.halt();
 					state++;
 					// fall through
@@ -296,40 +375,58 @@ namespace course
 
 		void recover_begin()
 		{
+			io::lcd.clear();
+			io::lcd.home();
+			io::lcd.print("recover");
 			state = 0;
+
 			motion::left.halt();
 			motion::right.halt();
-			motion::left_theta = 0;
-			motion::right_theta = 0;
 		}
 
 		void recover_tick()
 		{
-			enum
-			{
-				ONE_TURN_BEGIN = 0,
-				ONE_TURN
-			};
-			
 			if (menu::stop_falling())
 			{
 				control::set_mode(&menu::main_mode);
 				return;
 			}
 
-			if (pet_id == 1)
+			if (pet_id == 0)
+			{
+				switch (state)
+				{
+					case ZERO_TURN_BEGIN:
+					{
+						state++;
+						motion::left.speed(-150);
+						// fall through
+					}
+					case ZERO_TURN:
+					{
+						if (io::Analog::qrd_tape_left.read() > menu::flw_thresh_left.value())
+						{
+							control::set_mode(&follow_mode);
+							return;
+						}
+						break;
+					}
+				}
+			}
+			else if (pet_id == 1)
 			{
 				switch (state)
 				{
 					case ONE_TURN_BEGIN:
 					{
 						state++;
-						motion::left.speed(-100);
+						motion::left.speed(-150);
+						motion::left_theta = 0;
 						// fall through
 					}
 					case ONE_TURN:
 					{
-						if (motion::left_theta < -ONE_TWIST_THETA)
+						if (io::Analog::qrd_tape_left.read() > menu::flw_thresh_left.value())
 						{
 							control::set_mode(&follow_mode);
 							return;

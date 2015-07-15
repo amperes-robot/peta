@@ -74,11 +74,8 @@ namespace motion
 			analogWrite(digital_enables[_id], abs);
 		}
 
-		if (dir != _dir)
-		{
-			update_enc();
-			_dir = dir;
-		}
+		update_enc();
+		_dir = dir;
 	}
 	void Motor::halt()
 	{

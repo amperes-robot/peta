@@ -275,7 +275,7 @@ namespace course
 				}
 				case DONE:
 				{
-					control::set_mode(&follow_mode);
+					control::set_mode(&recover_mode);
 					break;
 				}
 			}

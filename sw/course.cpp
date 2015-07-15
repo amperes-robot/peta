@@ -11,7 +11,7 @@ namespace course
 	{
 		enum { ARM_LO_THRESH = -20, ARM_HI_THRESH = -5 };
 
-		pid::Controller controller(0, 0, 0);
+		pid::DigitalController controller(0, 0, 0);
 
 		void begin_tick()
 		{
@@ -32,6 +32,7 @@ namespace course
 			
 			if (pet_id == 0)
 			{
+				controller.reset();
 				controller.gain_p = menu::flw_gain_p.value();
 				controller.gain_i = menu::flw_gain_i.value();
 				controller.gain_d = menu::flw_gain_d.value();
@@ -70,7 +71,7 @@ namespace course
 				state = 0; // debouncer failed
 			}
 
-			int16_t in = pid::follow_value_digital();
+			int8_t in = pid::follow_value_digital();
 
 			controller.in(in);
 			int16_t out = controller.out();
@@ -78,7 +79,7 @@ namespace course
 			motion::vel(menu::flw_vel.value());
 			motion::dir(out);
 
-			motion::update_enc();
+			//motion::update_enc();
 			io::delay_ms(10);
 		}
 
@@ -89,6 +90,9 @@ namespace course
 
 		void side_retrieval_begin()
 		{
+			motion::left.halt();
+			motion::right.halt();
+
 			io::lcd.clear();
 			io::lcd.home();
 			io::lcd.print(TO_FSTR(strings::retrieval));

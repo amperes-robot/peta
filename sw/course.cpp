@@ -60,7 +60,7 @@ namespace course
 
 			if (state > DELAY_AMT)
 			{
-				control::set_mode(&side_retrieval_mode);
+				control::set_mode(&adjust_mode);
 				return;
 			}
 			else if (state > HOLD_AMT || qrd)
@@ -84,9 +84,55 @@ namespace course
 			io::delay_ms(10);
 		}
 
-		void follow_end()
+		void adjust_begin()
 		{
-			controller.reset();
+			state = 0;
+			motion::left.halt();
+			motion::right.halt();
+			motion::left_theta = 0;
+			motion::right_theta = 0;
+		}
+
+		void adjust_tick()
+		{
+			enum
+			{
+				ONE_TURN_BEGIN = 0,
+				ONE_TURN
+			};
+			
+			if (menu::stop_falling())
+			{
+				control::set_mode(&menu::main_mode);
+				return;
+			}
+
+			if (pet_id == 1)
+			{
+				switch (state)
+				{
+					case ONE_TURN_BEGIN:
+					{
+						state++;
+						motion::left.speed(100);
+						// fall through
+					}
+					case ONE_TURN:
+					{
+						if (motion::left_theta > 10)
+						{
+							control::set_mode(&side_retrieval_mode);
+							return;
+						}
+						break;
+					}
+				}
+			}
+			else
+			{
+				control::set_mode(&side_retrieval_mode);
+				return;
+			}
 		}
 
 		void side_retrieval_begin()
@@ -103,7 +149,6 @@ namespace course
 
 			retry_count = 0;
 			state = 0;
-			pet_id++;
 		}
 
 		void side_retrieval_tick()
@@ -237,6 +282,62 @@ namespace course
 
 			motion::update_enc();
 			io::delay_ms(10);
+		}
+
+		void recover_begin()
+		{
+			state = 0;
+			motion::left.halt();
+			motion::right.halt();
+			motion::left_theta = 0;
+			motion::right_theta = 0;
+		}
+
+		void recover_tick()
+		{
+			enum
+			{
+				ONE_TURN_BEGIN = 0,
+				ONE_TURN
+			};
+			
+			if (menu::stop_falling())
+			{
+				control::set_mode(&menu::main_mode);
+				return;
+			}
+
+			if (pet_id == 1)
+			{
+				switch (state)
+				{
+					case ONE_TURN_BEGIN:
+					{
+						state++;
+						motion::left.speed(-100);
+						// fall through
+					}
+					case ONE_TURN:
+					{
+						if (motion::left_theta > 10)
+						{
+							control::set_mode(&follow_mode);
+							return;
+						}
+						break;
+					}
+				}
+			}
+			else
+			{
+				control::set_mode(&follow_mode);
+				return;
+			}
+		}
+
+		void recover_end()
+		{
+			pet_id++;
 		}
 
 		void beacon_homing_begin()
@@ -389,6 +490,20 @@ namespace course
 		&follow_begin,
 		&follow_tick,
 		&control::nop
+	};
+
+	const control::Mode adjust_mode
+	{
+		&adjust_begin,
+		&adjust_tick,
+		&control::nop
+	};
+
+	const control::Mode recover_mode
+	{
+		&recover_begin,
+		&recover_tick,
+		&recover_end
 	};
 
 	const control::Mode side_retrieval_mode

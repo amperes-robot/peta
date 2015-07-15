@@ -30,6 +30,7 @@ namespace course
 			io::lcd.clear();
 			io::lcd.print(TO_FSTR(strings::follow));
 
+			io::Timer::start();
 			state = 0;
 			
 			if (pet_id == 0)
@@ -50,6 +51,7 @@ namespace course
 		void follow_tick()
 		{
 			enum { HOLD_AMT = 3, DELAY_AMT = 6 };
+			enum { PICKUP_COOLDOWN = 300 };
 
 			if (menu::stop_falling())
 			{
@@ -58,6 +60,11 @@ namespace course
 			}
 
 			bool qrd = io::Analog::qrd_side.read() > menu::flw_thresh_side.value();
+
+			if (io::Timer::time() < PICKUP_COOLDOWN)
+			{
+				state = 0;
+			}
 
 			if (state > DELAY_AMT)
 			{
@@ -81,7 +88,6 @@ namespace course
 			motion::vel(menu::flw_vel.value());
 			motion::dir(out);
 
-			motion::update_enc();
 			io::delay_ms(10);
 		}
 

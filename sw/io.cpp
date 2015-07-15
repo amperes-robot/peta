@@ -91,13 +91,14 @@ namespace io
 	}
 	namespace Analog
 	{
-		ANALOG_INPUT(select, 7);
-		ANALOG_INPUT(tweak, 6);
 		ANALOG_INPUT(qrd_tape_left, 0);
 		ANALOG_INPUT(qrd_tape_right, 1);
 		ANALOG_INPUT(pd_left, 2);
 		ANALOG_INPUT(pd_right, 3);
 		ANALOG_INPUT(qrd_side, 4);
+
+		ANALOG_INPUT(tweak, 6);
+		ANALOG_INPUT(select, 7);
 	}
 
 	namespace Timer

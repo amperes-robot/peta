@@ -267,7 +267,9 @@ namespace menu
 				return;
 			}
 
-			control::set_mode(&course::side_retrieval_mode);
+			io::lcd.clear();
+			io::lcd.home();
+			io::lcd.print(io::analog_attached);
 		}
 	}
 

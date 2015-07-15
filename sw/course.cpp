@@ -29,6 +29,7 @@ namespace course
 			io::lcd.print(TO_FSTR(strings::follow));
 
 			state = 0;
+			
 			if (pet_id == 0)
 			{
 				controller.gain_p = menu::flw_gain_p.value();

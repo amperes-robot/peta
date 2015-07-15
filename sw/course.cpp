@@ -13,14 +13,15 @@ namespace course
 
 		pid::DigitalController controller(0, 0, 0);
 
+		uint8_t pet_id;
+		uint8_t retry_count;
+		uint8_t state;
+
 		void begin_tick()
 		{
 			control::set_mode(&follow_mode);
+			pet_id = 0;
 		}
-
-		uint8_t pet_id = 0;
-		uint8_t retry_count;
-		uint8_t state;
 
 		void follow_begin()
 		{
@@ -310,7 +311,7 @@ namespace course
 				{
 					state++;
 					motion::left.halt();
-					motion::right.speed(50);
+					motion::right.speed(100);
 					motion::right_theta = 0;
 					// fall through
 				}
@@ -325,8 +326,8 @@ namespace course
 				case BACK_BEGIN:
 				{
 					state++;
-					motion::left.speed(-50);
-					motion::right.speed(-70);
+					motion::left.speed(-100);
+					motion::right.speed(-120);
 					motion::right_theta = 0;
 					motion::left_theta = 0;
 					// fall through
@@ -342,7 +343,7 @@ namespace course
 				case FORWARD_BEGIN:
 				{
 					state++;
-					motion::left.speed(50);
+					motion::left.speed(100);
 					motion::right.halt();
 					motion::left_theta = 0;
 					// fall through

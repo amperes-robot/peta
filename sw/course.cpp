@@ -80,7 +80,7 @@ namespace course
 			motion::vel(menu::flw_vel.value());
 			motion::dir(out);
 
-			//motion::update_enc();
+			motion::update_enc();
 			io::delay_ms(10);
 		}
 
@@ -133,6 +133,9 @@ namespace course
 				control::set_mode(&side_retrieval_mode);
 				return;
 			}
+
+			motion::update_enc();
+			io::delay_ms(10);
 		}
 
 		void side_retrieval_begin()
@@ -333,6 +336,9 @@ namespace course
 				control::set_mode(&follow_mode);
 				return;
 			}
+
+			motion::update_enc();
+			io::delay_ms(10);
 		}
 
 		void recover_end()

@@ -37,4 +37,5 @@ namespace strings
 	DECL_FSTR(home);
 	DECL_FSTR(retrieval);
 	DECL_FSTR(view);
+	DECL_FSTR(ppark);
 }

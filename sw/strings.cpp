@@ -29,4 +29,5 @@ namespace strings
 	DEFN_FSTR(home);
 	DEFN_FSTR(retrieval);
 	DEFN_FSTR(view);
+	DEFN_FSTR(ppark);
 }

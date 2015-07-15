@@ -9,7 +9,7 @@ namespace course
 {
 	namespace
 	{
-		enum { ARM_LO_THRESH = -20, ARM_HI_THRESH = -5 };
+		enum { ARM_LO_THRESH = -26, ARM_HI_THRESH = -5 };
 
 		pid::DigitalController controller(0, 0, 0);
 
@@ -47,7 +47,7 @@ namespace course
 
 		void follow_tick()
 		{
-			enum { HOLD_AMT = 5, DELAY_AMT = 15 };
+			enum { HOLD_AMT = 3, DELAY_AMT = 6 };
 
 			if (menu::stop_falling())
 			{
@@ -235,7 +235,7 @@ namespace course
 			}
 
 			motion::update_enc();
-			io::delay_ms(20);
+			io::delay_ms(10);
 		}
 
 		void beacon_homing_begin()
@@ -281,6 +281,7 @@ namespace course
 		{
 			io::lcd.clear();
 			io::lcd.home();
+			io::lcd.print(TO_FSTR(strings::ppark));
 
 			state = 0;
 		}
@@ -289,13 +290,19 @@ namespace course
 		{
 			enum
 			{
-				ENTRY_BEGIN,
+				ENTRY_BEGIN = 0,
 				ENTRY,
 				BACK_BEGIN,
 				BACK,
 				FORWARD_BEGIN,
 				FORWARD
 			};
+
+			if (menu::stop_falling())
+			{
+				control::set_mode(&menu::main_mode);
+				return;
+			}
 
 			switch (state)
 			{
@@ -350,7 +357,7 @@ namespace course
 				}
 			}
 
-			io::delay_ms(20);
+			io::delay_ms(10);
 			motion::update_enc();
 		}
 
@@ -361,6 +368,11 @@ namespace course
 
 		void rubble_excavation_tick()
 		{
+			if (menu::stop_falling())
+			{
+				control::set_mode(&menu::main_mode);
+				return;
+			}
 		}
 	}
 

@@ -258,6 +258,8 @@ namespace menu
 		void dbg_mode_begin()
 		{
 			motion::left_theta = 0;
+
+			motion::right.speed(-150);
 		}
 
 		void dbg_mode_tick()
@@ -267,14 +269,6 @@ namespace menu
 				control::set_mode(&menu::main_mode);
 				return;
 			}
-
-			motion::update_enc();
-
-			io::lcd.clear();
-			io::lcd.home();
-			io::lcd.print(motion::left_theta);
-
-			io::delay_ms(50);
 		}
 	}
 

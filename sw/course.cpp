@@ -9,8 +9,12 @@ namespace course
 {
 	namespace
 	{
-		enum { ARM_LO_THRESH = -23, ARM_HI_THRESH = -5 };
-		enum { ZERO_TWIST_THETA = 80, ONE_TWIST_THETA = 20, THREE_BACKUP_THETA = -10 };
+		enum { ARM_LO_THRESH = -25, ARM_HI_THRESH = -5 };
+		enum { ZERO_TURN_THETA = 20, ZERO_BACK_THETA = -50, ZERO_FWD_THETA = 55, ONE_TURN_THETA = 20, THREE_BACKUP_THETA = -20 };
+		const int16_t SLOW_SPEED = 120;
+		const int16_t MEDIUM_SPEED = 180;
+		const int16_t FAST_SPEED = 210;
+		cosnt int16_t LUDICROUS_SPEED = 255;
 
 		pid::DigitalController controller(0, 0, 0);
 
@@ -51,7 +55,7 @@ namespace course
 		void follow_tick()
 		{
 			enum { HOLD_AMT = 1, DELAY_AMT = 2 };
-			enum { PICKUP_COOLDOWN = 300 };
+			enum { PICKUP_COOLDOWN = 1000 };
 
 			if (menu::stop_falling())
 			{
@@ -61,15 +65,13 @@ namespace course
 
 			bool qrd = io::Analog::qrd_side.read() > menu::flw_thresh_side.value();
 
-			if (io::Timer::time() < PICKUP_COOLDOWN)
-			{
-				state = 0;
-			}
-
 			if (state > DELAY_AMT)
 			{
-				control::set_mode(&adjust_mode);
-				return;
+				if (io::Timer::time() > PICKUP_COOLDOWN)
+				{
+					control::set_mode(&adjust_mode);
+					return;
+				}
 			}
 			else if (state > HOLD_AMT || qrd)
 			{
@@ -104,8 +106,12 @@ namespace course
 
 		enum
 		{
-			ZERO_TURN_BEGIN = 0,
-			ZERO_TURN
+			ZERO_BACK_BEGIN = 0,
+			ZERO_BACK,
+			ZERO_TURN_BEGIN,
+			ZERO_TURN,
+			ZERO_FWD_BEGIN,
+			ZERO_FWD
 		};
 		enum
 		{
@@ -130,20 +136,59 @@ namespace course
 			{
 				switch (state)
 				{
+					case ZERO_BACK_BEGIN:
+					{
+						io::lcd.setCursor(0, 1);
+						io::lcd.print("bck");
+
+						state++;
+						motion::left.speed(-SLOW_SPEED);
+						motion::right.speed(-SLOW_SPEED);
+						motion::left_theta = 0;
+					}
+					case ZERO_BACK:
+					{
+						if (motion::left_theta < ZERO_BACK_THETA)
+						{
+							state = ZERO_TURN_BEGIN;
+						}
+						break;
+					}
 					case ZERO_TURN_BEGIN:
 					{
+						io::lcd.setCursor(0, 1);
+						io::lcd.print("trn");
+
 						state++;
-						motion::left.speed(150);
-						motion::right.speed(-100);
+						motion::left.speed(MEDIUM_SPEED);
+						motion::right.speed(-SLOW_SPEED);
 						motion::left_theta = 0;
 						// fall through
 					}
 					case ZERO_TURN:
 					{
-						if (motion::left_theta > ZERO_TWIST_THETA)
+						if (motion::left_theta > ZERO_TURN_THETA)
+						{
+							state = ZERO_FWD_BEGIN;
+						}
+						break;
+					}
+					case ZERO_FWD_BEGIN:
+					{
+						io::lcd.setCursor(0, 1);
+						io::lcd.print("fwd");
+						state++;
+
+						motion::left.speed(MEDIUM_SPEED);
+						motion::right.speed(MEDIUM_SPEED);
+						motion::left_theta = 0;
+						// fall through
+					}
+					case ZERO_FWD:
+					{
+						if (motion::left_theta > ZERO_FWD_THETA)
 						{
 							control::set_mode(&side_retrieval_mode);
-							return;
 						}
 						break;
 					}
@@ -156,14 +201,14 @@ namespace course
 					case ONE_TURN_BEGIN:
 					{
 						state++;
-						motion::left.speed(150);
-						motion::right.speed(80);
+						motion::left.speed(MEDIUM_SPEED);
+						motion::right.halt();
 						motion::left_theta = 0;
 						// fall through
 					}
 					case ONE_TURN:
 					{
-						if (motion::left_theta > ONE_TWIST_THETA)
+						if (motion::left_theta > ONE_TURN_THETA)
 						{
 							control::set_mode(&side_retrieval_mode);
 							return;
@@ -179,8 +224,8 @@ namespace course
 					case THREE_BACKUP_BEGIN:
 					{
 						state++;
-						motion::left.speed(-150);
-						motion::right.speed(-150);
+						motion::left.speed(-MEDIUM_SPEED);
+						motion::right.speed(-MEDIUM_SPEED);
 						motion::left_theta = 0;
 						// fall through
 					}
@@ -257,7 +302,7 @@ namespace course
 				{
 					io::lcd.setCursor(0, 1);
 					io::lcd.print("drp");
-					motion::arm.speed(-200);
+					motion::arm.speed(-FAST_SPEED);
 					state++;
 					// fall through
 				}
@@ -294,7 +339,7 @@ namespace course
 				{
 					io::lcd.setCursor(0, 1);
 					io::lcd.print("lft");
-					motion::arm.speed(150);
+					motion::arm.speed(MEDIUM_SPEED);
 					state++;
 					io::Timer::start();
 					// fall through
@@ -324,7 +369,7 @@ namespace course
 					io::lcd.print("rty");
 					retry_count++;
 					state++;
-					motion::arm.speed(-100);
+					motion::arm.speed(-SLOW_SPEED);
 					// fall through
 				}
 				case RETRY:
@@ -340,7 +385,7 @@ namespace course
 					io::lcd.setCursor(0, 1);
 					io::lcd.print("zro");
 
-					motion::arm.speed(180);
+					motion::arm.speed(MEDIUM_SPEED);
 					io::Timer::start();
 					state++;
 					// fall through
@@ -396,13 +441,13 @@ namespace course
 			{
 				switch (state)
 				{
-					case ZERO_TURN_BEGIN:
+					case ZERO_BACK_BEGIN:
 					{
 						state++;
-						motion::left.speed(-150);
+						motion::right.speed(MEDIUM_SPEED);
 						// fall through
 					}
-					case ZERO_TURN:
+					case ZERO_BACK:
 					{
 						if (io::Analog::qrd_tape_left.read() > menu::flw_thresh_left.value())
 						{
@@ -420,7 +465,7 @@ namespace course
 					case ONE_TURN_BEGIN:
 					{
 						state++;
-						motion::left.speed(-150);
+						motion::left.speed(-MEDIUM_SPEED);
 						motion::left_theta = 0;
 						// fall through
 					}
@@ -522,7 +567,7 @@ namespace course
 				{
 					state++;
 					motion::left.halt();
-					motion::right.speed(100);
+					motion::right.speed(MEDIUM_SPEED);
 					motion::right_theta = 0;
 					// fall through
 				}
@@ -537,8 +582,8 @@ namespace course
 				case BACK_BEGIN:
 				{
 					state++;
-					motion::left.speed(-100);
-					motion::right.speed(-120);
+					motion::left.speed(-MEDIUM_SPEED);
+					motion::right.speed(-SLOW_SPEED);
 					motion::right_theta = 0;
 					motion::left_theta = 0;
 					// fall through
@@ -554,7 +599,7 @@ namespace course
 				case FORWARD_BEGIN:
 				{
 					state++;
-					motion::left.speed(100);
+					motion::left.speed(SLOW_SPEED);
 					motion::right.halt();
 					motion::left_theta = 0;
 					// fall through

@@ -4,14 +4,15 @@
 #include "menu.h"
 #include "motion.h"
 #include "pid.h"
+#include <avr/pgmspace.h>
 
 namespace course
 {
 	namespace
 	{
 		enum { ARM_LO_THRESH = -23, ARM_HI_THRESH = -5 };
-		enum { ZERO_TURN_THETA = 16, ZERO_BACK_THETA = -50, ZERO_FWD_THETA = 40, ONE_TURN_THETA = 10, ONE_FWD_THETA = 30, TWO_BACKUP_THETA = -20 };
-		enum { PICKUP_COOLDOWN = 300 };
+		enum { ZERO_TURN_THETA = 45, ZERO_BACK_THETA = -50, ZERO_FWD_THETA = 40, ONE_TURN_THETA = 5, ONE_FWD_THETA = 18, TWO_BACKUP_THETA = -17 };
+		const PROGMEM uint16_t COOLDOWNS[] = { 0, 100, 400, 2000 };
 		const int16_t SLOW_SPEED = 120;
 		const int16_t MEDIUM_SPEED = 180;
 		const int16_t FAST_SPEED = 210;
@@ -67,10 +68,14 @@ namespace course
 
 			if (state > DELAY_AMT)
 			{
-				if (io::Timer::time() > PICKUP_COOLDOWN)
+				if (io::Timer::time() > (uint16_t) pgm_read_word(COOLDOWNS + pet_id))
 				{
 					control::set_mode(&adjust_mode);
 					return;
+				}
+				else
+				{
+					state = 0;
 				}
 			}
 			else if (state > HOLD_AMT || qrd)

@@ -46,12 +46,6 @@ namespace course
 				controller.gain_i = menu::flw_gain_i.value();
 				controller.gain_d = menu::flw_gain_d.value();
 			}
-
-			if (pet_id == 4)
-			{
-				control::set_mode(&beacon_homing_mode);
-				return;
-			}
 		}
 
 		void follow_tick()
@@ -80,7 +74,7 @@ namespace course
 			}
 			else if (state > HOLD_AMT || qrd)
 			{
-				state++;
+				state++; // ok
 			}
 			else
 			{
@@ -94,6 +88,78 @@ namespace course
 
 			motion::vel(menu::flw_vel.value());
 			motion::dir(out);
+
+			io::delay_ms(10);
+		}
+
+		void reverse_follow_begin()
+		{
+			controller.reset();
+			controller.gain_p = menu::flw_gain_p.value();
+			controller.gain_i = menu::flw_gain_i.value();
+			controller.gain_d = menu::flw_gain_d.value();
+
+			io::lcd.home();
+			io::lcd.clear();
+			io::lcd.print(TO_FSTR(strings::follow));
+
+			state = 0;
+		}
+
+		void reverse_follow_tick()
+		{
+			enum
+			{
+				TURN_BEGIN = 0,
+				TURN_A,
+				TURN_B,
+				FOLLOW
+			};
+
+			if (menu::stop_falling())
+			{
+				control::set_mode(&menu::main_mode);
+				return;
+			}
+
+			switch (state)
+			{
+				case TURN_BEGIN:
+				{
+					state++;
+					motion::left.speed(-MEDIUM_SPEED);
+					motion::right.speed(MEDIUM_SPEED);
+					motion::right_theta = 0;
+					// fall through
+				}
+				case TURN_A:
+				{
+					if (motion::right_theta > 30)
+					{
+						state = TURN_B;
+					}
+					break;
+				}
+				case TURN_B:
+				{
+					if (io::Analog::qrd_tape_left.read() > menu::flw_thresh_left.value())
+					{
+						state = FOLLOW;
+					}
+					break;
+				}
+				case FOLLOW:
+				{
+					int8_t in = pid::follow_value_digital();
+
+					controller.in(in);
+					int16_t out = controller.out();
+
+					motion::vel(menu::flw_vel.value());
+					motion::dir(out);
+					break;
+				}
+			}
 
 			io::delay_ms(10);
 		}
@@ -262,7 +328,12 @@ namespace course
 					}
 				}
 			}
-			else
+			else if (pet_id == 3)
+			{
+				control::set_mode(&reverse_follow_mode);
+				return;
+			}
+			else // should not reach here
 			{
 				control::set_mode(&side_retrieval_mode);
 				return;
@@ -274,7 +345,7 @@ namespace course
 
 		void side_retrieval_begin()
 		{
-			if (pet_id == 0) // we don't use the arm
+			if (pet_id == 0) // we don't use the arm for the first pet
 			{
 				control::set_mode(&recover_mode);
 			}
@@ -701,6 +772,13 @@ namespace course
 	{
 		&parallel_park_begin,
 		&parallel_park_tick,
+		&control::nop
+	};
+
+	const control::Mode reverse_follow_mode
+	{
+		&reverse_follow_begin,
+		&reverse_follow_tick,
 		&control::nop
 	};
 

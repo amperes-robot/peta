@@ -9,12 +9,13 @@ namespace course
 {
 	namespace
 	{
-		enum { ARM_LO_THRESH = -25, ARM_HI_THRESH = -5 };
-		enum { ZERO_TURN_THETA = 20, ZERO_BACK_THETA = -50, ZERO_FWD_THETA = 55, ONE_TURN_THETA = 20, THREE_BACKUP_THETA = -20 };
+		enum { ARM_LO_THRESH = -23, ARM_HI_THRESH = -5 };
+		enum { ZERO_TURN_THETA = 16, ZERO_BACK_THETA = -50, ZERO_FWD_THETA = 40, ONE_TURN_THETA = 10, ONE_FWD_THETA = 30, TWO_BACKUP_THETA = -20 };
+		enum { PICKUP_COOLDOWN = 300 };
 		const int16_t SLOW_SPEED = 120;
 		const int16_t MEDIUM_SPEED = 180;
 		const int16_t FAST_SPEED = 210;
-		cosnt int16_t LUDICROUS_SPEED = 255;
+		const int16_t LUDICROUS_SPEED = 255;
 
 		pid::DigitalController controller(0, 0, 0);
 
@@ -24,8 +25,8 @@ namespace course
 
 		void begin_tick()
 		{
-			control::set_mode(&follow_mode);
 			pet_id = 0;
+			control::set_mode(&follow_mode);
 		}
 
 		void follow_begin()
@@ -55,7 +56,6 @@ namespace course
 		void follow_tick()
 		{
 			enum { HOLD_AMT = 1, DELAY_AMT = 2 };
-			enum { PICKUP_COOLDOWN = 1000 };
 
 			if (menu::stop_falling())
 			{
@@ -116,12 +116,14 @@ namespace course
 		enum
 		{
 			ONE_TURN_BEGIN = 0,
-			ONE_TURN
+			ONE_TURN,
+			ONE_FWD_BEGIN,
+			ONE_FWD
 		};
 		enum
 		{
-			THREE_BACKUP_BEGIN = 0,
-			THREE_BACKUP
+			TWO_BACKUP_BEGIN = 0,
+			TWO_BACKUP
 		};
 
 		void adjust_tick()
@@ -210,6 +212,21 @@ namespace course
 					{
 						if (motion::left_theta > ONE_TURN_THETA)
 						{
+							state = ONE_FWD_BEGIN;
+						}
+						break;
+					}
+					case ONE_FWD_BEGIN:
+					{
+						state++;
+						motion::left.speed(MEDIUM_SPEED);
+						motion::right.speed(MEDIUM_SPEED);
+						motion::left_theta = 0;
+					}
+					case ONE_FWD:
+					{
+						if (motion::left_theta > ONE_FWD_THETA)
+						{
 							control::set_mode(&side_retrieval_mode);
 							return;
 						}
@@ -217,11 +234,11 @@ namespace course
 					}
 				}
 			}
-			else if (pet_id == 3)
+			else if (pet_id == 2)
 			{
 				switch (state)
 				{
-					case THREE_BACKUP_BEGIN:
+					case TWO_BACKUP_BEGIN:
 					{
 						state++;
 						motion::left.speed(-MEDIUM_SPEED);
@@ -229,9 +246,9 @@ namespace course
 						motion::left_theta = 0;
 						// fall through
 					}
-					case THREE_BACKUP:
+					case TWO_BACKUP:
 					{
-						if (motion::left_theta > -THREE_BACKUP_THETA)
+						if (motion::left_theta < TWO_BACKUP_THETA)
 						{
 							control::set_mode(&side_retrieval_mode);
 							return;

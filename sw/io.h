@@ -75,13 +75,15 @@ namespace io
 		 * there must be at least one analog input
 		 * otherwise the ADC interrupt will never end! 
 		 */
-		const extern In select;
-		const extern In tweak;
 		const extern In qrd_tape_left;
 		const extern In qrd_tape_right;
 		const extern In pd_left;
 		const extern In pd_right;
 		const extern In qrd_side;
+		const extern In pd_side;
+		
+		const extern In select;
+		const extern In tweak;
 	}
 	namespace Digital
 	{

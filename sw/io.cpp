@@ -96,6 +96,7 @@ namespace io
 		ANALOG_INPUT(pd_left, 2);
 		ANALOG_INPUT(pd_right, 3);
 		ANALOG_INPUT(qrd_side, 4);
+		ANALOG_INPUT(pd_side, 5);
 
 		ANALOG_INPUT(tweak, 6);
 		ANALOG_INPUT(select, 7);

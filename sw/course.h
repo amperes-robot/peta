@@ -1,9 +1,11 @@
 #pragma once
 
 #include "control.h"
+#include "io.h"
 
 namespace course
 {
+	extern uint8_t pet_id;
 	/**
 	 * Control modes for the course.
 	 */

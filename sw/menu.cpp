@@ -257,9 +257,6 @@ namespace menu
 		
 		void dbg_mode_begin()
 		{
-			motion::left_theta = 0;
-
-			motion::right.speed(-150);
 		}
 
 		void dbg_mode_tick()
@@ -269,6 +266,9 @@ namespace menu
 				control::set_mode(&menu::main_mode);
 				return;
 			}
+
+			course::pet_id = 3;
+			control::set_mode(&course::reverse_follow_mode);
 		}
 	}
 

@@ -8,19 +8,22 @@
 
 namespace course
 {
+	uint8_t pet_id;
+
 	namespace
 	{
 		enum { ARM_LO_THRESH = -23, ARM_HI_THRESH = -5 };
-		enum { ZERO_TURN_THETA = 45, ZERO_BACK_THETA = -50, ZERO_FWD_THETA = 40, ONE_TURN_THETA = 5, ONE_FWD_THETA = 18, TWO_BACKUP_THETA = -17 };
+		enum { ZERO_TURN_THETA = 34, ZERO_BACK_THETA = -50, ZERO_FWD_THETA = 40, ONE_TURN_THETA = 5, ONE_FWD_THETA = 6, TWO_BACKUP_THETA = -17 };
+		enum { THREE_FWD_THETA = 20, REV_TURN_THETA = 300 };
 		const PROGMEM uint16_t COOLDOWNS[] = { 0, 100, 400, 2000 };
 		const int16_t SLOW_SPEED = 120;
+		const int16_t MILD_SPEED = 150;
 		const int16_t MEDIUM_SPEED = 180;
 		const int16_t FAST_SPEED = 210;
 		const int16_t LUDICROUS_SPEED = 255;
 
 		pid::DigitalController controller(0, 0, 0);
 
-		uint8_t pet_id;
 		uint8_t retry_count;
 		uint8_t state;
 
@@ -110,10 +113,10 @@ namespace course
 		{
 			enum
 			{
-				TURN_BEGIN = 0,
-				TURN_A,
-				TURN_B,
-				FOLLOW
+				REV_TURN_BEGIN = 0,
+				REV_TURN_A,
+				REV_TURN_B,
+				REV_FOLLOW
 			};
 
 			if (menu::stop_falling())
@@ -124,31 +127,33 @@ namespace course
 
 			switch (state)
 			{
-				case TURN_BEGIN:
+				case REV_TURN_BEGIN:
 				{
-					state++;
 					motion::left.speed(-MEDIUM_SPEED);
 					motion::right.speed(MEDIUM_SPEED);
 					motion::right_theta = 0;
+					state++;
 					// fall through
 				}
-				case TURN_A:
+				case REV_TURN_A:
 				{
-					if (motion::right_theta > 30)
+					io::lcd.setCursor(0, 1);
+					io::lcd.print(motion::right_theta);
+					if (motion::right_theta > REV_TURN_THETA)
 					{
-						state = TURN_B;
+						state = REV_TURN_B;
 					}
 					break;
 				}
-				case TURN_B:
+				case REV_TURN_B:
 				{
 					if (io::Analog::qrd_tape_left.read() > menu::flw_thresh_left.value())
 					{
-						state = FOLLOW;
+						state = REV_FOLLOW;
 					}
 					break;
 				}
-				case FOLLOW:
+				case REV_FOLLOW:
 				{
 					int8_t in = pid::follow_value_digital();
 
@@ -161,6 +166,7 @@ namespace course
 				}
 			}
 
+			motion::update_enc();
 			io::delay_ms(10);
 		}
 
@@ -195,6 +201,11 @@ namespace course
 		{
 			TWO_BACKUP_BEGIN = 0,
 			TWO_BACKUP
+		};
+		enum
+		{
+			THREE_FWD_BEGIN = 0,
+			THREE_FWD
 		};
 
 		void adjust_tick()
@@ -330,8 +341,26 @@ namespace course
 			}
 			else if (pet_id == 3)
 			{
-				control::set_mode(&reverse_follow_mode);
-				return;
+				switch (state)
+				{
+					case THREE_FWD_BEGIN:
+					{
+						state++;
+						motion::left.speed(MEDIUM_SPEED);
+						motion::right.speed(MEDIUM_SPEED);
+						motion::left_theta = 0;
+						// fall through
+					}
+					case THREE_FWD:
+					{
+						if (motion::left_theta > THREE_FWD_THETA)
+						{
+							control::set_mode(&reverse_follow_mode);
+							return;
+						}
+						break;
+					}
+				}
 			}
 			else // should not reach here
 			{
@@ -395,13 +424,14 @@ namespace course
 				{
 					io::lcd.setCursor(0, 1);
 					io::lcd.print("drp");
-					motion::arm.speed(-FAST_SPEED);
+					motion::arm.speed(-MEDIUM_SPEED);
+					io::Timer::start();
 					state++;
 					// fall through
 				}
 				case DROPPING:
 				{
-					if (motion::arm_theta < ARM_LO_THRESH /*|| io::Digital::switch_upper.read()*/) // dropped
+					if (motion::arm_theta < ARM_LO_THRESH || io::Timer::time() > 1000 /*|| io::Digital::switch_upper.read()*/) // dropped
 					{
 						state = BRAKE_BEGIN;
 					}
@@ -422,7 +452,7 @@ namespace course
 				}
 				case BRAKE:
 				{
-					if (io::Timer::time() > 750)
+					if (io::Timer::time() > 400)
 					{
 						state = LIFTING_BEGIN;
 					}

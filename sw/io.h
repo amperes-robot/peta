@@ -150,5 +150,7 @@ namespace io
 		const extern In enc_left;
 		const extern In enc_right;
 		const extern In enc_arm;
+
+		const extern Out zipline_enable;
 	}
 }

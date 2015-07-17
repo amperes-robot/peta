@@ -12,8 +12,8 @@ namespace course
 
 	namespace
 	{
-		enum { ARM_LO_THRESH = -23, ARM_HI_THRESH = -5 };
-		enum { ZERO_TURN_THETA = 34, ZERO_BACK_THETA = -50, ZERO_FWD_THETA = 40, ONE_TURN_THETA = 5, ONE_FWD_THETA = 6, TWO_BACKUP_THETA = -17 };
+		enum { ARM_LO_THRESH = -25, ARM_HI_THRESH = -5 };
+		enum { ZERO_TURN_THETA = 36, ZERO_BACK_THETA = -50, ZERO_FWD_THETA = 37, ONE_TURN_THETA = 15, ONE_FWD_THETA = 6, TWO_BACKUP_THETA = -14 };
 		enum { THREE_FWD_THETA = 20, REV_TURN_THETA = 300 };
 		const PROGMEM uint16_t COOLDOWNS[] = { 0, 100, 400, 2000 };
 		const int16_t SLOW_SPEED = 120;
@@ -568,11 +568,12 @@ namespace course
 					{
 						state++;
 						motion::right.speed(MEDIUM_SPEED);
+						motion::right_theta = 0;
 						// fall through
 					}
 					case ZERO_BACK:
 					{
-						if (io::Analog::qrd_tape_left.read() > menu::flw_thresh_left.value())
+						if (motion::right_theta > 40 && io::Analog::qrd_tape_left.read() > menu::flw_thresh_left.value())
 						{
 							control::set_mode(&follow_mode);
 							return;

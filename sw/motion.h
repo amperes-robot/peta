@@ -11,15 +11,19 @@ namespace motion
 	{
 		public:
 			Motor(uint8_t id, uint8_t reverse);
-			void speed(int16_t id);
-			void halt();
+			int16_t speed(int16_t amt);
+			inline int16_t speed() const
+			{
+				return _speed;
+			}
 			inline int8_t dir() const
 			{
-				return _dir;
+				return _speed > 0 ? 1 : (_speed < 0 ? -1 : 0);
 			}
+			void halt();
 		private:
 			const uint8_t _id, _rev;
-			int8_t _dir;
+			int16_t _speed;
 	};
 
 	void init();

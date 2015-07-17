@@ -41,41 +41,38 @@ namespace motion
 
 	Motor::Motor(uint8_t id, uint8_t reverse) : _id(id), _rev(reverse)
 	{
-		_dir = 1;
+		_speed = 0;
 		dirs[_id]->write(true);
 		pinMode(digital_enables[_id], OUTPUT);
 
 		analogWrite(digital_enables[_id], 1); //make the motor glitch, force it to be zero.
 		analogWrite(enables[_id], 0);
 	}
-	void Motor::speed(int16_t speed)
+	int16_t Motor::speed(int16_t speed)
 	{
 		if (speed == 0)
 		{
 			halt();
-			return;
+			return 0;
 		}
 
 		if (speed > 255) speed = 255;
 		if (speed < -255) speed = -255;
 		uint8_t abs = speed > 0 ? speed : -speed;
-		int8_t dir;
 
 		if (speed >= 0)
 		{
-			dir = 1;
 			dirs[_id]->write(!_rev);
 			analogWrite(digital_enables[_id], abs);
 		}
 		else
 		{
-			dir = -1;
 			dirs[_id]->write(_rev);
 			analogWrite(digital_enables[_id], abs);
 		}
 
 		update_enc();
-		_dir = dir;
+		return _speed = speed;
 	}
 	void Motor::halt()
 	{

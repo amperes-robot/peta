@@ -4,7 +4,6 @@
 namespace io
 {
 	volatile uint16_t analog_pins[8] = { };
-	uint8_t analog_attached = 0;
 
 	namespace
 	{
@@ -63,15 +62,11 @@ namespace io
 		low = ADCL;
 		high = ADCH;
 
-		// io::log(io::string(analog_roundrobin) + " " + io::string((high << 8) | low));
 		analog_pins[analog_roundrobin++] = (high << 8) | low;
 		
-		while (!(analog_attached & (1 << analog_roundrobin)))
+		if (analog_roundrobin >= 8)
 		{
-			if (++analog_roundrobin >= 8)
-			{
-				analog_roundrobin = 0;
-			}
+			analog_roundrobin = 0;
 		}
 
 		start_adc();

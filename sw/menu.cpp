@@ -257,7 +257,6 @@ namespace menu
 		
 		void dbg_mode_begin()
 		{
-			io::Timer::start();
 		}
 
 		void dbg_mode_tick()
@@ -268,25 +267,11 @@ namespace menu
 				return;
 			}
 
-			if (io::Timer::time() > 2000)
-			{
-				io::Digital::zipline_enable.write(1);
-				io::Timer::start();
-			}
-			else if (io::Timer::time() > 1000)
-			{
-				io::Digital::zipline_enable.write(0);
-			}
-
 			motion::left.speed(((int16_t) io::Analog::select.read() - 512)/ 2);
 			io::lcd.clear();
 			io::lcd.home();
 			io::lcd.print("motor speed ");
 			io::lcd.print(motion::left.speed());
-			io::lcd.setCursor(0, 1);
-			io::lcd.print("port E3 ");
-			io::lcd.print(io::Digital::zipline_enable.read());
-
 			io::delay_ms(10);
 		}
 	}

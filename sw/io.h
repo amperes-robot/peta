@@ -5,7 +5,6 @@
 namespace io
 {
 	extern volatile uint16_t analog_pins[8];
-	extern uint8_t analog_attached;
 	extern LiquidCrystal lcd;
 
 	/**
@@ -55,7 +54,6 @@ namespace io
 				In(const In&) = delete;
 				inline In(uint8_t pin) : _pin(pin)
 				{
-					analog_attached |= 1 << pin;
 				}
 
 				/**

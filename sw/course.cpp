@@ -22,7 +22,8 @@ namespace course
 		const int16_t FAST_SPEED = 210;
 		const int16_t LUDICROUS_SPEED = 255;
 
-		pid::DigitalController controller(0, 0, 0);
+		pid::DigitalController dcontroller(0, 0, 0);
+		pid::Controller acontroller(0, 0, 0);
 
 		uint8_t retry_count;
 		uint8_t state;
@@ -44,10 +45,10 @@ namespace course
 			
 			if (pet_id == 0)
 			{
-				controller.reset();
-				controller.gain_p = menu::flw_gain_p.value();
-				controller.gain_i = menu::flw_gain_i.value();
-				controller.gain_d = menu::flw_gain_d.value();
+				dcontroller.reset();
+				dcontroller.gain_p = menu::flw_gain_p.value();
+				dcontroller.gain_i = menu::flw_gain_i.value();
+				dcontroller.gain_d = menu::flw_gain_d.value();
 			}
 		}
 
@@ -86,8 +87,8 @@ namespace course
 
 			int8_t in = pid::follow_value_digital();
 
-			controller.in(in);
-			int16_t out = controller.out();
+			dcontroller.in(in);
+			int16_t out = dcontroller.out();
 
 			motion::vel(menu::flw_vel.value());
 			motion::dir(out);
@@ -97,10 +98,10 @@ namespace course
 
 		void reverse_follow_begin()
 		{
-			controller.reset();
-			controller.gain_p = menu::flw_gain_p.value();
-			controller.gain_i = menu::flw_gain_i.value();
-			controller.gain_d = menu::flw_gain_d.value();
+			dcontroller.reset();
+			dcontroller.gain_p = menu::flw_gain_p.value();
+			dcontroller.gain_i = menu::flw_gain_i.value();
+			dcontroller.gain_d = menu::flw_gain_d.value();
 
 			io::lcd.home();
 			io::lcd.clear();
@@ -157,8 +158,8 @@ namespace course
 				{
 					int8_t in = pid::follow_value_digital();
 
-					controller.in(in);
-					int16_t out = controller.out();
+					dcontroller.in(in);
+					int16_t out = dcontroller.out();
 
 					motion::vel(menu::flw_vel.value());
 					motion::dir(out);
@@ -628,10 +629,10 @@ namespace course
 			io::lcd.home();
 			io::lcd.print(TO_FSTR(strings::home));
 			
-			controller.reset();
-			controller.gain_p = menu::home_gain_p.value();
-			controller.gain_i = menu::home_gain_i.value();
-			controller.gain_d = menu::home_gain_d.value();
+			acontroller.reset();
+			acontroller.gain_p = menu::home_gain_p.value();
+			acontroller.gain_i = menu::home_gain_i.value();
+			acontroller.gain_d = menu::home_gain_d.value();
 		}
 
 		void beacon_homing_tick()
@@ -651,18 +652,24 @@ namespace course
 				return;
 			}
 
-			int16_t in = (int32_t) (left - right) * 10 / (left + right);
+			int16_t in = ((int32_t) left - right) * 50 / (left + right);
 			int16_t thresh = menu::home_thresh.value();
 
 			io::lcd.clear();
 			io::lcd.home();
+			io::lcd.print(left);
+			io::lcd.print(' ');
+			io::lcd.print(right);
+			io::lcd.print(' ');
 			io::lcd.print(in);
 
-			controller.in(in - thresh);
-			int16_t out = controller.out();
+			acontroller.in(in - thresh);
+			int16_t out = acontroller.out();
 
 			motion::vel(menu::home_vel.value());
 			motion::dir(out);
+			
+			io::delay_ms(20);
 		}
 
 		void parallel_park_begin()

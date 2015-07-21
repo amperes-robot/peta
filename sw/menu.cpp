@@ -267,12 +267,7 @@ namespace menu
 				return;
 			}
 
-			motion::left.speed(((int16_t) io::Analog::select.read() - 512)/ 2);
-			io::lcd.clear();
-			io::lcd.home();
-			io::lcd.print("motor speed ");
-			io::lcd.print(motion::left.speed());
-			io::delay_ms(10);
+			control::set_mode(&course::beacon_homing_mode);
 		}
 	}
 

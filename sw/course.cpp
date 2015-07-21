@@ -12,9 +12,9 @@ namespace course
 
 	namespace
 	{
-		enum { ARM_LO_THRESH = -25, ARM_HI_THRESH = -5 };
-		enum { ZERO_TURN_THETA = 36, ZERO_BACK_THETA = -50, ZERO_FWD_THETA = 37, ONE_TURN_THETA = 15, ONE_FWD_THETA = 6, TWO_BACKUP_THETA = -14 };
-		enum { THREE_FWD_THETA = 20, REV_TURN_THETA = 300 };
+		enum { ARM_LO_THRESH = -26, ARM_HI_THRESH = -5 };
+		enum { ZERO_TURN_THETA = 37, ZERO_BACK_THETA = -55, ZERO_FWD_THETA = 37, ONE_TURN_THETA = 17, ONE_FWD_THETA = 15, TWO_BACKUP_THETA = -9 };
+		enum { THREE_FWD_THETA = 20, REV_TURN_THETA = 200 };
 		const PROGMEM uint16_t COOLDOWNS[] = { 0, 100, 400, 2000 };
 		const int16_t SLOW_SPEED = 120;
 		const int16_t MILD_SPEED = 150;
@@ -323,13 +323,16 @@ namespace course
 					case TWO_BACKUP_BEGIN:
 					{
 						state++;
-						motion::left.speed(-MEDIUM_SPEED);
-						motion::right.speed(-MEDIUM_SPEED);
+						motion::left.speed(-SLOW_SPEED);
+						motion::right.speed(-SLOW_SPEED);
 						motion::left_theta = 0;
 						// fall through
 					}
 					case TWO_BACKUP:
 					{
+						io::lcd.clear();
+						io::lcd.home();
+						io::lcd.print(motion::left_theta);
 						if (motion::left_theta < TWO_BACKUP_THETA)
 						{
 							control::set_mode(&side_retrieval_mode);
@@ -425,7 +428,7 @@ namespace course
 					io::lcd.setCursor(0, 1);
 					io::lcd.print("drp");
 					motion::arm.speed(-MEDIUM_SPEED);
-					io::Timer::start();
+					io::Timer::start(); 
 					state++;
 					// fall through
 				}
@@ -648,8 +651,12 @@ namespace course
 				return;
 			}
 
-			int16_t in = left - right;
+			int16_t in = (int32_t) (left - right) * 10 / (left + right);
 			int16_t thresh = menu::home_thresh.value();
+
+			io::lcd.clear();
+			io::lcd.home();
+			io::lcd.print(in);
 
 			controller.in(in - thresh);
 			int16_t out = controller.out();

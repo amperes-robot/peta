@@ -34,10 +34,10 @@ namespace motion
 	volatile int16_t right_theta;
 	volatile int8_t arm_theta;
 
-	Motor left(0, true);
-	Motor right(1, true);
-	Motor arm(2, true);
-	Motor zipline(3, true);
+	Motor left(0, 0);
+	Motor right(1, 1);
+	Motor arm(2, 0);
+	Motor zipline(3, 1);
 
 	Motor::Motor(uint8_t id, uint8_t reverse) : _id(id), _rev(reverse)
 	{
@@ -82,6 +82,7 @@ namespace motion
 	volatile uint32_t x;
 	volatile uint32_t y;
 	volatile uint16_t theta;
+	volatile int32_t raw_theta;
 
 	void init()
 	{
@@ -112,8 +113,10 @@ namespace motion
 
 	void update_enc()
 	{
-		left_theta += enc0_counts * left.dir();
-		right_theta += enc1_counts * right.dir();
+		int16_t left_ticks = enc0_counts * left.dir();
+		int16_t right_ticks = enc1_counts * right.dir();
+		left_theta += left_ticks;
+		right_theta += right_ticks;
 		arm_theta += enc2_counts * arm.dir();
 
 		// int8_t enc0 = enc0_counts * left.dir();
@@ -125,6 +128,8 @@ namespace motion
 		// theta += dth;
 		// x += math::cos(theta) * vv / math::full;
 		// y += math::sin(theta) * vv / math::full;
+
+		raw_theta += right_ticks - left_ticks;
 
 		enc0_counts = 0;
 		enc1_counts = 0;

@@ -267,7 +267,8 @@ namespace menu
 				return;
 			}
 
-			control::set_mode(&course::beacon_homing_mode);
+			course::pet_id = 3;
+			control::set_mode(&course::follow_mode);
 		}
 	}
 

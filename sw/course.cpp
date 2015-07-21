@@ -14,7 +14,7 @@ namespace course
 	{
 		enum { ARM_LO_THRESH = -26, ARM_HI_THRESH = -5 };
 		enum { ZERO_TURN_THETA = 37, ZERO_BACK_THETA = -55, ZERO_FWD_THETA = 37, ONE_TURN_THETA = 17, ONE_FWD_THETA = 15, TWO_BACKUP_THETA = -9 };
-		enum { THREE_FWD_THETA = 20, REV_TURN_THETA = 200 };
+		enum { THREE_FWD_THETA = 20, THREE_TURN_THETA = 20, REV_TURN_THETA = 200 };
 		const PROGMEM uint16_t COOLDOWNS[] = { 0, 100, 400, 2000 };
 		const int16_t SLOW_SPEED = 120;
 		const int16_t MILD_SPEED = 150;
@@ -359,7 +359,8 @@ namespace course
 					{
 						if (motion::left_theta > THREE_FWD_THETA)
 						{
-							control::set_mode(&reverse_follow_mode);
+							// control::set_mode(&reverse_follow_mode);
+							control::set_mode(&recover_mode);
 							return;
 						}
 						break;
@@ -608,6 +609,29 @@ namespace course
 					}
 				}
 			}
+			else if (pet_id == 3 && true)
+			{
+				switch (state)
+				{
+					case THREE_FWD_BEGIN:
+					{
+						motion::left.speed(MEDIUM_SPEED);
+						motion::right.speed(SLOW_SPEED);
+						motion::left_theta = 0;
+						state++;
+						// fall through
+					}
+					case THREE_FWD:
+					{
+						if (motion::left_theta > THREE_TURN_THETA)
+						{
+							control::set_mode(&beacon_homing_mode);
+							return;
+						}
+						break;
+					}
+				}
+			}
 			else
 			{
 				control::set_mode(&follow_mode);
@@ -646,7 +670,7 @@ namespace course
 			uint16_t left = io::Analog::pd_left.read();
 			uint16_t right = io::Analog::pd_right.read();
 
-			if ((left + right) / 2 > menu::beacon_thresh.value()) // close enough to the beacon
+			if (left + right > menu::beacon_thresh.value()) // close enough to the beacon
 			{
 				control::set_mode(&parallel_park_mode);
 				return;
@@ -655,21 +679,18 @@ namespace course
 			int16_t in = ((int32_t) left - right) * 50 / (left + right);
 			int16_t thresh = menu::home_thresh.value();
 
-			io::lcd.clear();
-			io::lcd.home();
-			io::lcd.print(left);
-			io::lcd.print(' ');
-			io::lcd.print(right);
-			io::lcd.print(' ');
 			io::lcd.print(in);
 
 			acontroller.in(in - thresh);
 			int16_t out = acontroller.out();
 
+			io::lcd.setCursor(0, 1);
+			io::lcd.print(out);
+
 			motion::vel(menu::home_vel.value());
 			motion::dir(out);
 			
-			io::delay_ms(20);
+			io::delay_ms(50);
 		}
 
 		void parallel_park_begin()

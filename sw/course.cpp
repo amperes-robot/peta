@@ -616,13 +616,16 @@ namespace course
 					case THREE_FWD_BEGIN:
 					{
 						motion::left.speed(MEDIUM_SPEED);
-						motion::right.speed(SLOW_SPEED);
+						motion::right.halt();
 						motion::left_theta = 0;
 						state++;
 						// fall through
 					}
 					case THREE_FWD:
 					{
+						io::lcd.clear();
+						io::lcd.home();
+						io::lcd.print(motion::left_theta);
 						if (motion::left_theta > THREE_TURN_THETA)
 						{
 							control::set_mode(&beacon_homing_mode);
@@ -679,6 +682,7 @@ namespace course
 			int16_t in = ((int32_t) left - right) * 50 / (left + right);
 			int16_t thresh = menu::home_thresh.value();
 
+			io::lcd.clear();
 			io::lcd.print(in);
 
 			acontroller.in(in - thresh);

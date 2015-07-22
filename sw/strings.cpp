@@ -25,6 +25,7 @@ namespace strings
 	DEFN_FSTR(home_vel);
 
 	DEFN_FSTR(beacon_thresh);
+	DEFN_FSTR(beacon_theta);
 
 	DEFN_FSTR(home);
 	DEFN_FSTR(retrieval);

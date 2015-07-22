@@ -52,7 +52,7 @@ namespace menu
 			const uint16_t _default;
 	};
 
-	const size_t N_OPTS = 14;
+	const size_t N_OPTS = 15;
 	extern Opt flw_gain_p;
 	extern Opt flw_gain_i;
 	extern Opt flw_gain_d;
@@ -70,6 +70,7 @@ namespace menu
 	extern Opt home_vel;
 
 	extern Opt beacon_thresh;
+	extern Opt beacon_theta;
 
 	/**
 	 * Menu modes.

@@ -33,6 +33,7 @@ namespace strings
 	DECL_FSTR(home_vel);
 
 	DECL_FSTR(beacon_thresh);
+	DECL_FSTR(beacon_theta);
 
 	DECL_FSTR(home);
 	DECL_FSTR(retrieval);

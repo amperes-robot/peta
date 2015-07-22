@@ -12,9 +12,10 @@ namespace course
 
 	namespace
 	{
-		enum { ARM_LO_THRESH = -26, ARM_HI_THRESH = -5 };
+		enum { ARM_LO_THRESH = -26, ARM_HI_THRESH = -5, ARM_MID_THRESH = -10 };
 		enum { ZERO_TURN_THETA = 37, ZERO_BACK_THETA = -55, ZERO_FWD_THETA = 37, ONE_TURN_THETA = 17, ONE_FWD_THETA = 15, TWO_BACKUP_THETA = -9 };
-		enum { THREE_FWD_THETA = 20, THREE_TURN_THETA = 20, REV_TURN_THETA = 200 };
+		enum { THREE_FWD_THETA = 20, THREE_TURN_THETA = 27, REV_TURN_THETA = 200 };
+		enum { PAR_FWD_A_THETA = 300 };
 		const PROGMEM uint16_t COOLDOWNS[] = { 0, 100, 400, 2000 };
 		const int16_t SLOW_SPEED = 120;
 		const int16_t MILD_SPEED = 150;
@@ -43,13 +44,10 @@ namespace course
 			io::Timer::start();
 			state = 0;
 			
-			if (pet_id == 0)
-			{
-				dcontroller.reset();
-				dcontroller.gain_p = menu::flw_gain_p.value();
-				dcontroller.gain_i = menu::flw_gain_i.value();
-				dcontroller.gain_d = menu::flw_gain_d.value();
-			}
+			dcontroller.reset();
+			dcontroller.gain_p = menu::flw_gain_p.value();
+			dcontroller.gain_i = menu::flw_gain_i.value();
+			dcontroller.gain_d = menu::flw_gain_d.value();
 		}
 
 		void follow_tick()
@@ -400,6 +398,16 @@ namespace course
 
 		void side_retrieval_tick()
 		{
+			int8_t drop_thresh;
+			if (pet_id < 4)
+			{
+				drop_thresh = ARM_LO_THRESH;
+			}
+			else
+			{
+				drop_thresh = ARM_HI_THRESH;
+			}
+
 			enum { N_RETRIES = 2 };
 			enum
 			{
@@ -436,11 +444,11 @@ namespace course
 				}
 				case DROPPING:
 				{
-					if (motion::arm_theta < ARM_LO_THRESH || io::Timer::time() > 1000 /*|| io::Digital::switch_upper.read()*/) // dropped
+					if (motion::arm_theta < drop_thresh || io::Timer::time() > 1000 /*|| io::Digital::switch_upper.read()*/) // dropped
 					{
 						state = BRAKE_BEGIN;
 					}
-					else if (motion::arm_theta < ARM_LO_THRESH)
+					else if (motion::arm_theta < drop_thresh)
 					{
 						state = DONE_BEGIN; // not detected, abort
 					}
@@ -609,7 +617,7 @@ namespace course
 					}
 				}
 			}
-			else if (pet_id == 3 && true)
+			else if (pet_id == 3)
 			{
 				switch (state)
 				{
@@ -635,6 +643,11 @@ namespace course
 					}
 				}
 			}
+			else if (pet_id == 4)
+			{
+				control::set_mode(&parallel_park_mode);
+				return;
+			}
 			else
 			{
 				control::set_mode(&follow_mode);
@@ -652,6 +665,8 @@ namespace course
 
 		void beacon_homing_begin()
 		{
+			pet_id = 4;
+
 			io::lcd.clear();
 			io::lcd.home();
 			io::lcd.print(TO_FSTR(strings::home));
@@ -660,6 +675,10 @@ namespace course
 			acontroller.gain_p = menu::home_gain_p.value();
 			acontroller.gain_i = menu::home_gain_i.value();
 			acontroller.gain_d = menu::home_gain_d.value();
+
+			motion::update_enc();
+			motion::left_theta = 0;
+			motion::right_theta = 0;
 		}
 
 		void beacon_homing_tick()
@@ -673,7 +692,7 @@ namespace course
 			uint16_t left = io::Analog::pd_left.read();
 			uint16_t right = io::Analog::pd_right.read();
 
-			if (left + right > menu::beacon_thresh.value()) // close enough to the beacon
+			if ((motion::left_theta + motion::right_theta) / 2 > menu::beacon_theta.value()) // close enough to the beacon
 			{
 				control::set_mode(&parallel_park_mode);
 				return;
@@ -710,12 +729,14 @@ namespace course
 		{
 			enum
 			{
-				ENTRY_BEGIN = 0,
+				FORWARD_A_BEGIN = 0,
+				FORWARD_A,
+				ENTRY_BEGIN,
 				ENTRY,
 				BACK_BEGIN,
 				BACK,
-				FORWARD_BEGIN,
-				FORWARD
+				FORWARD_B_BEGIN,
+				FORWARD_B
 			};
 
 			if (menu::stop_falling())
@@ -726,6 +747,23 @@ namespace course
 
 			switch (state)
 			{
+				case FORWARD_A_BEGIN:
+				{
+					state++;
+					motion::left.speed(MEDIUM_SPEED);
+					motion::right.speed(MEDIUM_SPEED);
+					motion::left_theta = 0;
+					motion::right_theta = 0;
+					// fall through
+				}
+				case FORWARD_A:
+				{
+					if ((motion::right_theta + motion::left_theta) / 2 > PAR_FWD_A_THETA)
+					{
+						state = ENTRY_BEGIN;
+					}
+					break;
+				}
 				case ENTRY_BEGIN:
 				{
 					state++;
@@ -736,7 +774,7 @@ namespace course
 				}
 				case ENTRY: // go in
 				{
-					if (motion::right_theta > 100)
+					if (motion::right_theta > 30)
 					{
 						state = BACK_BEGIN;
 					}
@@ -753,13 +791,13 @@ namespace course
 				}
 				case BACK:
 				{
-					if ((motion::right_theta + motion::left_theta) / 2 < -100)
+					if ((motion::right_theta + motion::left_theta) / 2 < -40)
 					{
-						state = FORWARD_BEGIN;
+						state = FORWARD_B_BEGIN;
 					}
 					break;
 				}
-				case FORWARD_BEGIN:
+				case FORWARD_B_BEGIN:
 				{
 					state++;
 					motion::left.speed(SLOW_SPEED);
@@ -767,7 +805,7 @@ namespace course
 					motion::left_theta = 0;
 					// fall through
 				}
-				case FORWARD:
+				case FORWARD_B:
 				{
 					if (motion::left_theta > 50)
 					{
@@ -784,6 +822,8 @@ namespace course
 		void rubble_excavation_begin()
 		{
 			state = 0;
+			motion::left.halt();
+			motion::right.halt();
 		}
 
 		void rubble_excavation_tick()

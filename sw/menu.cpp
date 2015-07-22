@@ -328,12 +328,12 @@ namespace menu
 	Opt flw_thresh_side(TO_FSTR(strings::flw_thresh_side), 360);
 	Opt flw_recover(TO_FSTR(strings::flw_recover), 130);
 
-	Opt beacon_thresh(TO_FSTR(strings::beacon_thresh), 220, 2);
-	Opt beacon_theta(TO_FSTR(strings::beacon_theta), 50, 3);
+	Opt beacon_thresh(TO_FSTR(strings::beacon_thresh), 0, 4);
+	Opt beacon_theta(TO_FSTR(strings::beacon_theta), 110, 3);
 
 	Opt home_gain_p(TO_FSTR(strings::home_p), 400);
 	Opt home_gain_i(TO_FSTR(strings::home_i), 0);
-	Opt home_gain_d(TO_FSTR(strings::home_d), 60);
+	Opt home_gain_d(TO_FSTR(strings::home_d), 40);
 	Opt home_thresh(TO_FSTR(strings::home_thresh), 0, 8);
 	Opt home_vel(TO_FSTR(strings::home_vel), 100);
 

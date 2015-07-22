@@ -12,9 +12,10 @@ namespace course
 
 	namespace
 	{
-		enum { ARM_LO_THRESH = -26, ARM_HI_THRESH = -5, ARM_MID_THRESH = -10 };
+		enum { ARM_LO_THRESH = -26, ARM_HI_THRESH = -5, ARM_MID_THRESH = -15 };
 		enum { ZERO_TURN_THETA = 37, ZERO_BACK_THETA = -55, ZERO_FWD_THETA = 37, ONE_TURN_THETA = 17, ONE_FWD_THETA = 15, TWO_BACKUP_THETA = -9 };
-		enum { THREE_FWD_THETA = 20, THREE_TURN_THETA = 27, REV_TURN_THETA = 200 };
+		enum { THREE_FWD_THETA = 20, THREE_TURN_THETA = 27 };
+		enum { REV_TURN_THETA = 150, REV_BACK_THETA = -50 };
 		enum { PAR_FWD_A_THETA = 300 };
 		const PROGMEM uint16_t COOLDOWNS[] = { 0, 100, 400, 2000 };
 		const int16_t SLOW_SPEED = 120;
@@ -80,6 +81,7 @@ namespace course
 			}
 			else
 			{
+
 				state = 0; // debouncer failed
 			}
 
@@ -112,9 +114,10 @@ namespace course
 		{
 			enum
 			{
-				REV_TURN_BEGIN = 0,
-				REV_TURN_A,
-				REV_TURN_B,
+				REV_BACK_BEGIN = 0,
+				REV_BACK,
+				REV_TURN_BEGIN,
+				REV_TURN,
 				REV_FOLLOW
 			};
 
@@ -126,6 +129,22 @@ namespace course
 
 			switch (state)
 			{
+				case REV_BACK_BEGIN:
+				{
+					motion::left.speed(-MEDIUM_SPEED);
+					motion::right.speed(-MEDIUM_SPEED);
+					motion::right_theta = 0;
+					state++;
+					// fall through
+				}
+				case REV_BACK:
+				{
+					if (motion::right_theta < REV_BACK_THETA)
+					{
+						state = REV_TURN_BEGIN;
+					}
+					break;
+				}
 				case REV_TURN_BEGIN:
 				{
 					motion::left.speed(-MEDIUM_SPEED);
@@ -134,19 +153,9 @@ namespace course
 					state++;
 					// fall through
 				}
-				case REV_TURN_A:
+				case REV_TURN:
 				{
-					io::lcd.setCursor(0, 1);
-					io::lcd.print(motion::right_theta);
 					if (motion::right_theta > REV_TURN_THETA)
-					{
-						state = REV_TURN_B;
-					}
-					break;
-				}
-				case REV_TURN_B:
-				{
-					if (io::Analog::qrd_tape_left.read() > menu::flw_thresh_left.value())
 					{
 						state = REV_FOLLOW;
 					}
@@ -405,7 +414,7 @@ namespace course
 			}
 			else
 			{
-				drop_thresh = ARM_HI_THRESH;
+				drop_thresh = ARM_MID_THRESH;
 			}
 
 			enum { N_RETRIES = 2 };
@@ -475,7 +484,7 @@ namespace course
 				{
 					io::lcd.setCursor(0, 1);
 					io::lcd.print("lft");
-					motion::arm.speed(MEDIUM_SPEED);
+					motion::arm.speed(MEDIUM_SPEED - 15);
 					state++;
 					io::Timer::start();
 					// fall through
@@ -645,7 +654,9 @@ namespace course
 			}
 			else if (pet_id == 4)
 			{
-				control::set_mode(&parallel_park_mode);
+				control::set_mode(&reverse_follow_mode);
+				// motion::left.halt();
+				// motion::right.halt();
 				return;
 			}
 			else
@@ -694,11 +705,11 @@ namespace course
 
 			if ((motion::left_theta + motion::right_theta) / 2 > menu::beacon_theta.value()) // close enough to the beacon
 			{
-				control::set_mode(&parallel_park_mode);
+				control::set_mode(&side_retrieval_mode);
 				return;
 			}
 
-			int16_t in = ((int32_t) left - right) * 50 / (left + right);
+			int16_t in = ((int32_t) right - left) * 50 / (left + right);
 			int16_t thresh = menu::home_thresh.value();
 
 			io::lcd.clear();

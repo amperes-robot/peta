@@ -175,6 +175,7 @@ namespace course
 
 					if (io::Timer::time() > menu::rev_dead_begin.value() && io::Timer::time() < menu::rev_dead_end.value())
 					{
+						motion::dir(0);
 						pid::digital_recovery = -((int8_t) menu::flw_drecover.value());
 						break;
 					}

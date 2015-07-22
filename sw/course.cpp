@@ -15,7 +15,7 @@ namespace course
 		enum { ARM_LO_THRESH = -26, ARM_HI_THRESH = -5, ARM_MID_THRESH = -15 };
 		enum { ZERO_TURN_THETA = 37, ZERO_BACK_THETA = -55, ZERO_FWD_THETA = 37, ONE_TURN_THETA = 17, ONE_FWD_THETA = 15, TWO_BACKUP_THETA = -9 };
 		enum { THREE_FWD_THETA = 20, THREE_TURN_THETA = 27 };
-		enum { REV_TURN_THETA = 150, REV_BACK_THETA = -50 };
+		enum { REV_TURN_THETA = 150, REV_BACK_THETA = -140 };
 		enum { PAR_FWD_A_THETA = 300 };
 		const PROGMEM uint16_t COOLDOWNS[] = { 0, 100, 400, 2000 };
 		const int16_t SLOW_SPEED = 120;
@@ -155,7 +155,7 @@ namespace course
 				}
 				case REV_TURN:
 				{
-					if (motion::right_theta > REV_TURN_THETA)
+					if (motion::right_theta > REV_TURN_THETA && io::Analog::qrd_tape_left.read() > menu::flw_thresh_left.value())
 					{
 						state = REV_FOLLOW;
 					}

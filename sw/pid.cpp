@@ -72,11 +72,11 @@ namespace pid
 
 		if (left) // previous sensor on tape
 		{
-			previous = -5;
+			previous = -((int8_t) menu::flw_drecover.value());
 		}
 		else if (right)
 		{
-			previous = 5;
+			previous = menu::flw_drecover.value();
 		}
 
 		if (!left && !right) // both lost

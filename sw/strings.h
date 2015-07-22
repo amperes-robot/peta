@@ -25,6 +25,7 @@ namespace strings
 	DECL_FSTR(flw_thresh_side);
 	DECL_FSTR(flw_thresh_right);
 	DECL_FSTR(flw_recover);
+	DECL_FSTR(flw_drecover);
 
 	DECL_FSTR(home_p);
 	DECL_FSTR(home_i);

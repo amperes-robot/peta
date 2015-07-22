@@ -322,18 +322,19 @@ namespace menu
 	Opt flw_gain_p(TO_FSTR(strings::flw_p), 900, 1);
 	Opt flw_gain_i(TO_FSTR(strings::flw_i), 0, 5);
 	Opt flw_gain_d(TO_FSTR(strings::flw_d), 20, 2);
-	Opt flw_vel(TO_FSTR(strings::flw_vel), 150, 4);
-	Opt flw_thresh_left(TO_FSTR(strings::flw_thresh_left), 150);
-	Opt flw_thresh_right(TO_FSTR(strings::flw_thresh_right), 150);
-	Opt flw_thresh_side(TO_FSTR(strings::flw_thresh_side), 360);
+	Opt flw_vel(TO_FSTR(strings::flw_vel), 180, 4);
+	Opt flw_thresh_left(TO_FSTR(strings::flw_thresh_left), 165);
+	Opt flw_thresh_right(TO_FSTR(strings::flw_thresh_right), 165);
+	Opt flw_thresh_side(TO_FSTR(strings::flw_thresh_side), 280);
 	Opt flw_recover(TO_FSTR(strings::flw_recover), 130);
+	Opt flw_drecover(TO_FSTR(strings::flw_drecover), 5, 10);
 
 	Opt beacon_thresh(TO_FSTR(strings::beacon_thresh), 0, 4);
 	Opt beacon_theta(TO_FSTR(strings::beacon_theta), 110, 3);
 
 	Opt home_gain_p(TO_FSTR(strings::home_p), 400);
 	Opt home_gain_i(TO_FSTR(strings::home_i), 0);
-	Opt home_gain_d(TO_FSTR(strings::home_d), 40);
+	Opt home_gain_d(TO_FSTR(strings::home_d), 10);
 	Opt home_thresh(TO_FSTR(strings::home_thresh), 0, 8);
 	Opt home_vel(TO_FSTR(strings::home_vel), 100);
 

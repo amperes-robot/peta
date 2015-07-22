@@ -64,24 +64,25 @@ namespace pid
 		}
 	}
 
+	int8_t digital_recovery = 0;
+
 	int8_t follow_value_digital()
 	{
-		static int8_t previous = 0;
 		int8_t left = io::Analog::qrd_tape_left.read() > menu::flw_thresh_left.value();
 		int8_t right = io::Analog::qrd_tape_right.read() > menu::flw_thresh_right.value();
 
 		if (left) // previous sensor on tape
 		{
-			previous = -((int8_t) menu::flw_drecover.value());
+			digital_recovery = -((int8_t) menu::flw_drecover.value());
 		}
 		else if (right)
 		{
-			previous = menu::flw_drecover.value();
+			digital_recovery = menu::flw_drecover.value();
 		}
 
 		if (!left && !right) // both lost
 		{
-			return previous;
+			return digital_recovery;
 		}
 		else if (left && right) // both on
 		{

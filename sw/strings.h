@@ -40,4 +40,7 @@ namespace strings
 	DECL_FSTR(retrieval);
 	DECL_FSTR(view);
 	DECL_FSTR(ppark);
+
+	DECL_FSTR(rev_dbegin);
+	DECL_FSTR(rev_dend);
 }

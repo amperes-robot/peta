@@ -39,6 +39,7 @@ namespace pid
 	int8_t follow_value_digital();
 
 	extern const control::Mode follow_mode;
+	extern int8_t digital_recovery;
 
 #ifdef IO_SIM
 	extern TestCallback test_suite[];

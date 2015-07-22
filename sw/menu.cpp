@@ -329,14 +329,15 @@ namespace menu
 	Opt flw_recover(TO_FSTR(strings::flw_recover), 130);
 	Opt flw_drecover(TO_FSTR(strings::flw_drecover), 5, 10);
 
-	Opt beacon_thresh(TO_FSTR(strings::beacon_thresh), 0, 4);
 	Opt beacon_theta(TO_FSTR(strings::beacon_theta), 110, 3);
 
 	Opt home_gain_p(TO_FSTR(strings::home_p), 400);
 	Opt home_gain_i(TO_FSTR(strings::home_i), 0);
 	Opt home_gain_d(TO_FSTR(strings::home_d), 10);
-	Opt home_thresh(TO_FSTR(strings::home_thresh), 0, 8);
 	Opt home_vel(TO_FSTR(strings::home_vel), 100);
+
+	Opt rev_dead_begin(TO_FSTR(strings::rev_dbegin), 400);
+	Opt rev_dead_end(TO_FSTR(strings::rev_dend), 600);
 
 	const control::Mode main_mode
 	{

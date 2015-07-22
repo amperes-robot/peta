@@ -13,9 +13,9 @@ namespace course
 	namespace
 	{
 		enum { ARM_LO_THRESH = -26, ARM_HI_THRESH = -5, ARM_MID_THRESH = -15 };
-		enum { ZERO_TURN_THETA = 37, ZERO_BACK_THETA = -55, ZERO_FWD_THETA = 37, ONE_TURN_THETA = 17, ONE_FWD_THETA = 15, TWO_BACKUP_THETA = -9 };
-		enum { THREE_FWD_THETA = 20, THREE_TURN_THETA = 27 };
-		enum { REV_TURN_THETA = 150, REV_BACK_THETA = -140 };
+		enum { ZERO_TURN_THETA = 37, ZERO_BACK_THETA = -55, ZERO_FWD_THETA = 37, ONE_TURN_THETA = 5, ONE_FWD_THETA = 15, TWO_BACKUP_THETA = -9 };
+		enum { THREE_FWD_THETA = 20, THREE_TURN_THETA = 20 };
+		enum { REV_TURN_THETA = 150, REV_BACK_THETA = -140, REV_DEAD_BEGIN = 400, REV_DEAD_END = 600 };
 		enum { PAR_FWD_A_THETA = 300 };
 		const PROGMEM uint16_t COOLDOWNS[] = { 0, 100, 400, 2000 };
 		const int16_t SLOW_SPEED = 120;
@@ -81,7 +81,6 @@ namespace course
 			}
 			else
 			{
-
 				state = 0; // debouncer failed
 			}
 
@@ -118,6 +117,7 @@ namespace course
 				REV_BACK,
 				REV_TURN_BEGIN,
 				REV_TURN,
+				REV_FOLLOW_BEGIN,
 				REV_FOLLOW
 			};
 
@@ -157,12 +157,28 @@ namespace course
 				{
 					if (motion::right_theta > REV_TURN_THETA && io::Analog::qrd_tape_left.read() > menu::flw_thresh_left.value())
 					{
-						state = REV_FOLLOW;
+						state = REV_FOLLOW_BEGIN;
 					}
 					break;
 				}
+				case REV_FOLLOW_BEGIN:
+				{
+					state++;
+					io::Timer::start();
+					// fall through
+				}
 				case REV_FOLLOW:
 				{
+					io::lcd.clear();
+					io::lcd.home();
+					io::lcd.print(io::Timer::time());
+
+					if (io::Timer::time() > menu::rev_dead_begin.value() && io::Timer::time() < menu::rev_dead_end.value())
+					{
+						pid::digital_recovery = -((int8_t) menu::flw_drecover.value());
+						break;
+					}
+
 					int8_t in = pid::follow_value_digital();
 
 					dcontroller.in(in);
@@ -710,12 +726,11 @@ namespace course
 			}
 
 			int16_t in = ((int32_t) right - left) * 50 / (left + right);
-			int16_t thresh = menu::home_thresh.value();
 
 			io::lcd.clear();
 			io::lcd.print(in);
 
-			acontroller.in(in - thresh);
+			acontroller.in(in);
 			int16_t out = acontroller.out();
 
 			io::lcd.setCursor(0, 1);

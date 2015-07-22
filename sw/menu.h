@@ -67,11 +67,12 @@ namespace menu
 	extern Opt home_gain_p;
 	extern Opt home_gain_i;
 	extern Opt home_gain_d;
-	extern Opt home_thresh;
 	extern Opt home_vel;
 
-	extern Opt beacon_thresh;
 	extern Opt beacon_theta;
+
+	extern Opt rev_dead_begin;
+	extern Opt rev_dead_end;
 
 	/**
 	 * Menu modes.

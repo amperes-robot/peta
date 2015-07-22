@@ -32,4 +32,7 @@ namespace strings
 	DEFN_FSTR(retrieval);
 	DEFN_FSTR(view);
 	DEFN_FSTR(ppark);
+
+	DEFN_FSTR(rev_dbegin);
+	DEFN_FSTR(rev_dend);
 }

@@ -17,7 +17,7 @@ namespace course
 			ONE_TURN_THETA = 5, ONE_FWD_THETA = 6, TWO_TURN_THETA = 10, TWO_BACKUP_THETA = -10 };
 		enum { THREE_FWD_THETA = 20, THREE_TURN_THETA = 45 };
 		enum { REV_TURN_THETA = 150, REV_BACK_THETA = -140, REV_DEAD_BEGIN = 400, REV_DEAD_END = 600 };
-		enum { PAR_REVERSE_THETA = -50, PAR_ENTRY_THETA = 80, PAR_BACK_THETA = -40, PAR_FORWARD_THETA = 40 };
+		enum { PAR_REVERSE_THETA = 0, PAR_ENTRY_THETA = 135, PAR_BACK_LEFT_THETA = -80, PAR_BACK_RIGHT_THETA = -80 };
 		const PROGMEM uint16_t COOLDOWNS[] = { 0, 300, 1000, 2000 };
 		// cooldowns determine amount of time that must be waited before side qrd can trigger again
 		const int16_t SLOW_SPEED = 120;
@@ -800,10 +800,10 @@ namespace course
 				REVERSE,
 				ENTRY_BEGIN,
 				ENTRY,
-				BACK_BEGIN,
-				BACK,
-				FORWARD_BEGIN,
-				FORWARD
+				BACK_LEFT_BEGIN,
+				BACK_LEFT,
+				BACK_RIGHT_BEGIN,
+				BACK_RIGHT
 			};
 
 			if (menu::stop_falling())
@@ -834,7 +834,7 @@ namespace course
 				case ENTRY_BEGIN:
 				{
 					state++;
-					motion::left.halt();
+					motion::left.speed(-MEDIUM_SPEED);
 					motion::right.speed(MEDIUM_SPEED);
 					motion::right_theta = 0;
 					// fall through
@@ -843,38 +843,37 @@ namespace course
 				{
 					if (motion::right_theta > PAR_ENTRY_THETA)
 					{
-						state = BACK_BEGIN;
+						state = BACK_LEFT_BEGIN;
 					}
 					break;
 				}
-				case BACK_BEGIN:
+				case BACK_LEFT_BEGIN:
 				{
 					state++;
-					motion::left.speed(-MEDIUM_SPEED);
-					motion::right.speed(-SLOW_SPEED);
-					motion::right_theta = 0;
-					motion::left_theta = 0;
-					// fall through
-				}
-				case BACK:
-				{
-					if ((motion::right_theta + motion::left_theta) / 2 < PAR_BACK_THETA)
-					{
-						state = FORWARD_BEGIN;
-					}
-					break;
-				}
-				case FORWARD_BEGIN:
-				{
-					state++;
-					motion::left.speed(SLOW_SPEED);
+					motion::left.speed(-SLOW_SPEED);
 					motion::right.halt();
 					motion::left_theta = 0;
 					// fall through
 				}
-				case FORWARD:
+				case BACK_LEFT:
 				{
-					if (motion::left_theta > PAR_FORWARD_THETA)
+					if (motion::left_theta < PAR_BACK_LEFT_THETA)
+					{
+						state = BACK_RIGHT_BEGIN;
+					}
+					break;
+				}
+				case BACK_RIGHT_BEGIN:
+				{
+					state++;
+					motion::left.halt();
+					motion::right.speed(-SLOW_SPEED);
+					motion::right_theta = 0;
+					// fall through
+				}
+				case BACK_RIGHT:
+				{
+					if (motion::right_theta < PAR_BACK_RIGHT_THETA)
 					{
 						control::set_mode(&rubble_excavation_mode);
 					}

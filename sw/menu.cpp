@@ -280,8 +280,8 @@ namespace menu
 				return;
 			}
 
-			course::pet_id = 3;
-			control::set_mode(&course::follow_mode);
+			course::pet_id = 5;
+			control::set_mode(&course::beacon_homing_mode);
 		}
 	}
 

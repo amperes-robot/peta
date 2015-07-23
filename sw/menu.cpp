@@ -38,17 +38,30 @@ namespace menu
 			motion::zipline.halt();
 			motion::arm.halt();
 		}
+
 		void main_mode_tick()
 		{
+			static uint8_t prev = 1, now = 0;
+			uint8_t temp;
+
+			temp = prev;
+			prev = now;
+
+			if (now == 0 && prev == 1) now = 1;
+			else if (now == 15 && prev == 14) now = 14;
+			else now = now + now - prev;
+
+			io::lcd.setCursor(prev, 0);
+			io::lcd.write(' ');
+			io::lcd.setCursor(now, 0);
+			io::lcd.write('x');
+
 			uint8_t index = get_index(main_count);
 			if (prev_index != index)
 			{
-				io::lcd.clear();
-				io::lcd.home();
-				io::lcd.setCursor(0, 0);
-				io::lcd.write('x');
 				io::lcd.setCursor(0, 1);
 				io::lcd.print(TO_FSTR(main_names[index]));
+				io::lcd.print("                ");
 			}
 			prev_index = index;
 
@@ -338,6 +351,8 @@ namespace menu
 
 	Opt rev_dead_begin(TO_FSTR(strings::rev_dbegin), 170);
 	Opt rev_dead_end(TO_FSTR(strings::rev_dend), 220);
+
+	Opt rev_enable(TO_FSTR(strings::rev_enable), 0, 512);
 
 	const control::Mode main_mode
 	{

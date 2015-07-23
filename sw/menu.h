@@ -52,7 +52,7 @@ namespace menu
 			const uint16_t _default;
 	};
 
-	const size_t N_OPTS = 16;
+	const size_t N_OPTS = 17;
 	extern Opt flw_gain_p;
 	extern Opt flw_gain_i;
 	extern Opt flw_gain_d;
@@ -60,7 +60,6 @@ namespace menu
 	extern Opt flw_thresh_left;
 	extern Opt flw_thresh_right;
 	extern Opt flw_thresh_side;
-
 	extern Opt flw_recover;
 	extern Opt flw_drecover;
 
@@ -73,6 +72,7 @@ namespace menu
 
 	extern Opt rev_dead_begin;
 	extern Opt rev_dead_end;
+	extern Opt rev_enable;
 
 	/**
 	 * Menu modes.

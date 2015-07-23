@@ -149,6 +149,8 @@ namespace io
 		const extern In enc_right;
 		const extern In enc_arm;
 
+		const extern In switch_front;
+
 		const extern Out zipline_enable;
 	}
 }

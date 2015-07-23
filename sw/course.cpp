@@ -13,7 +13,8 @@ namespace course
 	namespace
 	{
 		enum { ARM_LO_THRESH = -28, ARM_HI_THRESH = -5, ARM_MID_THRESH = -15 };
-		enum { ZERO_TURN_THETA = 37, ZERO_BACK_THETA = -70, ZERO_FWD_THETA = 37, ONE_TURN_THETA = 5, ONE_FWD_THETA = 15, TWO_TURN_THETA = 10, TWO_BACKUP_THETA = -8 };
+		enum { ZERO_TURN_THETA = 70, ZERO_BACK_THETA = -20, ZERO_FWD_THETA = 30, ZERO_TURN2_THETA = 30,
+			ONE_TURN_THETA = 5, ONE_FWD_THETA = 6, TWO_TURN_THETA = 10, TWO_BACKUP_THETA = -10 };
 		enum { THREE_FWD_THETA = 20, THREE_TURN_THETA = 36 };
 		enum { REV_TURN_THETA = 150, REV_BACK_THETA = -140, REV_DEAD_BEGIN = 400, REV_DEAD_END = 600 };
 		enum { PAR_FWD_A_THETA = 300 };
@@ -209,7 +210,7 @@ namespace course
 			ZERO_TURN_BEGIN,
 			ZERO_TURN,
 			ZERO_FWD_BEGIN,
-			ZERO_FWD
+			ZERO_FWD,
 		};
 		enum
 		{
@@ -278,7 +279,7 @@ namespace course
 
 						state++;
 						motion::left.speed(MEDIUM_SPEED);
-						motion::right.speed(-SLOW_SPEED);
+						motion::right.speed(-MEDIUM_SPEED);
 						motion::left_theta = 0;
 						// fall through
 					}
@@ -292,8 +293,6 @@ namespace course
 					}
 					case ZERO_FWD_BEGIN: // drive forward
 					{
-						io::lcd.setCursor(0, 1);
-						io::lcd.print("fwd");
 						state++;
 
 						motion::left.speed(MEDIUM_SPEED);
@@ -622,12 +621,27 @@ namespace course
 					case ZERO_BACK_BEGIN: // turn CCW until the tape is found
 					{
 						state++;
-						motion::left.halt();
+						motion::left.speed(-MEDIUM_SPEED);
 						motion::right.speed(MEDIUM_SPEED);
 						motion::right_theta = 0;
 						// fall through
 					}
 					case ZERO_BACK:
+					{
+						if (motion::right_theta > ZERO_TURN2_THETA)
+						{
+							state = ZERO_TURN_BEGIN;
+						}
+						break;
+					}
+					case ZERO_TURN_BEGIN:
+					{
+						state++;
+						motion::left.speed(-MEDIUM_SPEED);
+						motion::right.speed(MEDIUM_SPEED);
+						motion::right_theta = 0;
+					}
+					case ZERO_TURN:
 					{
 						if (motion::right_theta > 40 && io::Analog::qrd_tape_left.read() > menu::flw_thresh_left.value())
 						{
@@ -689,7 +703,7 @@ namespace course
 			}
 			else if (pet_id == 4) // change mode here instead of doing a real recovery
 			{
-				control::set_mode(&reverse_follow_mode);
+				control::set_mode(menu::rev_enable.value() ? &reverse_follow_mode : &beacon_homing_mode);
 				return;
 			}
 			else
@@ -741,6 +755,14 @@ namespace course
 				if ((motion::left_theta + motion::right_theta) / 2 > menu::beacon_theta.value()) // move a fixed amount forward
 				{
 					control::set_mode(&retrieve_mode);
+					return;
+				}
+			}
+			else if (pet_id == 5)
+			{
+				if (io::Digital::switch_front.read())
+				{
+					control::set_mode(&parallel_park_mode);
 					return;
 				}
 			}

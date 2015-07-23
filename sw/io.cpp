@@ -83,6 +83,7 @@ namespace io
 
 		DIGITAL_INPUT(switch_upper, G, 2);
 		DIGITAL_INPUT(switch_lower, D, 5);
+		DIGITAL_INPUT(switch_front, D, 3);
 
 		DIGITAL_OUTPUT(zipline_enable, E, 3);
 	}

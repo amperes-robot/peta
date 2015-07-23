@@ -12,9 +12,9 @@ namespace course
 
 	namespace
 	{
-		enum { ARM_LO_THRESH = -26, ARM_HI_THRESH = -5, ARM_MID_THRESH = -15 };
-		enum { ZERO_TURN_THETA = 37, ZERO_BACK_THETA = -55, ZERO_FWD_THETA = 37, ONE_TURN_THETA = 5, ONE_FWD_THETA = 15, TWO_BACKUP_THETA = -9 };
-		enum { THREE_FWD_THETA = 20, THREE_TURN_THETA = 20 };
+		enum { ARM_LO_THRESH = -28, ARM_HI_THRESH = -5, ARM_MID_THRESH = -15 };
+		enum { ZERO_TURN_THETA = 37, ZERO_BACK_THETA = -70, ZERO_FWD_THETA = 37, ONE_TURN_THETA = 5, ONE_FWD_THETA = 15, TWO_TURN_THETA = 10, TWO_BACKUP_THETA = -8 };
+		enum { THREE_FWD_THETA = 20, THREE_TURN_THETA = 36 };
 		enum { REV_TURN_THETA = 150, REV_BACK_THETA = -140, REV_DEAD_BEGIN = 400, REV_DEAD_END = 600 };
 		enum { PAR_FWD_A_THETA = 300 };
 		const PROGMEM uint16_t COOLDOWNS[] = { 0, 300, 1000, 2000 };
@@ -175,7 +175,7 @@ namespace course
 					io::lcd.home();
 					io::lcd.print(io::Timer::time());
 
-					if (io::Timer::time() > menu::rev_dead_begin.value() && io::Timer::time() < menu::rev_dead_end.value())
+					if (io::Timer::time() > menu::rev_dead_begin.value() * 10 && io::Timer::time() < menu::rev_dead_end.value() * 10)
 					// in dead zone, ignore the QRD and drive straight forward, force a left turn by setting the PID controller's
 					// recovery value to the negative value
 					{
@@ -221,7 +221,9 @@ namespace course
 		enum
 		{
 			TWO_BACKUP_BEGIN = 0,
-			TWO_BACKUP
+			TWO_BACKUP,
+			TWO_TURN_BEGIN, // unused
+			TWO_TURN,
 		};
 		enum
 		{
@@ -351,7 +353,22 @@ namespace course
 			{
 				switch (state)
 				{
-					case TWO_BACKUP_BEGIN: // back up, this is the only reposition we need
+					case TWO_TURN_BEGIN: // turn CW
+					{
+						state++;
+						motion::left.speed(MEDIUM_SPEED);
+						motion::right.halt();
+						motion::left_theta = 0;
+					}
+					case TWO_TURN:
+					{
+						if (motion::left_theta > TWO_TURN_THETA)
+						{
+							state = TWO_BACKUP_BEGIN;
+						}
+						break;
+					}
+					case TWO_BACKUP_BEGIN: // back up
 					{
 						state++;
 						motion::left.speed(-SLOW_SPEED);
@@ -361,9 +378,6 @@ namespace course
 					}
 					case TWO_BACKUP:
 					{
-						io::lcd.clear();
-						io::lcd.home();
-						io::lcd.print(motion::left_theta);
 						if (motion::left_theta < TWO_BACKUP_THETA)
 						{
 							control::set_mode(&retrieve_mode);
@@ -608,6 +622,7 @@ namespace course
 					case ZERO_BACK_BEGIN: // turn CCW until the tape is found
 					{
 						state++;
+						motion::left.halt();
 						motion::right.speed(MEDIUM_SPEED);
 						motion::right_theta = 0;
 						// fall through
@@ -631,6 +646,7 @@ namespace course
 					{
 						state++;
 						motion::left.speed(-MEDIUM_SPEED);
+						motion::right.halt();
 						motion::left_theta = 0;
 						// fall through
 					}
@@ -693,8 +709,6 @@ namespace course
 
 		void beacon_homing_begin()
 		{
-			pet_id = 4;
-
 			io::lcd.clear();
 			io::lcd.home();
 			io::lcd.print(TO_FSTR(strings::home));
@@ -720,15 +734,19 @@ namespace course
 			uint16_t left = io::Analog::pd_left.read();
 			uint16_t right = io::Analog::pd_right.read();
 
-			if ((motion::left_theta + motion::right_theta) / 2 > menu::beacon_theta.value()) // move a fixed amount forward
+			io::lcd.clear();
+
+			if (pet_id == 4)
 			{
-				control::set_mode(&retrieve_mode);
-				return;
+				if ((motion::left_theta + motion::right_theta) / 2 > menu::beacon_theta.value()) // move a fixed amount forward
+				{
+					control::set_mode(&retrieve_mode);
+					return;
+				}
 			}
 
 			int16_t in = ((int32_t) right - left) * 50 / (left + right);
 
-			io::lcd.clear();
 			io::lcd.print(in);
 
 			acontroller.in(in);

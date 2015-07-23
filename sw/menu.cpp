@@ -38,17 +38,30 @@ namespace menu
 			motion::zipline.halt();
 			motion::arm.halt();
 		}
+
 		void main_mode_tick()
 		{
+			static uint8_t prev = 1, now = 0;
+			uint8_t temp;
+
+			temp = prev;
+			prev = now;
+
+			if (now == 0 && temp == 1) now = 1;
+			else if (now == 15 && temp == 14) now = 14;
+			else now = now + now - temp;
+
+			io::lcd.setCursor(prev, 0);
+			io::lcd.write(' ');
+			io::lcd.setCursor(now, 0);
+			io::lcd.write('x');
+
 			uint8_t index = get_index(main_count);
 			if (prev_index != index)
 			{
-				io::lcd.clear();
-				io::lcd.home();
-				io::lcd.setCursor(0, 0);
-				io::lcd.write('x');
 				io::lcd.setCursor(0, 1);
 				io::lcd.print(TO_FSTR(main_names[index]));
+				io::lcd.print("                ");
 			}
 			prev_index = index;
 
@@ -267,8 +280,8 @@ namespace menu
 				return;
 			}
 
-			course::pet_id = 3;
-			control::set_mode(&course::follow_mode);
+			course::pet_id = 5;
+			control::set_mode(&course::beacon_homing_mode);
 		}
 	}
 
@@ -308,7 +321,7 @@ namespace menu
 
 	uint8_t Opt::opt_count = 0;
 
-	Opt::Opt(FSTR name, uint16_t def, uint8_t scale) : _scale(scale), _addr_eep((uint16_t*) (2 * opt_count)), _name(name), _default(def)
+	Opt::Opt(FSTR name, uint16_t def, uint16_t scale) : _scale(scale), _addr_eep((uint16_t*) (2 * opt_count)), _name(name), _default(def)
 	{
 		opts[opt_count++] = this;
 		_value = eeprom_read_word(_addr_eep);
@@ -329,15 +342,17 @@ namespace menu
 	Opt flw_recover(TO_FSTR(strings::flw_recover), 130);
 	Opt flw_drecover(TO_FSTR(strings::flw_drecover), 5, 10);
 
-	Opt beacon_theta(TO_FSTR(strings::beacon_theta), 110, 3);
+	Opt beacon_theta(TO_FSTR(strings::beacon_theta), 125, 3);
 
 	Opt home_gain_p(TO_FSTR(strings::home_p), 400);
 	Opt home_gain_i(TO_FSTR(strings::home_i), 0);
 	Opt home_gain_d(TO_FSTR(strings::home_d), 10);
 	Opt home_vel(TO_FSTR(strings::home_vel), 100);
 
-	Opt rev_dead_begin(TO_FSTR(strings::rev_dbegin), 400);
-	Opt rev_dead_end(TO_FSTR(strings::rev_dend), 600);
+	Opt rev_dead_begin(TO_FSTR(strings::rev_dbegin), 170);
+	Opt rev_dead_end(TO_FSTR(strings::rev_dend), 220);
+
+	Opt rev_enable(TO_FSTR(strings::rev_enable), 0, 512);
 
 	const control::Mode main_mode
 	{

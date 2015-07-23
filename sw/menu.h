@@ -17,7 +17,7 @@ namespace menu
 			static uint8_t opt_count;
 			Opt() = delete;
 			Opt(const Opt& other) = delete;
-			Opt(FSTR name, uint16_t def, uint8_t scale = 1);
+			Opt(FSTR name, uint16_t def, uint16_t scale = 1);
 
 			inline uint16_t value() const
 			{
@@ -29,7 +29,7 @@ namespace menu
 				return _name;
 			}
 
-			inline uint8_t scale() const
+			inline uint16_t scale() const
 			{
 				return _scale;
 			}
@@ -45,14 +45,14 @@ namespace menu
 				eeprom_write_word(_addr_eep, value);
 			}
 		private:
-			uint8_t _scale;
+			uint16_t _scale;
 			uint16_t _value;
 			uint16_t* const _addr_eep;
 			const FSTR _name;
 			const uint16_t _default;
 	};
 
-	const size_t N_OPTS = 16;
+	const size_t N_OPTS = 17;
 	extern Opt flw_gain_p;
 	extern Opt flw_gain_i;
 	extern Opt flw_gain_d;
@@ -60,7 +60,6 @@ namespace menu
 	extern Opt flw_thresh_left;
 	extern Opt flw_thresh_right;
 	extern Opt flw_thresh_side;
-
 	extern Opt flw_recover;
 	extern Opt flw_drecover;
 
@@ -73,6 +72,7 @@ namespace menu
 
 	extern Opt rev_dead_begin;
 	extern Opt rev_dead_end;
+	extern Opt rev_enable;
 
 	/**
 	 * Menu modes.

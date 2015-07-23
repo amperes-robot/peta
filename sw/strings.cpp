@@ -35,4 +35,5 @@ namespace strings
 
 	DEFN_FSTR(rev_dbegin);
 	DEFN_FSTR(rev_dend);
+	DEFN_FSTR(rev_enable);
 }

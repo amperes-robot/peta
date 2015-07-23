@@ -47,9 +47,9 @@ namespace menu
 			temp = prev;
 			prev = now;
 
-			if (now == 0 && prev == 1) now = 1;
-			else if (now == 15 && prev == 14) now = 14;
-			else now = now + now - prev;
+			if (now == 0 && temp == 1) now = 1;
+			else if (now == 15 && temp == 14) now = 14;
+			else now = now + now - temp;
 
 			io::lcd.setCursor(prev, 0);
 			io::lcd.write(' ');
@@ -321,7 +321,7 @@ namespace menu
 
 	uint8_t Opt::opt_count = 0;
 
-	Opt::Opt(FSTR name, uint16_t def, uint8_t scale) : _scale(scale), _addr_eep((uint16_t*) (2 * opt_count)), _name(name), _default(def)
+	Opt::Opt(FSTR name, uint16_t def, uint16_t scale) : _scale(scale), _addr_eep((uint16_t*) (2 * opt_count)), _name(name), _default(def)
 	{
 		opts[opt_count++] = this;
 		_value = eeprom_read_word(_addr_eep);

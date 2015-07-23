@@ -17,7 +17,7 @@ namespace menu
 			static uint8_t opt_count;
 			Opt() = delete;
 			Opt(const Opt& other) = delete;
-			Opt(FSTR name, uint16_t def, uint8_t scale = 1);
+			Opt(FSTR name, uint16_t def, uint16_t scale = 1);
 
 			inline uint16_t value() const
 			{
@@ -29,7 +29,7 @@ namespace menu
 				return _name;
 			}
 
-			inline uint8_t scale() const
+			inline uint16_t scale() const
 			{
 				return _scale;
 			}
@@ -45,7 +45,7 @@ namespace menu
 				eeprom_write_word(_addr_eep, value);
 			}
 		private:
-			uint8_t _scale;
+			uint16_t _scale;
 			uint16_t _value;
 			uint16_t* const _addr_eep;
 			const FSTR _name;

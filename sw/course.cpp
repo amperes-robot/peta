@@ -13,11 +13,11 @@ namespace course
 	namespace
 	{
 		enum { ARM_LO_THRESH = -28, ARM_HI_THRESH = -5, ARM_MID_THRESH = -15 };
-		enum { ZERO_TURN_THETA = 70, ZERO_BACK_THETA = -20, ZERO_FWD_THETA = 30, ZERO_TURN2_THETA = 30,
+		enum { ZERO_TURN_THETA = 30, ZERO_BACK_THETA = -70, ZERO_FWD_THETA = 70, ZERO_TURN2_THETA = 30,
 			ONE_TURN_THETA = 5, ONE_FWD_THETA = 6, TWO_TURN_THETA = 10, TWO_BACKUP_THETA = -10 };
 		enum { THREE_FWD_THETA = 20, THREE_TURN_THETA = 45 };
 		enum { REV_TURN_THETA = 150, REV_BACK_THETA = -140, REV_DEAD_BEGIN = 400, REV_DEAD_END = 600 };
-		enum { PAR_FWD_A_THETA = 300 };
+		enum { PAR_REVERSE_THETA = -50, PAR_ENTRY_THETA = 80, PAR_BACK_THETA = -40, PAR_FORWARD_THETA = 40 };
 		const PROGMEM uint16_t COOLDOWNS[] = { 0, 300, 1000, 2000 };
 		// cooldowns determine amount of time that must be waited before side qrd can trigger again
 		const int16_t SLOW_SPEED = 120;
@@ -796,14 +796,14 @@ namespace course
 		{
 			enum
 			{
-				FORWARD_A_BEGIN = 0,
-				FORWARD_A,
+				REVERSE_BEGIN = 0,
+				REVERSE,
 				ENTRY_BEGIN,
 				ENTRY,
 				BACK_BEGIN,
 				BACK,
-				FORWARD_B_BEGIN,
-				FORWARD_B
+				FORWARD_BEGIN,
+				FORWARD
 			};
 
 			if (menu::stop_falling())
@@ -814,18 +814,18 @@ namespace course
 
 			switch (state)
 			{
-				case FORWARD_A_BEGIN:
+				case REVERSE_BEGIN:
 				{
 					state++;
-					motion::left.speed(MEDIUM_SPEED);
-					motion::right.speed(MEDIUM_SPEED);
+					motion::left.speed(-MEDIUM_SPEED);
+					motion::right.speed(-MEDIUM_SPEED);
 					motion::left_theta = 0;
 					motion::right_theta = 0;
 					// fall through
 				}
-				case FORWARD_A:
+				case REVERSE:
 				{
-					if ((motion::right_theta + motion::left_theta) / 2 > PAR_FWD_A_THETA)
+					if ((motion::right_theta + motion::left_theta) / 2 < PAR_REVERSE_THETA)
 					{
 						state = ENTRY_BEGIN;
 					}
@@ -841,7 +841,7 @@ namespace course
 				}
 				case ENTRY: // go in
 				{
-					if (motion::right_theta > 30)
+					if (motion::right_theta > PAR_ENTRY_THETA)
 					{
 						state = BACK_BEGIN;
 					}
@@ -858,13 +858,13 @@ namespace course
 				}
 				case BACK:
 				{
-					if ((motion::right_theta + motion::left_theta) / 2 < -40)
+					if ((motion::right_theta + motion::left_theta) / 2 < PAR_BACK_THETA)
 					{
-						state = FORWARD_B_BEGIN;
+						state = FORWARD_BEGIN;
 					}
 					break;
 				}
-				case FORWARD_B_BEGIN:
+				case FORWARD_BEGIN:
 				{
 					state++;
 					motion::left.speed(SLOW_SPEED);
@@ -872,9 +872,9 @@ namespace course
 					motion::left_theta = 0;
 					// fall through
 				}
-				case FORWARD_B:
+				case FORWARD:
 				{
-					if (motion::left_theta > 50)
+					if (motion::left_theta > PAR_FORWARD_THETA)
 					{
 						control::set_mode(&rubble_excavation_mode);
 					}

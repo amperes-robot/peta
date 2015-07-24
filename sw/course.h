@@ -5,6 +5,8 @@
 
 namespace course
 {
+	enum { SLOW_SPEED = 120, MILD_SPEED = 150, MEDIUM_SPEED = 180, FAST_SPEED = 210, LUDICROUS_SPEED = 255 };
+
 	extern uint8_t pet_id;
 	/**
 	 * Control modes for the course.

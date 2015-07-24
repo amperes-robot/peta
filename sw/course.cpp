@@ -752,7 +752,7 @@ namespace course
 
 			if (pet_id == 4)
 			{
-				if ((motion::left_theta + motion::right_theta) / 2 > menu::beacon_theta.value()) // move a fixed amount forward
+				if ((motion::left_theta + motion::right_theta) / 2 > (int16_t) menu::beacon_theta.value()) // move a fixed amount forward
 				{
 					control::set_mode(&retrieve_mode);
 					return;
@@ -894,10 +894,52 @@ namespace course
 
 		void rubble_excavation_tick()
 		{
+			enum
+			{
+				LOWER_BEGIN = 0,
+				LOWER,
+				BRAKE_BEGIN,
+				BRAKE
+			};
+
 			if (menu::stop_falling())
 			{
 				control::set_mode(&menu::main_mode);
 				return;
+			}
+
+
+			switch (state)
+			{
+				case LOWER_BEGIN:
+				{
+					state++;
+					io::Timer::start();
+					motion::excavator.speed(-MEDIUM_SPEED);
+					// fall through
+				}
+				case LOWER:
+				{
+					if (io::Timer::time() > 600)
+					{
+						state = BRAKE_BEGIN;
+					}
+					break;
+				}
+				case BRAKE_BEGIN:
+				{
+					state++;
+					io::Timer::start();
+					motion::excavator.halt();
+					// fall through
+				}
+				case BRAKE:
+				{
+					if (io::Timer::time() > 400)
+					{
+					}
+					break;
+				}
 			}
 		}
 	}

@@ -35,7 +35,7 @@ namespace menu
 			motion::vel(0);
 			motion::left.halt();
 			motion::right.halt();
-			motion::zipline.halt();
+			motion::excavator.halt();
 			motion::arm.halt();
 		}
 

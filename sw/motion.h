@@ -48,7 +48,7 @@ namespace motion
 	extern Motor left;
 	extern Motor right;
 	extern Motor arm;
-	extern Motor zipline;
+	extern Motor excavator;
 
 	extern volatile uint32_t x;
 	extern volatile uint32_t y;

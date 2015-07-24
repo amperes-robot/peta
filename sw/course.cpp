@@ -808,7 +808,7 @@ namespace course
 			{
 				if (io::Digital::switch_front.read())
 				{
-					control::set_mode(&parallel_park_mode);
+					control::set_mode(&rubble_excavation_mode);
 					return;
 				}
 			}

@@ -10,10 +10,10 @@ namespace course
 	{
 		uint8_t state;
 
-		enum { ZERO_TURN_THETA = 30, ZERO_BACK_THETA = -70, ZERO_FWD_THETA = 70, ZERO_TURN2_THETA = 30,
+		enum { ZERO_TURN_THETA = 30, ZERO_BACK_THETA = -40, ZERO_FWD_THETA = 60, ZERO_TURN2_THETA = 30,
 			ONE_TURN_THETA = 5, ONE_FWD_THETA = 6, TWO_TURN_THETA = 10, TWO_BACKUP_THETA = -10 };
-		enum { THREE_FWD_THETA = 20, THREE_TURN_THETA = 45 };
-		enum { FIVE_REPOS_THETA = -40, FIVE_BACK_THETA = -100, FIVE_TURN_THETA = 200 };
+		enum { THREE_FWD_THETA = 20, THREE_TURN_THETA = 30 };
+		enum { FIVE_REPOS_THETA = -20, FIVE_BACK_THETA = -100, FIVE_TURN_THETA = 200 };
 
 		/**
 		 * ADJUST (before dropping arm)
@@ -245,7 +245,7 @@ namespace course
 					{
 						state++;
 						motion::right.speed(-SLOW_SPEED);
-						motion::left.halt();
+						motion::left.speed(SLOW_SPEED);
 						motion::right_theta = 0;
 						// fall through
 					}
@@ -384,35 +384,19 @@ namespace course
 			{
 				switch (state)
 				{
-					case FIVE_BACK_BEGIN:
+					case FIVE_REPOS_BEGIN:
 					{
 						state++;
-						motion::left.speed(-MEDIUM_SPEED);
-						motion::right.speed(-MEDIUM_SPEED);
+						motion::right.speed(SLOW_SPEED);
+						motion::left.speed(-SLOW_SPEED);
 						motion::left_theta = 0;
 						// fall through
 					}
-					case FIVE_BACK:
+					case FIVE_REPOS:
 					{
-						if (motion::left_theta < FIVE_BACK_THETA)
-						{
-							state = FIVE_TURN_BEGIN;
-						}
-						break;
-					}
-					case FIVE_TURN_BEGIN:
-					{
-						state++;
-						motion::left.speed(MEDIUM_SPEED);
-						motion::right.speed(-MEDIUM_SPEED);
-						motion::left_theta = 0;
-					}
-					case FIVE_TURN:
-					{
-						if (motion::left_theta > FIVE_TURN_THETA)
+						if (motion::left_theta < FIVE_REPOS_THETA)
 						{
 							control::set_mode(&beacon_homing_mode);
-							return;
 						}
 						break;
 					}

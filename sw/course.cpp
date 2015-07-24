@@ -17,7 +17,7 @@ namespace course
 		enum { PAR_REVERSE_THETA = 0, PAR_ENTRY_THETA = 135, PAR_BACK_LEFT_THETA = -80, PAR_BACK_RIGHT_THETA = -80 };
 		// cooldowns determine amount of time that must be waited before side qrd can trigger again
 
-		const PROGMEM uint16_t COOLDOWNS[] = { 0, 300, 1000, 2000 };
+		const PROGMEM uint16_t COOLDOWNS[] = { 0, 1000, 1000, 2000 };
 
 		pid::DigitalController dcontroller(0, 0, 0);
 		pid::Controller acontroller(0, 0, 0);
@@ -288,7 +288,7 @@ namespace course
 				{
 					io::lcd.setCursor(0, 1);
 					io::lcd.print("lft");
-					motion::arm.speed(MEDIUM_SPEED - 15);
+					motion::arm.speed(MEDIUM_SPEED);
 					state++;
 					io::Timer::start();
 					// fall through
@@ -369,6 +369,7 @@ namespace course
 		}
 		void beacon_homing_begin()
 		{
+			io::Timer::start();
 			io::lcd.clear();
 			io::lcd.home();
 			io::lcd.print(TO_FSTR(strings::home));
@@ -406,9 +407,18 @@ namespace course
 			}
 			else if (pet_id == 5)
 			{
+				if (io::Timer::time() > 1100)
+				{
+					motion::excavator.halt();
+				}
+				else
+				{
+					motion::excavator.speed(-70);
+				}
+
 				if (io::Digital::switch_front.read())
 				{
-					control::set_mode(&rubble_excavation_mode);
+					control::set_mode(&adjust_mode);
 					return;
 				}
 			}
@@ -416,7 +426,7 @@ namespace course
 			{
 				if (io::Analog::qrd_side.read() > menu::flw_thresh_side.value())
 				{
-					control::set_mode(&pid::follow_mode);
+					control::set_mode(&reverse_follow_mode);
 					return;
 				}
 			}
@@ -431,8 +441,16 @@ namespace course
 			io::lcd.setCursor(0, 1);
 			io::lcd.print(out);
 
-			motion::vel(menu::home_vel.value());
-			motion::dir(out);
+			if (pet_id == 6)
+			{
+				motion::vel(-((int16_t) menu::home_vel.value()));
+				motion::dir(-out);
+			}
+			else
+			{
+				motion::vel(menu::home_vel.value());
+				motion::dir(out);
+			}
 			
 			io::delay_ms(50);
 		}
@@ -541,6 +559,9 @@ namespace course
 
 		void rubble_excavation_begin()
 		{
+			io::lcd.clear();
+			io::lcd.home();
+			io::lcd.print("exc");
 			state = 0;
 			motion::left.halt();
 			motion::right.halt();
@@ -552,6 +573,8 @@ namespace course
 			{
 				LOWER_BEGIN = 0,
 				LOWER,
+				RAISE_BEGIN,
+				RAISE,
 				BRAKE_BEGIN,
 				BRAKE
 			};
@@ -569,28 +592,29 @@ namespace course
 					state++;
 					motion::right.halt();
 					io::Timer::start();
-					motion::excavator.speed(-MEDIUM_SPEED);
+					motion::excavator.speed(-70);
 					// fall through
 				}
 				case LOWER:
 				{
 					if (io::Timer::time() > 600)
 					{
-						state = BRAKE_BEGIN;
+						state = RAISE_BEGIN;
 					}
 					break;
 				}
-				case BRAKE_BEGIN:
+				case RAISE_BEGIN:
 				{
 					state++;
 					io::Timer::start();
-					motion::excavator.halt();
+					motion::excavator.speed(200);
 					// fall through
 				}
 				case BRAKE:
 				{
 					if (io::Timer::time() > 400)
 					{
+						motion::excavator.halt();
 						control::set_mode(&recover_mode);
 						return;
 					}

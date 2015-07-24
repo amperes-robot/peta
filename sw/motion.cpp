@@ -37,7 +37,7 @@ namespace motion
 	Motor left(0, 0);
 	Motor right(1, 1);
 	Motor arm(2, 0);
-	Motor excavator(3, 1);
+	Motor excavator(3, 0);
 
 	Motor::Motor(uint8_t id, uint8_t reverse) : _id(id), _rev(reverse)
 	{

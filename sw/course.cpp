@@ -16,6 +16,7 @@ namespace course
 		enum { ZERO_TURN_THETA = 30, ZERO_BACK_THETA = -70, ZERO_FWD_THETA = 70, ZERO_TURN2_THETA = 30,
 			ONE_TURN_THETA = 5, ONE_FWD_THETA = 6, TWO_TURN_THETA = 10, TWO_BACKUP_THETA = -10 };
 		enum { THREE_FWD_THETA = 20, THREE_TURN_THETA = 45 };
+		enum { FIVE_REPOS_THETA = -40, FIVE_BACK_THETA = -100, FIVE_TURN_THETA = 200 };
 		enum { REV_TURN_THETA = 150, REV_BACK_THETA = -140, REV_DEAD_BEGIN = 400, REV_DEAD_END = 600 };
 		enum { PAR_REVERSE_THETA = 0, PAR_ENTRY_THETA = 135, PAR_BACK_LEFT_THETA = -80, PAR_BACK_RIGHT_THETA = -80 };
 		const PROGMEM uint16_t COOLDOWNS[] = { 0, 300, 1000, 2000 };
@@ -230,6 +231,13 @@ namespace course
 		{
 			THREE_FWD_BEGIN = 0,
 			THREE_FWD
+		};
+		enum
+		{
+			FIVE_BACK_BEGIN = 0,
+			FIVE_BACK,
+			FIVE_TURN_BEGIN,
+			FIVE_TURN
 		};
 
 		void adjust_begin()
@@ -706,6 +714,44 @@ namespace course
 				control::set_mode(menu::rev_enable.value() ? &reverse_follow_mode : &beacon_homing_mode);
 				return;
 			}
+			else if (pet_id == 5)
+			{
+				switch (state)
+				{
+					case FIVE_BACK_BEGIN:
+					{
+						state++;
+						motion::left.speed(-MEDIUM_SPEED);
+						motion::right.speed(-MEDIUM_SPEED);
+						motion::left_theta = 0;
+						// fall through
+					}
+					case FIVE_BACK:
+					{
+						if (motion::left_theta < FIVE_BACK_THETA)
+						{
+							state = FIVE_TURN_BEGIN;
+						}
+						break;
+					}
+					case FIVE_TURN_BEGIN:
+					{
+						state++;
+						motion::left.speed(MEDIUM_SPEED);
+						motion::right.speed(-MEDIUM_SPEED);
+						motion::left_theta = 0;
+					}
+					case FIVE_TURN:
+					{
+						if (motion::left_theta > FIVE_TURN_THETA)
+						{
+							control::set_mode(&beacon_homing_mode);
+							return;
+						}
+						break;
+					}
+				}
+			}
 			else
 			{
 				control::set_mode(&follow_mode);
@@ -763,6 +809,14 @@ namespace course
 				if (io::Digital::switch_front.read())
 				{
 					control::set_mode(&parallel_park_mode);
+					return;
+				}
+			}
+			else if (pet_id == 6)
+			{
+				if (io::Analog::qrd_side.read() > menu::flw_thresh_side.value())
+				{
+					control::set_mode(&pid::follow_mode);
 					return;
 				}
 			}
@@ -896,7 +950,9 @@ namespace course
 		{
 			enum
 			{
-				LOWER_BEGIN = 0,
+				REPOSITION_BEGIN = 0,
+				REPOSITION,
+				LOWER_BEGIN,
 				LOWER,
 				BRAKE_BEGIN,
 				BRAKE
@@ -908,12 +964,28 @@ namespace course
 				return;
 			}
 
-
 			switch (state)
 			{
+				case REPOSITION_BEGIN:
+				{
+					state++;
+					motion::right.speed(-SLOW_SPEED);
+					motion::left.halt();
+					motion::right_theta = 0;
+					// fall through
+				}
+				case REPOSITION:
+				{
+					if (motion::right_theta < FIVE_REPOS_THETA)
+					{
+						state = LOWER_BEGIN;
+					}
+					break;
+				}
 				case LOWER_BEGIN:
 				{
 					state++;
+					motion::right.halt();
 					io::Timer::start();
 					motion::excavator.speed(-MEDIUM_SPEED);
 					// fall through
@@ -937,10 +1009,15 @@ namespace course
 				{
 					if (io::Timer::time() > 400)
 					{
+						control::set_mode(&recover_mode);
+						return;
 					}
 					break;
 				}
 			}
+
+			motion::update_enc();
+			io::delay_ms(10);
 		}
 	}
 

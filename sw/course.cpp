@@ -17,7 +17,7 @@ namespace course
 		enum { PAR_REVERSE_THETA = 0, PAR_ENTRY_THETA = 135, PAR_BACK_LEFT_THETA = -80, PAR_BACK_RIGHT_THETA = -80 };
 		// cooldowns determine amount of time that must be waited before side qrd can trigger again
 
-		const PROGMEM uint16_t COOLDOWNS[] = { 0, 1000, 1000, 2000 };
+		const PROGMEM uint16_t COOLDOWNS[] = { 0, 1000, 1000, 5000 };
 
 		pid::DigitalController dcontroller(0, 0, 0);
 		pid::Controller acontroller(0, 0, 0);
@@ -288,7 +288,7 @@ namespace course
 				{
 					io::lcd.setCursor(0, 1);
 					io::lcd.print("lft");
-					motion::arm.speed(MEDIUM_SPEED);
+					motion::arm.speed(MEDIUM_SPEED - 15);
 					state++;
 					io::Timer::start();
 					// fall through

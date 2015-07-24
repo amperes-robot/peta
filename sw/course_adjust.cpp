@@ -10,8 +10,8 @@ namespace course
 	{
 		uint8_t state;
 
-		enum { ZERO_TURN_THETA = 30, ZERO_BACK_THETA = -40, ZERO_FWD_THETA = 60, ZERO_TURN2_THETA = 30,
-			ONE_TURN_THETA = 5, ONE_FWD_THETA = 6, TWO_TURN_THETA = 10, TWO_BACKUP_THETA = -10 };
+		enum { ZERO_TURN_THETA = 35, ZERO_BACK_THETA = -45, ZERO_FWD_THETA = 70, ZERO_TURN2_THETA = 30,
+			ONE_TURN_THETA = 8, ONE_FWD_THETA = 15, TWO_TURN_THETA = 10, TWO_BACKUP_THETA = -4 };
 		enum { THREE_FWD_THETA = 20, THREE_TURN_THETA = 30 };
 		enum { FIVE_REPOS_THETA = -20, FIVE_BACK_THETA = -100, FIVE_TURN_THETA = 200 };
 
@@ -105,8 +105,8 @@ namespace course
 						io::lcd.print("trn");
 
 						state++;
-						motion::left.speed(MEDIUM_SPEED);
-						motion::right.speed(-MEDIUM_SPEED);
+						motion::left.speed(MEDIUM_SPEED - 10);
+						motion::right.speed(-MEDIUM_SPEED + 10);
 						motion::left_theta = 0;
 						// fall through
 					}
@@ -145,7 +145,7 @@ namespace course
 					{
 						state++;
 						motion::left.speed(MEDIUM_SPEED);
-						motion::right.halt();
+						motion::right.speed(-MEDIUM_SPEED);
 						motion::left_theta = 0;
 						// fall through
 					}

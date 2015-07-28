@@ -1,5 +1,6 @@
 #include "async.h"
 #include "menu.h"
+#include "motion.h"
 
 namespace async
 {
@@ -145,6 +146,8 @@ namespace async
 					control::set_mode((const control::Mode*) nullptr);
 				}
 			}
+
+			motion::update_enc();
 		}
 	}
 

@@ -279,9 +279,6 @@ namespace menu
 				control::set_mode(&menu::main_mode);
 				return;
 			}
-
-			course::pet_id = 5;
-			control::set_mode(&course::beacon_homing_mode);
 		}
 	}
 

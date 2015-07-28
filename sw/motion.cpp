@@ -32,7 +32,7 @@ namespace motion
 
 	volatile int16_t left_theta;
 	volatile int16_t right_theta;
-	volatile int8_t arm_theta;
+	volatile int16_t arm_theta;
 
 	Motor left(0, 0);
 	Motor right(1, 1);

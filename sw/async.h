@@ -3,7 +3,7 @@
 
 namespace async
 {
-	typedef uint8_t (*Action)(uint8_t begin);
+	typedef uint8_t (*Action)(uint8_t begin, uint16_t meta);
 
 	union Target
 	{
@@ -33,8 +33,8 @@ namespace async
 
 	extern void begin();
 
-	extern void fork(Action, Until);
-	extern void exec(Action, Until);
+	extern void fork(Action, Until, uint16_t = 0);
+	extern void exec(Action, Until, uint16_t = 0);
 	extern void branch(int8_t, If);
 
 	extern void end();

@@ -14,7 +14,21 @@ namespace course
 
 		pid::DigitalController dcontroller(0, 0, 0);
 
-		uint8_t follow(uint8_t first)
+		enum MotorMasks : uint16_t
+		{
+			MOTOR_LEFT = 0x00,
+			MOTOR_RIGHT = 0x10,
+			MOTOR_ARM = 0x20,
+			MOTOR_EXCAVATOR = 0x30,
+			MOTOR_REVERSE = 0x80,
+
+
+			MOTOR_MASK = 0x40,
+			REVERSE_MASK = 0x80,
+			SPEED_MASK = 0x0F,
+		};
+
+		uint8_t follow(uint8_t first, uint16_t)
 		{
 			if (first)
 			{
@@ -35,10 +49,25 @@ namespace course
 			return 1;
 		}
 
+		uint8_t motor(uint8_t first, uint16_t meta)
+		{
+			int16_t speed = meta & SPEED_MASK;
+
+			if (meta & REVERSE_MASK)
+			{
+				speed = -speed;
+			}
+
+			motion::motors[(meta & MOTOR_MASK) >> 4]->speed(speed);
+
+			return 1;
+		}
+
 		void begin_tick()
 		{
 			begin();
 
+			fork(&motor, Until(QRD_SIDE_GREATER_THAN, menu::flw_thresh_side.value()), MOTOR_REVERSE | MOTOR_ARM | 60);
 			exec(&follow, Until(QRD_SIDE_GREATER_THAN, menu::flw_thresh_side.value()));
 
 			end();
@@ -47,7 +76,7 @@ namespace course
 		}
 	}
 
-	int16_t pet_id;
+	uint8_t pet_id;
 
 	const control::Mode begin_mode
 	{

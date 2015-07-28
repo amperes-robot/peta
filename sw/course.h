@@ -5,7 +5,7 @@
 
 namespace course
 {
-	extern int16_t pet_id;
+	extern uint8_t pet_id;
 
 	extern const control::Mode begin_mode;
 }

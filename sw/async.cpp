@@ -5,7 +5,7 @@ namespace async
 {
 	namespace
 	{
-		enum CMD_TYPE
+		enum CMD_TYPE : uint8_t
 		{
 			FORK = 0,
 			EXEC = 1,
@@ -13,12 +13,12 @@ namespace async
 			END = 3
 		};
 
-		enum
+		enum MASKS : uint8_t
 		{
 			N_FORKS = 8,
-			ADDRESS_MASK = 0x3F,
-			FORK_ACTIVE_MASK = 0x80,
-			FIRST_CALL_MASK = 0x40,
+			FORK_ACTIVE_MASK = 1 << 7,
+			FIRST_CALL_MASK = 1 << 6,
+			ADDRESS_MASK = 0xFFU >> 2
 		};
 
 		// forked commands, MSB is whether forks
@@ -30,6 +30,7 @@ namespace async
 
 		Target targets[256];
 		If ifs[256];
+		uint16_t metadata[256];
 
 		void async_begin()
 		{
@@ -52,7 +53,7 @@ namespace async
 					// index is 6 lowest bits
 					uint8_t ptr = forks[i] & ADDRESS_MASK;
 
-					if (!targets[ptr].func(forks[i] & FIRST_CALL_MASK))
+					if (!targets[ptr].func(forks[i] & FIRST_CALL_MASK, metadata[ptr]))
 					{
 						// returned false -> disable fork
 						forks[i] = 0;
@@ -70,8 +71,8 @@ namespace async
 				}
 			}
 
-			uint8_t type = program[IP]; // high 2 bits
 			uint8_t addr = IP & ADDRESS_MASK; // low 6 bits
+			uint8_t type = program[addr]; // high 2 bits
 
 			uint8_t inc = 0; // whether to increment IP
 
@@ -95,11 +96,12 @@ namespace async
 					io::lcd.home();
 					io::lcd.print("FORKS EXCEEDED");
 					control::set_mode((const control::Mode*) nullptr);
+
 					break;
 				}
 				case EXEC:
 				{
-					if (!targets[addr].func(IP & FIRST_CALL_MASK))
+					if (!targets[addr].func(IP & FIRST_CALL_MASK, metadata[addr]))
 					{
 						inc = 1;
 					}
@@ -154,18 +156,20 @@ namespace async
 	{
 		program[IP] = END;
 	}
-	void fork(Action action, Until until)
+	void fork(Action action, Until until, uint16_t meta)
 	{
 		program[IP] = FORK;
 		targets[IP].func = action;
 		ifs[IP] = until;
+		metadata[IP] = meta;
 		IP++;
 	}
-	void exec(Action action, Until until)
+	void exec(Action action, Until until, uint16_t meta)
 	{
 		program[IP] = EXEC;
 		targets[IP].func = action;
 		ifs[IP] = until;
+		metadata[IP] = meta;
 		IP++;
 	}
 	void branch(int8_t loc, If if_)

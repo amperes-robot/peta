@@ -49,6 +49,7 @@ namespace motion
 	extern Motor right;
 	extern Motor arm;
 	extern Motor excavator;
+	extern Motor* const motors[4];
 
 	extern volatile uint32_t x;
 	extern volatile uint32_t y;

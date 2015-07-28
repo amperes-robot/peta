@@ -39,6 +39,8 @@ namespace motion
 	Motor arm(2, 0);
 	Motor excavator(3, 0);
 
+	Motor* const motors[4] = { &left, &right, &arm, &excavator };
+
 	Motor::Motor(uint8_t id, uint8_t reverse) : _id(id), _rev(reverse)
 	{
 		_speed = 0;

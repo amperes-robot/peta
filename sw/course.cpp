@@ -59,7 +59,7 @@ namespace course
 				return;
 			}
 
-			bool qrd = io::Analog::qrd_side.read() > menu::flw_thresh_side.value(); // side trigger
+			bool qrd = io::Analog::qrd_side_right.read() > menu::flw_thresh_side.value(); // side trigger
 
 			if (qrd && io::Timer::time() > (uint16_t) pgm_read_word(COOLDOWNS + pet_id))
 				// qrd is triggered and the cooldown has ended
@@ -424,7 +424,7 @@ namespace course
 			}
 			else if (pet_id == 6)
 			{
-				if (io::Analog::qrd_side.read() > menu::flw_thresh_side.value())
+				if (io::Analog::qrd_side_right.read() > menu::flw_thresh_side.value())
 				{
 					control::set_mode(&reverse_follow_mode);
 					return;

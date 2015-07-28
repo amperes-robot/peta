@@ -13,15 +13,24 @@ namespace async
 
 	enum Condition
 	{
-		NEVER = 0,
-		FOREVER = 0,
+		TRUE,
+		FALSE,
 		ARM_DEPRESSED,
-		QRD_SIDE_LEFT_GREATER_THAN,
+		EITHER_SIDE_QRD_GREATER_THAN,
+		FRONT_LEFT_QRD_GREATER_THAN,
+		FRONT_RIGHT_QRD_GREATER_THAN,
+
+		LEFT_ENC_GREATER_THAN,
+		LEFT_ENC_LESS_THAN,
+		RIGHT_ENC_GREATER_THAN,
+		RIGHT_ENC_LESS_THAN,
+		ARM_ENC_GREATER_THAN,
+		ARM_ENC_LESS_THAN
 	};
 
 	struct If
 	{
-		inline If() : type(NEVER), arg(0) { }
+		inline If() : type(TRUE), arg(0) { }
 		inline If(Condition type, uint16_t arg = 0) : type(type), arg(arg) { }
 
 		uint8_t eval() const;

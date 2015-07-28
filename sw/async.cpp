@@ -187,12 +187,30 @@ namespace async
 	{
 		switch (type)
 		{
-			case NEVER:
+			case TRUE:
+				return 1;
+			case FALSE:
 				return 0;
 			case ARM_DEPRESSED:
 				return !io::Digital::switch_lower.read();
-			case QRD_SIDE_LEFT_GREATER_THAN:
-				return io::Analog::qrd_side_left.read() > arg;
+			case EITHER_SIDE_QRD_GREATER_THAN:
+				return io::Analog::qrd_side_left.read() > arg || io::Analog::qrd_side_right.read() > arg;
+			case FRONT_LEFT_QRD_GREATER_THAN:
+				return io::Analog::qrd_tape_left.read() > arg;
+			case FRONT_RIGHT_QRD_GREATER_THAN:
+				return io::Analog::qrd_tape_right.read() > arg;
+			case LEFT_ENC_GREATER_THAN:
+				return motion::left_theta > arg;
+			case LEFT_ENC_LESS_THAN:
+				return motion::left_theta < arg;
+			case RIGHT_ENC_GREATER_THAN:
+				return motion::right_theta > arg;
+			case RIGHT_ENC_LESS_THAN:
+				return motion::right_theta < arg;
+			case ARM_ENC_GREATER_THAN:
+				return motion::arm_theta > arg;
+			case ARM_ENC_LESS_THAN:
+				return motion::arm_theta < arg;
 		}
 	}
 

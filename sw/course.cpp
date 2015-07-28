@@ -210,11 +210,29 @@ namespace course
 			return 1;
 		}
 
+		uint8_t halt(uint8_t, uint16_t)
+		{
+			motion::left.halt();
+			motion::right.halt();
+			motion::arm.halt();
+			motion::excavator.halt();
+
+			return 0;
+		}
+
 		void begin_tick()
 		{
 			begin();
 
-			exec(&follow, Until(QRD_SIDE_LEFT_GREATER_THAN, menu::flw_thresh_side.value()));
+			exec(&follow, Until(EITHER_SIDE_QRD_GREATER_THAN, menu::flw_thresh_side.value()));
+
+			fork(&motor, Until(TRUE), MOTOR_REVERSE | MOTOR_RIGHT | 100);
+			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 50), MOTOR_LEFT | 100);
+
+			exec(&halt, Until(TRUE));
+			exec(&retrieve, Until(FALSE));
+
+			exec(&motor, Until(FRONT_LEFT_QRD_GREATER_THAN, menu::flw_thresh_left.value()));
 
 			end();
 

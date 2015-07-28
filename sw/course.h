@@ -22,4 +22,5 @@ namespace course
 	extern const control::Mode parallel_park_mode;
 	extern const control::Mode rubble_excavation_mode;
 	extern const control::Mode return_mode;
+	extern const control::Mode square_mode;
 }

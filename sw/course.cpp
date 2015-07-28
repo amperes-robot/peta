@@ -625,7 +625,23 @@ namespace course
 			motion::update_enc();
 			io::delay_ms(10);
 		}
+
+		void square_begin()
+		{
+			io::lcd.clear();
+			io::lcd.home();
+			io::lcd.print("square");
+			state = 0;
+			
+		}
+
+		void square_tick()
+		{
+	
+		}
 	}
+
+		
 
 	const control::Mode begin_mode
 	{
@@ -680,6 +696,13 @@ namespace course
 	{
 		&control::nop,
 		&control::nop,
+		&control::nop
+	};
+
+	const control::Mode square_mode
+	{
+		&square_begin,
+		&square_tick,
 		&control::nop
 	};
 }

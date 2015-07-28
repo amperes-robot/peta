@@ -15,6 +15,7 @@ namespace course
 		enum { REV_TURN_THETA = 150, REV_BACK_THETA = -140, REV_DEAD_BEGIN = 400, REV_DEAD_END = 600 };
 		enum { ARM_LO_THRESH = -28, ARM_HI_THRESH = -5, ARM_MID_THRESH = -15 };
 		enum { PAR_REVERSE_THETA = 0, PAR_ENTRY_THETA = 135, PAR_BACK_LEFT_THETA = -80, PAR_BACK_RIGHT_THETA = -80 };
+		enum { SQAURE_MAX_FRONT_CORRECTION= 30, SQAURE_MAX_BACK_CORRECTION = -30};
 		// cooldowns determine amount of time that must be waited before side qrd can trigger again
 
 		const PROGMEM uint16_t COOLDOWNS[] = { 0, 1000, 1000, 5000 };
@@ -59,7 +60,9 @@ namespace course
 				return;
 			}
 
-			bool qrd = io::Analog::qrd_side_right.read() > menu::flw_thresh_side.value(); // side trigger
+			bool qrd = max(io::Analog::qrd_side_left.read(), io::Analog::qrd_side_right.read()) > menu::flw_thresh_side.value(); 
+			// side trigger, detects if left or right qrd reads line
+
 
 			if (qrd && io::Timer::time() > (uint16_t) pgm_read_word(COOLDOWNS + pet_id))
 				// qrd is triggered and the cooldown has ended
@@ -73,7 +76,7 @@ namespace course
 
 			if (state > HOLD_AMT)
 			{
-				control::set_mode(&adjust_mode); // following has ended
+				control::set_mode(&square_mode); // following has ended
 				return;
 			}
 
@@ -632,13 +635,117 @@ namespace course
 			io::lcd.home();
 			io::lcd.print("square");
 			state = 0;
-			
+			motion::left.halt();
+			motion::right.halt();
 		}
 
 		void square_tick()
 		{
-	
+  			if (menu::stop_falling())
+			{
+				control::set_mode(&menu::main_mode);
+				return;
+			}
+
+  			enum
+			{
+  				BEGIN = 0,
+				LEFT_FORWARD_BEGIN,
+				LEFT_FORWARD,
+				LEFT_BACKWARD_BEGIN,
+				LEFT_BACKWARD,
+				RIGHT_FORWARD_BEGIN,
+				RIGHT_FORWARD,
+				RIGHT_BACKWARD_BEGIN,
+				RIGHT_BACKWARD
+			};
+  
+			bool qrd_left = io::Analog::qrd_side_left.read() > menu::flw_thresh_side.value(); 
+			bool qrd_right = io::Analog::qrd_side_right.read() > menu::flw_thresh_side.value(); 
+
+			switch (state)
+			{
+  				case BEGIN:
+  				{
+    					if (!qrd_left)
+    					{
+      						state = LEFT_FORWARD_BEGIN;
+      					}
+      					else if (!qrd_right)
+      					{
+        					state = RIGHT_FORWARD_BEGIN;
+        				}
+        				else
+        				{
+          					control::set_mode(&adjust_mode);
+          				}
+    				}
+    				case LEFT_FORWARD_BEGIN: 
+    				{
+      					state++;
+      					motion::left.speed(SLOW_SPEED);
+      					motion::left_theta = 0;
+      				}
+      				case LEFT_FORWARD:
+      				{
+        				if (qrd_left)
+        				{
+          					control::set_mode(&adjust_mode);
+          				}
+          				if (motion::left_theta > SQAURE_MAX_FRONT_CORRECTION)
+          				{
+            					state++;
+            				}
+        			}
+      				case LEFT_BACKWARD_BEGIN: 
+    				{
+      					state++;
+      					motion::left.speed(-SLOW_SPEED);
+      					motion::left_theta = 0;
+      				}
+      				case LEFT_BACKWARD:
+      				{
+        				if (qrd_left || motion::left_theta < SQAURE_MAX_BACK_CORRECTION)
+        				{
+          					control::set_mode(&adjust_mode);
+          				}
+        			}
+       				case RIGHT_FORWARD_BEGIN: 
+    				{
+      					state++;
+      					motion::right.speed(SLOW_SPEED);
+      					motion::right_theta = 0;
+      				}
+      				case RIGHT_FORWARD:
+      				{
+        				if (qrd_right)
+        				{
+          					control::set_mode(&adjust_mode);
+          				}
+          				if (motion::right_theta > SQAURE_MAX_FRONT_CORRECTION)
+          				{
+            					state++;
+            				}
+        			}
+      				case RIGHT_BACKWARD_BEGIN: 
+    				{
+      					state++;
+      					motion::right.speed(-SLOW_SPEED);
+      					motion::right_theta = 0;
+      				}
+      				case RIGHT_BACKWARD:
+      				{
+        				if (qrd_right || motion::right_theta < SQAURE_MAX_BACK_CORRECTION)
+        				{
+          					control::set_mode(&adjust_mode);
+          				}
+        			}
+      
+      
+			}
+  
 		}
+
 	}
 
 		

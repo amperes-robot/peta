@@ -105,8 +105,8 @@ namespace course
 						io::lcd.print("trn");
 
 						state++;
-						motion::left.speed(MEDIUM_SPEED - 10);
-						motion::right.speed(-MEDIUM_SPEED + 10);
+						motion::left.speed(MEDIUM_SPEED - 20);
+						motion::right.speed(-MEDIUM_SPEED + 20);
 						motion::left_theta = 0;
 						// fall through
 					}

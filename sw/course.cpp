@@ -22,7 +22,6 @@ namespace course
 			MOTOR_EXCAVATOR = 0x30,
 			MOTOR_REVERSE = 0x80,
 
-
 			MOTOR_MASK = 0x40,
 			REVERSE_MASK = 0x80,
 			SPEED_MASK = 0x0F,
@@ -67,8 +66,8 @@ namespace course
 		{
 			begin();
 
-			fork(&motor, Until(QRD_SIDE_GREATER_THAN, menu::flw_thresh_side.value()), MOTOR_REVERSE | MOTOR_ARM | 60);
-			exec(&follow, Until(QRD_SIDE_GREATER_THAN, menu::flw_thresh_side.value()));
+			fork(&motor, Until(QRD_SIDE_LEFT_GREATER_THAN, menu::flw_thresh_side.value()), MOTOR_REVERSE | MOTOR_ARM | 60);
+			exec(&follow, Until(QRD_SIDE_LEFT_GREATER_THAN, menu::flw_thresh_side.value()));
 
 			end();
 

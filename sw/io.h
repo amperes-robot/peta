@@ -77,8 +77,8 @@ namespace io
 		const extern In qrd_tape_right;
 		const extern In pd_left;
 		const extern In pd_right;
-		const extern In qrd_side;
-		const extern In pd_side;
+		const extern In qrd_side_right;
+                const extern In qrd_side_left;
 		
 		const extern In select;
 		const extern In tweak;

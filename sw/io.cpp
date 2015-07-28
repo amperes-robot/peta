@@ -93,8 +93,8 @@ namespace io
 		ANALOG_INPUT(qrd_tape_right, 1);
 		ANALOG_INPUT(pd_left, 2);
 		ANALOG_INPUT(pd_right, 3);
-		ANALOG_INPUT(qrd_side, 4);
-		ANALOG_INPUT(pd_side, 5);
+		ANALOG_INPUT(qrd_side_right, 4); //qrd side right
+		ANALOG_INPUT(qrd_side_left, 5); // qrd side left
 
 		ANALOG_INPUT(tweak, 6);
 		ANALOG_INPUT(select, 7);

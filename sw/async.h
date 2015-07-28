@@ -16,7 +16,7 @@ namespace async
 		NEVER = 0,
 		FOREVER = 0,
 		ARM_DEPRESSED,
-		QRD_SIDE_GREATER_THAN,
+		QRD_SIDE_LEFT_GREATER_THAN,
 	};
 
 	struct If

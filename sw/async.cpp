@@ -188,8 +188,8 @@ namespace async
 				return 0;
 			case ARM_DEPRESSED:
 				return !io::Digital::switch_lower.read();
-			case QRD_SIDE_GREATER_THAN:
-				return io::Analog::qrd_side.read() > arg;
+			case QRD_SIDE_LEFT_GREATER_THAN:
+				return io::Analog::qrd_side_left.read() > arg;
 		}
 	}
 

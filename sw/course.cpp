@@ -13,9 +13,9 @@ namespace course
   namespace
   {
     enum { REV_TURN_THETA = 150, REV_BACK_THETA = -140, REV_DEAD_BEGIN = 400, REV_DEAD_END = 600 };
-    enum { ARM_LO_THRESH = -28, ARM_HI_THRESH = -5, ARM_MID_THRESH = -15, RETRY_SHIFT_THRES = 5 };
+    enum { ARM_LO_THRESH = -28, ARM_HI_THRESH = -5, ARM_MID_THRESH = -15, RETRY_SHIFT_THETA= 8 };
     enum { PAR_REVERSE_THETA = 0, PAR_ENTRY_THETA = 135, PAR_BACK_LEFT_THETA = -80, PAR_BACK_RIGHT_THETA = -80 };
-    enum { SQAURE_MAX_FRONT_CORRECTION= 30, SQAURE_MAX_BACK_CORRECTION = -30};
+    enum { SQUARE_MAX_FRONT_CORRECTION= 50, SQUARE_MAX_BACK_CORRECTION = -50};
     // cooldowns determine amount of time that must be waited before side qrd can trigger again
     
     const PROGMEM uint16_t COOLDOWNS[] = { 0, 1000, 1000, 5000 };
@@ -227,7 +227,7 @@ namespace course
         drop_thresh = ARM_MID_THRESH;
       }
       
-      enum { N_RETRIES = 2 };
+      enum { N_RETRIES = 1 };
       enum
       {
         DROPPING_BEGIN = 0,
@@ -302,7 +302,7 @@ namespace course
         }
         case LIFTING:
         {
-          if (motion::arm_theta > ARM_HI_THRESH )
+          if (motion::arm_theta >= ARM_HI_THRESH )
             // wait until the arm is up
           {
             if (!io::Digital::switch_arm.read() && retry_count < N_RETRIES) // pet is off
@@ -314,7 +314,6 @@ namespace course
               state = ZERO_BEGIN;
             }
           }
-
           break;
         }
         case RETRY_SHIFT_BEGIN: // move down and try again
@@ -322,15 +321,21 @@ namespace course
           io::lcd.setCursor(0, 1);
           io::lcd.print("rty");
           retry_count++;
-          state++;
-          motion::left.speed(MEDIUM_SPEED);
+          
+		  state = RETRY_SHIFT;
+		  if(pet_id == 4){
+			  motion::right.speed(-MEDIUM_SPEED);
+			  motion::left.speed(-MEDIUM_SPEED);
+		  }else{
+			motion::left.speed(-MEDIUM_SPEED);
+		  }
           motion::left_theta = 0;
-
-          // fall through
+		  // fall through
         }
+
         case RETRY_SHIFT:
         {
-          if (motion::left_theta > RETRY_SHIFT_THRES)
+          if (motion::left_theta <= -RETRY_SHIFT_THETA)
           {
             state = DROPPING_BEGIN;
           }
@@ -347,6 +352,7 @@ namespace course
           state++;
           // fall through
         }
+
         case ZERO:
         {
           if (io::Timer::time() > 500)
@@ -366,15 +372,20 @@ namespace course
           io::lcd.setCursor(0, 1);
           io::lcd.print("sft");
           retry_count++;
-          state++;
-          motion::left.speed(-MEDIUM_SPEED);
-          motion::left_theta = 0;
           
+		  if(pet_id != 4){
+		  state++;
+          motion::left.speed(MEDIUM_SPEED);
+          motion::left_theta = 0;
+		  }else{
+			  state = DONE_BEGIN;
+		  }
+
           // fall through
         }
         case SHIFT_BACK:
         {
-          if (motion::left_theta < retry_count*5)
+          if (motion::left_theta >= retry_count*RETRY_SHIFT_THETA)
           {
             state = DONE_BEGIN;
           }
@@ -723,7 +734,7 @@ namespace course
           {
             control::set_mode(&adjust_mode);
           }
-          if (motion::left_theta > SQAURE_MAX_FRONT_CORRECTION)
+          if (motion::left_theta > SQUARE_MAX_FRONT_CORRECTION)
           {
             state++;
           }
@@ -737,7 +748,7 @@ namespace course
             }
         case LEFT_BACKWARD:
         {
-          if (qrd_left || motion::left_theta < SQAURE_MAX_BACK_CORRECTION)
+          if (qrd_left || motion::left_theta < SQUARE_MAX_BACK_CORRECTION)
           {
             control::set_mode(&adjust_mode);
           }
@@ -756,7 +767,7 @@ namespace course
           {
             control::set_mode(&adjust_mode);
           }
-          if (motion::right_theta > SQAURE_MAX_FRONT_CORRECTION)
+          if (motion::right_theta > SQUARE_MAX_FRONT_CORRECTION)
           {
             state++;
           }
@@ -770,7 +781,7 @@ namespace course
             }
         case RIGHT_BACKWARD:
         {
-          if (qrd_right || motion::right_theta < SQAURE_MAX_BACK_CORRECTION)
+          if (qrd_right || motion::right_theta < SQUARE_MAX_BACK_CORRECTION)
           {
             control::set_mode(&adjust_mode);
           }

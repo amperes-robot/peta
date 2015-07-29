@@ -257,6 +257,12 @@ namespace async
 			case A_ENC_LT:
 				return motion::arm_theta < arg;
 			case L_MINUS_R_ENC_GT:
+				/*
+				io::lcd.clear();
+				io::lcd.home();
+				io::lcd.print(motion::left_theta - motion::right_theta);
+				io::delay_ms(20);
+				*/
 				return motion::left_theta - motion::right_theta > arg;
 			case L_PLUS_R_ENC_GT:
 				return motion::left_theta + motion::right_theta > arg;

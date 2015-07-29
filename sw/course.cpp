@@ -107,7 +107,7 @@ namespace course
 
 			// PET 1
 
-			exec(&follow, Until(FALSE), 1000U);
+			exec(&follow, Until(FALSE), 500U);
 			exec(&square, Until(FALSE));
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 

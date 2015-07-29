@@ -346,8 +346,8 @@ namespace menu
 	Opt home_gain_d(TO_FSTR(strings::home_d), 10);
 	Opt home_vel(TO_FSTR(strings::home_vel), 100);
 
-	Opt rev_dead_begin(TO_FSTR(strings::rev_dbegin), 170);
-	Opt rev_dead_end(TO_FSTR(strings::rev_dend), 220);
+	Opt rev_dead_begin(TO_FSTR(strings::rev_dbegin), 110);
+	Opt rev_dead_end(TO_FSTR(strings::rev_dend), 130);
 
 	Opt rev_enable(TO_FSTR(strings::rev_enable), 0, 512);
 

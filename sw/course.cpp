@@ -55,7 +55,8 @@ namespace course
 		enum MiscMasks : uint16_t
 		{
 			DELAY_MASK = 0x0FFF,
-			FOLLOW_IGNORE_SIDES = 1U << 15
+			FOLLOW_IGNORE_SIDES = 1U << 15,
+			FOLLOW_USE_DEAD_ZONE = 1U << 14
 		};
 
 		uint8_t increment_pet(uint8_t, uint16_t);
@@ -67,19 +68,23 @@ namespace course
 
 		void begin_tick()
 		{
+			pet_id = 0;
+
 			uint16_t side_thresh = menu::flw_thresh_side.value();
 			uint16_t left_thresh = menu::flw_thresh_left.value();
 			uint16_t right_thresh = menu::flw_thresh_right.value();
 
 			begin();
 
+			branch(26, If(TRUE));
+
 			// PET 0
 			exec(&follow, Until(FALSE), 0U);
 			exec(&square, Until(FALSE));
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
-			fork(&motor, Until(TRUE),                    MOTOR_REVERSE | MOTOR_RIGHT | 120U);
-			exec(&motor, Until(LEFT_ENC_LESS_THAN, -45), MOTOR_REVERSE | MOTOR_LEFT | 120U);
+			fork(&motor, Until(TRUE),                    MOTOR_REVERSE | MOTOR_RIGHT | 140U);
+			exec(&motor, Until(LEFT_ENC_LESS_THAN, -45), MOTOR_REVERSE | MOTOR_LEFT | 140U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
@@ -94,20 +99,15 @@ namespace course
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 			exec(&increment_pet, Until(TRUE));
 
-			exec(&motor, Until(FRONT_LEFT_QRD_GREATER_THAN, left_thresh), MOTOR_LEFT | 100U);
+			exec(&motor, Until(FRONT_LEFT_QRD_GREATER_THAN, left_thresh), MOTOR_RIGHT | 180U);
 
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 500U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 300U);
 
 			// PET 1
 
 			exec(&follow, Until(FALSE), 1000U);
 			exec(&square, Until(FALSE));
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 500U);
-
-			fork(&motor, Until(TRUE),                     MOTOR_REVERSE | MOTOR_RIGHT | 160U);
-			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 4), MOTOR_LEFT | 160U);
-
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 300U);
 
 			fork(&motor, Until(TRUE),                      MOTOR_RIGHT | 160U);
 			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 27), MOTOR_LEFT | 160U);
@@ -117,19 +117,15 @@ namespace course
 			exec(&retrieve, Until(FALSE));
 			exec(&increment_pet, Until(TRUE));
 
-			exec(&motor, Until(FRONT_LEFT_QRD_GREATER_THAN, left_thresh), MOTOR_REVERSE | MOTOR_LEFT | 100U);
+			exec(&motor, Until(FRONT_LEFT_QRD_GREATER_THAN, left_thresh), MOTOR_REVERSE | MOTOR_LEFT | 180U);
 
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 500U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 300U);
 
 			// PET 2
 
 			exec(&follow, Until(FALSE), 2000U);
 			exec(&square, Until(FALSE));
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 500U);
-
-			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 10), MOTOR_REVERSE | MOTOR_LEFT | 140U);
-
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 300U);
 
 			fork(&motor, Until(TRUE),                   MOTOR_REVERSE | MOTOR_RIGHT | 160U);
 			exec(&motor, Until(LEFT_ENC_LESS_THAN, -4), MOTOR_REVERSE | MOTOR_LEFT | 160U);
@@ -139,18 +135,21 @@ namespace course
 			exec(&retrieve, Until(FALSE));
 			exec(&increment_pet, Until(TRUE));
 
+			exec(&motor, Until(FRONT_LEFT_QRD_GREATER_THAN, left_thresh), MOTOR_LEFT | 180U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 300U);
+
 			// PET 3
 
-			exec(&follow, Until(FALSE), 5000U);
+			exec(&follow, Until(FALSE), FOLLOW_USE_DEAD_ZONE | 5000U);
 			exec(&square, Until(FALSE));
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 500U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 300U);
 
-			fork(&motor, Until(FALSE),                     MOTOR_RIGHT | 150U);
+			fork(&motor, Until(TRUE),                      MOTOR_RIGHT | 150U);
 			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 20), MOTOR_LEFT | 150U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
-			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 30), MOTOR_LEFT | 180U);
+			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 20), MOTOR_LEFT | 180U);
 
 			end();
 
@@ -174,6 +173,18 @@ namespace course
 				dcontroller.gain_d = menu::flw_gain_d.value();
 			}
 
+			if ((meta & FOLLOW_USE_DEAD_ZONE) && 
+			    io::Timer::time() > menu::rev_dead_begin.value() * 10 && io::Timer::time() < menu::rev_dead_end.value() * 10)
+
+				// in dead zone, ignore the QRD and drive straight forward, force a left turn by setting the PID controller's
+				// recovery value to the negative value
+			{
+				motion::dir(0);
+				pid::digital_recovery = ((int8_t) menu::flw_drecover.value());
+				return 1;
+			}
+          
+
 			int8_t in = pid::follow_value_digital();
 
 			dcontroller.in(in);
@@ -186,12 +197,15 @@ namespace course
 
 			if (meta & FOLLOW_IGNORE_SIDES)
 			{
-				return io::Timer::time() < meta;
+				return 1;
 			}
 			else
 			{
-				return io::Timer::time() < meta &&
-					io::Analog::qrd_side_left.read() < thresh && io::Analog::qrd_side_right.read() < thresh;
+				uint8_t timer_elapsed = io::Timer::time() > (meta & DELAY_MASK);
+				uint8_t side_detected = io::Analog::qrd_side_left.read() > thresh ||
+				                        io::Analog::qrd_side_right.read() > thresh;
+
+				return !(side_detected && timer_elapsed);
 			}
 		}
 
@@ -235,74 +249,88 @@ namespace course
 			switch (state) // dropping arm
 			{
 				case DROPPING_BEGIN: // drop the arm
-				{
-					motion::arm.speed(-MEDIUM_SPEED);
-
-					io::Timer::start();
-					state++;
-					// fall through
-				}
-				case DROPPING:
-				{
-					if (motion::arm_theta < drop_thresh || io::Timer::time() > 1000)
-						// the arm is down or timeout
 					{
-						state = BRAKE_BEGIN;
+						motion::arm.speed(-MEDIUM_SPEED);
+						motion::left.halt();
+						motion::right.halt();
+						io::Timer::start();
+						state++;
+						// fall through
 					}
-					break;
-				}
+				case DROPPING:
+					{
+						if (motion::arm_theta < drop_thresh || io::Timer::time() > 1000)
+							// the arm is down or timeout
+						{
+							state = BRAKE_BEGIN;
+						}
+						break;
+					}
 				case BRAKE_BEGIN: // brake
-				{
-					motion::arm.halt();
-					io::Timer::start();
-					state++;
-					// fall through
-				}
+					{
+						motion::arm.halt();
+						state++;
+						io::Timer::start();
+						// fall through
+					}
 				case BRAKE: // wait for arm to slow to halt
-				{
-					if (io::Timer::time() > 400) state = LIFTING_BEGIN;
-					break;
-				}
+					{
+						if (io::Timer::time() > 400)
+						{
+							state = LIFTING_BEGIN;
+						}
+						break;
+					}
 				case LIFTING_BEGIN: // lift
-				{
-					motion::arm.speed(MEDIUM_SPEED - 15);
-					state++;
-					io::Timer::start();
-					// fall through
-				}
+					{
+						motion::arm.speed(MEDIUM_SPEED - 15);
+						state++;
+						io::Timer::start();
+						// fall through
+					}
 				case LIFTING:
 				{
-					if (motion::arm_theta >= ARM_HI_THRESH)
+					if (motion::arm_theta >= ARM_HI_THRESH )
 						// wait until the arm is up
 					{
-						state = !io::Digital::switch_arm.read() && retry_count < N_RETRIES
-							? RETRY_SHIFT_BEGIN : ZERO_BEGIN;
+						if (!io::Digital::switch_arm.read() && retry_count < N_RETRIES) // pet is off
+						{
+							state = RETRY_SHIFT_BEGIN;
+						}
+						else
+						{
+							state = ZERO_BEGIN;
+						}
 					}
 					break;
 				}
 				case RETRY_SHIFT_BEGIN: // move down and try again
 				{
 					retry_count++;
-					state++;
 
-					motion::left.speed(-MEDIUM_SPEED);
-					motion::left_theta = 0;
-
+					state = RETRY_SHIFT;
 					if (pet_id == 4)
 					{
 						motion::right.speed(-MEDIUM_SPEED);
+						motion::left.speed(-MEDIUM_SPEED);
 					}
-
+					else
+					{
+						motion::left.speed(-MEDIUM_SPEED);
+					}
+					motion::left_theta = 0;
 					// fall through
 				}
+
 				case RETRY_SHIFT:
 				{
-					if (motion::left_theta < -RETRY_SHIFT_THETA)
+					if (motion::left_theta <= -RETRY_SHIFT_THETA)
 					{
 						state = DROPPING_BEGIN;
 					}
 					break;
 				}
+
 				case ZERO_BEGIN: // zero the arm by ramming it into the hardstop
 				{
 					motion::arm.speed(MEDIUM_SPEED);
@@ -310,14 +338,23 @@ namespace course
 					state++;
 					// fall through
 				}
+
 				case ZERO:
 				{
 					if (io::Timer::time() > 500)
 					{
-						state = retry_count > 0 ? SHIFT_BACK_BEGIN : DONE_BEGIN;
+						if (retry_count > 0)
+						{
+							state = SHIFT_BACK_BEGIN;
+						}
+						else
+						{
+							state = DONE_BEGIN;
+						}
 					}
 					break;
 				}
+
 				case SHIFT_BACK_BEGIN: // move down and try again
 				{
 					retry_count++;
@@ -352,9 +389,9 @@ namespace course
 				case DONE:
 				{
 					return 0;
-					break;
 				}
 			}
+			
 			return 1;
 		}
 

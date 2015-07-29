@@ -132,6 +132,7 @@ namespace async
 					if (ifs[addr].eval()) // true
 					{
 						IP += targets[addr].addr; // branch off
+						IP |= FIRST_CALL_MASK;
 					}
 					break;
 				}
@@ -141,8 +142,6 @@ namespace async
 					motion::right.halt();
 					motion::arm.halt();
 					motion::excavator.halt();
-
-					io::delay_ms(1000);
 
 					control::set_mode(&menu::main_mode);
 					return;

@@ -250,7 +250,7 @@ namespace course
 
 			fork(&motor, Until(FALSE), MOTOR_REVERSE | MOTOR_RIGHT | 100U);
 			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 50), MOTOR_LEFT | 100U);
-			exec(&halt, Until(FALSE));
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT);
 
 			exec(&retrieve, Until(FALSE));
 			exec(&increment_pet, Until(TRUE));

@@ -34,6 +34,7 @@ namespace async
 		inline If(Condition type, uint16_t arg = 0) : type(type), arg(arg) { }
 
 		uint8_t eval() const;
+		void init() const;
 
 		Condition type;
 		uint16_t arg;

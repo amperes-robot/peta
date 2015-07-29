@@ -54,6 +54,11 @@ namespace async
 					// index is 6 lowest bits
 					uint8_t ptr = forks[i] & ADDRESS_MASK;
 
+					if (forks[i] & FIRST_CALL_MASK)
+					{
+						ifs[ptr].init();
+					}
+
 					if (!targets[ptr].func(forks[i] & FIRST_CALL_MASK, metadata[ptr]))
 					{
 						// returned false -> disable fork
@@ -102,6 +107,11 @@ namespace async
 				}
 				case EXEC:
 				{
+					if (IP & FIRST_CALL_MASK)
+					{
+						ifs[addr].init();
+					}
+
 					if (!targets[addr].func(IP & FIRST_CALL_MASK, metadata[addr]))
 					{
 						inc = 1;
@@ -127,6 +137,13 @@ namespace async
 				}
 				case END:
 				{
+					motion::left.halt();
+					motion::right.halt();
+					motion::arm.halt();
+					motion::excavator.halt();
+
+					io::delay_ms(1000);
+
 					control::set_mode(&menu::main_mode);
 					return;
 				}
@@ -181,6 +198,30 @@ namespace async
 		targets[IP].addr = loc;
 		ifs[IP] = if_;
 		IP++;
+	}
+
+	void If::init() const
+	{
+		switch (type)
+		{
+			case LEFT_ENC_GREATER_THAN:
+			case LEFT_ENC_LESS_THAN:
+				motion::update_enc();
+				motion::left_theta = 0;
+				break;
+
+			case RIGHT_ENC_GREATER_THAN:
+			case RIGHT_ENC_LESS_THAN:
+				motion::update_enc();
+				motion::right_theta = 0;
+				break;
+
+			case ARM_ENC_GREATER_THAN:
+			case ARM_ENC_LESS_THAN:
+				motion::update_enc();
+				motion::arm_theta = 0;
+				break;
+		}
 	}
 
 	uint8_t If::eval() const

@@ -32,11 +32,16 @@ namespace course
 
 		enum MotorMasks : uint16_t
 		{
+			MOTOR_LEFT_BIT = 1 << 0,
+			MOTOR_RIGHT_BIT = 1 << 1,
+			MOTOR_ARM_BIT = 1 << 2,
+			MOTOR_EXCAVATOR_BIT = 1 << 3,
+
 			MOTOR_LEFT = 0x000,
 			MOTOR_RIGHT = 0x100,
 			MOTOR_ARM = 0x200,
 			MOTOR_EXCAVATOR = 0x300,
-			MOTOR_MASK = 0x400,
+			MOTOR_MASK = 0x300,
 
 			MOTOR_REVERSE = 0x800,
 
@@ -196,7 +201,7 @@ namespace course
 			return 1;
 		}
 
-		uint8_t motor(uint8_t first, uint16_t meta)
+		uint8_t motor(uint8_t, uint16_t meta)
 		{
 			int16_t speed = meta & SPEED_MASK;
 
@@ -205,17 +210,20 @@ namespace course
 				speed = -speed;
 			}
 
-			motion::motors[(meta & MOTOR_MASK) >> 4]->speed(speed);
+			motion::motors[(meta & MOTOR_MASK) >> 8]->speed(speed);
 
 			return 1;
 		}
 
-		uint8_t halt(uint8_t, uint16_t)
+		uint8_t halt(uint8_t, uint16_t meta)
 		{
-			motion::left.halt();
-			motion::right.halt();
-			motion::arm.halt();
-			motion::excavator.halt();
+			for (uint8_t i = 0; i < 4; i++)
+			{
+				if (meta & (1 << i))
+				{
+					motion::motors[i]->halt();
+				}
+			}
 
 			return 0;
 		}
@@ -227,9 +235,11 @@ namespace course
 			// PET 0
 			exec(&follow, Until(EITHER_SIDE_QRD_GREATER_THAN, menu::flw_thresh_side.value()));
 
-			fork(&motor, Until(TRUE), MOTOR_REVERSE | MOTOR_RIGHT | 100);
-			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 50), MOTOR_LEFT | 100);
 			exec(&halt, Until(TRUE));
+			//fork(&motor, Until(TRUE), MOTOR_REVERSE | MOTOR_RIGHT | 100U);
+			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 50), MOTOR_LEFT | 100U);
+			exec(&halt, Until(TRUE));
+			exec(&motor, Until(FALSE), MOTOR_REVERSE | MOTOR_RIGHT | 100U);
 
 			exec(&retrieve, Until(FALSE));
 			exec(&increment_pet, Until(TRUE));

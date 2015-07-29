@@ -14,6 +14,7 @@ namespace course
 		using namespace async;
 
 		pid::DigitalController dcontroller(0, 0, 0);
+		pid::Controller acontroller(0, 0, 0);
 
 		enum Constants
 		{
@@ -56,6 +57,7 @@ namespace course
 		{
 			DELAY_MASK = 0x0FFF,
 			FOLLOW_IGNORE_SIDES = 1U << 15,
+			BEACON_REVERSE = 1U << 15
 		};
 
 		uint8_t increment_pet(uint8_t, uint16_t);
@@ -64,6 +66,7 @@ namespace course
 		uint8_t halt(uint8_t, uint16_t);
 		uint8_t motor(uint8_t, uint16_t);
 		uint8_t retrieve(uint8_t, uint16_t);
+		uint8_t beacon(uint8_t, uint16_t);
 
 		void begin_tick()
 		{
@@ -98,16 +101,16 @@ namespace course
 
 			exec(&motor, Until(FRONT_LEFT_QRD_GT, left_thresh), MOTOR_RIGHT | 180U);
 
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 300U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			// PET 1
 
 			exec(&follow, Until(FALSE), 1000U);
 			exec(&square, Until(FALSE));
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 300U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
-			fork(&motor, Until(TRUE),         MOTOR_RIGHT | 160U);
-			exec(&motor, Until(L_ENC_GT, 27), MOTOR_LEFT | 160U);
+			fork(&motor, Until(TRUE),         MOTOR_RIGHT | 120U);
+			exec(&motor, Until(L_ENC_GT, 10), MOTOR_LEFT | 160U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
@@ -116,16 +119,16 @@ namespace course
 
 			exec(&motor, Until(FRONT_LEFT_QRD_GT, left_thresh), MOTOR_REVERSE | MOTOR_LEFT | 180U);
 
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 300U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			// PET 2
 
 			exec(&follow, Until(FALSE), 2000U);
 			exec(&square, Until(FALSE));
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 300U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			fork(&motor, Until(TRUE),         MOTOR_REVERSE | MOTOR_RIGHT | 160U);
-			exec(&motor, Until(L_ENC_LT, -7), MOTOR_REVERSE | MOTOR_LEFT | 160U);
+			exec(&motor, Until(L_ENC_LT, -3), MOTOR_REVERSE | MOTOR_LEFT | 160U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
@@ -133,23 +136,23 @@ namespace course
 			exec(&increment_pet, Until(TRUE));
 
 			exec(&motor, Until(FRONT_LEFT_QRD_GT, left_thresh), MOTOR_LEFT | 180U);
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 300U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			// PET 3
 
-			exec(&follow, Until(L_MINUS_R_ENC_GT, 100), FOLLOW_IGNORE_SIDES | 0U);
+			exec(&follow, Until(L_MINUS_R_ENC_GT, 75), FOLLOW_IGNORE_SIDES | 0U);
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			fork(&motor, Until(TRUE),         MOTOR_RIGHT | 120U);
-			exec(&motor, Until(L_ENC_GT, 50), MOTOR_LEFT | 170U);
+			exec(&motor, Until(L_ENC_GT, 80), MOTOR_LEFT | 180U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			exec(&motor, Until(FRONT_RIGHT_QRD_GT, right_thresh), MOTOR_LEFT | 180U);
 
 			exec(&follow, Until(FALSE), 500U);
-			exec(&square, Until(FALSE));
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 300U);
+			//exec(&square, Until(FALSE));
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			fork(&motor, Until(TRUE),         MOTOR_RIGHT | 150U);
 			exec(&motor, Until(L_ENC_GT, 20), MOTOR_LEFT | 150U);
@@ -157,6 +160,8 @@ namespace course
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			exec(&motor, Until(L_ENC_GT, 20), MOTOR_LEFT | 180U);
+
+			exec(&beacon, Until(L_PLUS_R_ENC_GT, 150));
 
 			end();
 
@@ -201,6 +206,40 @@ namespace course
 				                        io::Analog::qrd_side_right.read() > thresh;
 
 				return !(side_detected && timer_elapsed);
+			}
+		}
+
+		uint8_t beacon(uint8_t first, uint16_t meta)
+		{
+			if (first)
+			{
+				acontroller.reset();
+				acontroller.gain_p = menu::home_gain_p.value();
+				acontroller.gain_i = menu::home_gain_i.value();
+				acontroller.gain_d = menu::home_gain_d.value();
+
+				motion::update_enc();
+				motion::left_theta = 0;
+				motion::right_theta = 0;
+			}
+
+			uint16_t left = io::Analog::pd_left.read();
+			uint16_t right = io::Analog::pd_right.read();
+
+			int16_t in = ((int32_t) right - left) * 50 / (left + right);
+
+			acontroller.in(in);
+			int16_t out = acontroller.out();
+
+			if (meta & BEACON_REVERSE)
+			{
+				motion::vel(-((int16_t) menu::home_vel.value()));
+				motion::dir(out);
+			}
+			else
+			{
+				motion::vel(menu::home_vel.value());
+				motion::dir(out);
 			}
 		}
 
@@ -278,7 +317,7 @@ namespace course
 					}
 				case LIFTING_BEGIN: // lift
 					{
-						motion::arm.speed(MEDIUM_SPEED - 15);
+						motion::arm.speed(MEDIUM_SPEED);
 						state++;
 						io::Timer::start();
 						// fall through

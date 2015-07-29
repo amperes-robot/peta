@@ -26,7 +26,8 @@ namespace async
 		A_ENC_GT,
 		A_ENC_LT,
 
-		L_MINUS_R_ENC_GT
+		L_MINUS_R_ENC_GT,
+		L_PLUS_R_ENC_GT
 	};
 
 	struct If

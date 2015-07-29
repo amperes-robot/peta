@@ -222,6 +222,7 @@ namespace async
 				break;
 
 			case L_MINUS_R_ENC_GT:
+			case L_PLUS_R_ENC_GT:
 				motion::update_enc();
 				motion::left_theta = 0;
 				motion::right_theta = 0;
@@ -257,6 +258,8 @@ namespace async
 				return motion::arm_theta < arg;
 			case L_MINUS_R_ENC_GT:
 				return motion::left_theta - motion::right_theta > arg;
+			case L_PLUS_R_ENC_GT:
+				return motion::left_theta + motion::right_theta > arg;
 		}
 	}
 

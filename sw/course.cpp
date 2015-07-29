@@ -13,7 +13,7 @@ namespace course
   namespace
   {
     enum { REV_TURN_THETA = 150, REV_BACK_THETA = -140, REV_DEAD_BEGIN = 400, REV_DEAD_END = 600 };
-    enum { ARM_LO_THRESH = -28, ARM_HI_THRESH = -5, ARM_MID_THRESH = -15 };
+    enum { ARM_LO_THRESH = -28, ARM_HI_THRESH = -5, ARM_MID_THRESH = -15, RETRY_SHIFT_THRES = 5 };
     enum { PAR_REVERSE_THETA = 0, PAR_ENTRY_THETA = 135, PAR_BACK_LEFT_THETA = -80, PAR_BACK_RIGHT_THETA = -80 };
     enum { SQAURE_MAX_FRONT_CORRECTION= 30, SQAURE_MAX_BACK_CORRECTION = -30};
     // cooldowns determine amount of time that must be waited before side qrd can trigger again
@@ -236,10 +236,12 @@ namespace course
         BRAKE,
         LIFTING_BEGIN,
         LIFTING,
-        RETRY_BEGIN,
-        RETRY,
+        RETRY_SHIFT_BEGIN,
+        RETRY_SHIFT,
         ZERO_BEGIN,
         ZERO,
+        SHIFT_BACK_BEGIN,
+        SHIFT_BACK,
         DONE_BEGIN,
         DONE
       };
@@ -257,14 +259,16 @@ namespace course
           io::lcd.setCursor(0, 1);
           io::lcd.print("drp");
           motion::arm.speed(-MEDIUM_SPEED);
+          motion::left.halt();
+          motion::right.halt();
           io::Timer::start();
           state++;
           // fall through
         }
         case DROPPING:
         {
-          if (motion::arm_theta < drop_thresh || io::Timer::time() > 1000 /*|| io::Digital::switch_upper.read()*/)
-            // the arm is down or the microswitch has been activated or timeout
+          if (motion::arm_theta < drop_thresh || io::Timer::time() > 1000)
+            // the arm is down or timeout
           {
             state = BRAKE_BEGIN;
           }
@@ -298,41 +302,41 @@ namespace course
         }
         case LIFTING:
         {
-          if (motion::arm_theta > ARM_HI_THRESH /* || !io::Digital::switch_upper.read()*/)
-            // wait until pet is detached or the arm is up
+          if (motion::arm_theta > ARM_HI_THRESH )
+            // wait until the arm is up
           {
-            state = ZERO_BEGIN;
-          }
-          else if (io::Timer::time() > 2000) // timeout
-          {
-            if (retry_count < N_RETRIES)
+            if (!io::Digital::switch_arm.read() && retry_count < N_RETRIES) // pet is off
             {
-              state = RETRY_BEGIN;
+              state = RETRY_SHIFT_BEGIN;
             }
             else
             {
               state = ZERO_BEGIN;
             }
           }
+
           break;
         }
-        case RETRY_BEGIN: // move down and try again
+        case RETRY_SHIFT_BEGIN: // move down and try again
         {
           io::lcd.setCursor(0, 1);
           io::lcd.print("rty");
           retry_count++;
           state++;
-          motion::arm.speed(-SLOW_SPEED);
+          motion::left.speed(MEDIUM_SPEED);
+          motion::left_theta = 0;
+
           // fall through
         }
-        case RETRY:
+        case RETRY_SHIFT:
         {
-          if (motion::arm_theta < ARM_LO_THRESH)
+          if (motion::left_theta > RETRY_SHIFT_THRES)
           {
-            state = BRAKE_BEGIN;
+            state = DROPPING_BEGIN;
           }
           break;
         }
+
         case ZERO_BEGIN: // zero the arm by ramming it into the hardstop
         {
           io::lcd.setCursor(0, 1);
@@ -347,10 +351,36 @@ namespace course
         {
           if (io::Timer::time() > 500)
           {
+            if (retry_count > 0) {
+              state = SHIFT_BACK_BEGIN;
+            }
+            else {
+              state = DONE_BEGIN;
+            }
+          }
+          break;
+        }
+          
+        case SHIFT_BACK_BEGIN: // move down and try again
+        {
+          io::lcd.setCursor(0, 1);
+          io::lcd.print("sft");
+          retry_count++;
+          state++;
+          motion::left.speed(-MEDIUM_SPEED);
+          motion::left_theta = 0;
+          
+          // fall through
+        }
+        case SHIFT_BACK:
+        {
+          if (motion::left_theta < retry_count*5)
+          {
             state = DONE_BEGIN;
           }
           break;
         }
+
         case DONE_BEGIN:
         {
           io::lcd.setCursor(0, 1);
@@ -684,7 +714,7 @@ namespace course
         case LEFT_FORWARD_BEGIN:
         {
             state++;
-            motion::left.speed(SLOW_SPEED);
+            motion::left.speed(MEDIUM_SPEED);
             motion::left_theta = 0;
         }
         case LEFT_FORWARD:
@@ -702,7 +732,7 @@ namespace course
         case LEFT_BACKWARD_BEGIN: 
     				{
               state++;
-              motion::left.speed(-SLOW_SPEED);
+              motion::left.speed(-MEDIUM_SPEED);
               motion::left_theta = 0;
             }
         case LEFT_BACKWARD:
@@ -717,7 +747,7 @@ namespace course
         {
 
               state++;
-              motion::right.speed(SLOW_SPEED);
+              motion::right.speed(MEDIUM_SPEED);
               motion::right_theta = 0;
         }
         case RIGHT_FORWARD:
@@ -735,7 +765,7 @@ namespace course
         case RIGHT_BACKWARD_BEGIN: 
     				{
               state++;
-              motion::right.speed(-SLOW_SPEED);
+              motion::right.speed(-MEDIUM_SPEED);
               motion::right_theta = 0;
             }
         case RIGHT_BACKWARD:

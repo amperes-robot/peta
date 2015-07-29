@@ -21,7 +21,8 @@ namespace course
 			ARM_HI_THRESH = -5,
 			ARM_MID_THRESH = -15,
 			SQUARE_FWD_MAX = 50,
-			SQUARE_BACK_MAX = -50
+			SQUARE_BACK_MAX = -50,
+			RETRY_SHIFT_THETA = 8
 		};
 
 		enum Speeds
@@ -54,7 +55,7 @@ namespace course
 		enum MiscMasks : uint16_t
 		{
 			DELAY_MASK = 0x0FFF,
-			FOLLOW_IGNORE_SIDES = 1 << 15;
+			FOLLOW_IGNORE_SIDES = 1U << 15
 		};
 
 		uint8_t increment_pet(uint8_t, uint16_t);
@@ -144,6 +145,13 @@ namespace course
 			exec(&square, Until(FALSE));
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 500U);
 
+			fork(&motor, Until(FALSE),                     MOTOR_RIGHT | 150U);
+			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 20), MOTOR_LEFT | 150U);
+
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
+
+			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 30), MOTOR_LEFT | 180U);
+
 			end();
 
 			control::set_mode(&async::async_mode);
@@ -178,33 +186,34 @@ namespace course
 
 			if (meta & FOLLOW_IGNORE_SIDES)
 			{
-				return io::Timer::time < meta;
+				return io::Timer::time() < meta;
 			}
 			else
 			{
-				return io::Timer::time < meta &&
+				return io::Timer::time() < meta &&
 					io::Analog::qrd_side_left.read() < thresh && io::Analog::qrd_side_right.read() < thresh;
 			}
 		}
 
-		uint8_t retrieve(uint8_t first, uint16_t)
+		uint8_t retrieve_tick(uint8_t first, uint16_t)
 		{
-			static int retry_count;
+			static uint8_t retry_count;
 
 			if (first)
 			{
 				motion::left.halt();
 				motion::right.halt();
-				motion::update_enc();
+
+				motion::update_enc(); // clear accumulator
 				motion::arm_theta = 0;
-				state = 0;
+
 				retry_count = 0;
+				state = 0;
 			}
 
-			int8_t drop_thresh;
+			int8_t drop_thresh = pet_id < 4 ? ARM_LO_THRESH : ARM_MID_THRESH;
 
-			drop_thresh = pet_id < 4 ? ARM_LO_THRESH : ARM_MID_THRESH;
-
+			enum { N_RETRIES = 1 };
 			enum
 			{
 				DROPPING_BEGIN = 0,
@@ -213,10 +222,12 @@ namespace course
 				BRAKE,
 				LIFTING_BEGIN,
 				LIFTING,
-				RETRY_BEGIN,
-				RETRY,
+				RETRY_SHIFT_BEGIN,
+				RETRY_SHIFT,
 				ZERO_BEGIN,
 				ZERO,
+				SHIFT_BACK_BEGIN,
+				SHIFT_BACK,
 				DONE_BEGIN,
 				DONE
 			};
@@ -226,14 +237,15 @@ namespace course
 				case DROPPING_BEGIN: // drop the arm
 				{
 					motion::arm.speed(-MEDIUM_SPEED);
-					io::Timer::start(); 
+
+					io::Timer::start();
 					state++;
 					// fall through
 				}
 				case DROPPING:
 				{
-					if (motion::arm_theta < drop_thresh || io::Timer::time() > 1000 /*|| io::Digital::switch_upper.read()*/)
-						// the arm is down or the microswitch has been activated or timeout
+					if (motion::arm_theta < drop_thresh || io::Timer::time() > 1000)
+						// the arm is down or timeout
 					{
 						state = BRAKE_BEGIN;
 					}
@@ -242,8 +254,8 @@ namespace course
 				case BRAKE_BEGIN: // brake
 				{
 					motion::arm.halt();
-					state++;
 					io::Timer::start();
+					state++;
 					// fall through
 				}
 				case BRAKE: // wait for arm to slow to halt
@@ -260,27 +272,35 @@ namespace course
 				}
 				case LIFTING:
 				{
-					if (motion::arm_theta > ARM_HI_THRESH /* || !io::Digital::switch_upper.read()*/)
-						// wait until pet is detached or the arm is up
+					if (motion::arm_theta >= ARM_HI_THRESH)
+						// wait until the arm is up
 					{
-						state = ZERO_BEGIN;
-					}
-					else if (io::Timer::time() > 2000) // timeout
-					{
-						state = retry_count < 2 ? RETRY_BEGIN : ZERO_BEGIN;
+						state = !io::Digital::switch_arm.read() && retry_count < N_RETRIES
+							? RETRY_SHIFT_BEGIN : ZERO_BEGIN;
 					}
 					break;
 				}
-				case RETRY_BEGIN: // move down and try again
+				case RETRY_SHIFT_BEGIN: // move down and try again
 				{
 					retry_count++;
 					state++;
-					motion::arm.speed(-SLOW_SPEED);
+
+					motion::left.speed(-MEDIUM_SPEED);
+					motion::left_theta = 0;
+
+					if (pet_id == 4)
+					{
+						motion::right.speed(-MEDIUM_SPEED);
+					}
+
 					// fall through
 				}
-				case RETRY:
+				case RETRY_SHIFT:
 				{
-					if (motion::arm_theta < ARM_LO_THRESH) state = BRAKE_BEGIN;
+					if (motion::left_theta < -RETRY_SHIFT_THETA)
+					{
+						state = DROPPING_BEGIN;
+					}
 					break;
 				}
 				case ZERO_BEGIN: // zero the arm by ramming it into the hardstop
@@ -293,6 +313,31 @@ namespace course
 				case ZERO:
 				{
 					if (io::Timer::time() > 500)
+					{
+						state = retry_count > 0 ? SHIFT_BACK_BEGIN : DONE_BEGIN;
+					}
+					break;
+				}
+				case SHIFT_BACK_BEGIN: // move down and try again
+				{
+					retry_count++;
+
+					if (pet_id != 4)
+					{
+						state++;
+						motion::left.speed(MEDIUM_SPEED);
+						motion::left_theta = 0;
+					}
+					else
+					{
+						state = DONE_BEGIN;
+					}
+
+					// fall through
+				}
+				case SHIFT_BACK:
+				{
+					if (motion::left_theta >= retry_count * RETRY_SHIFT_THETA)
 					{
 						state = DONE_BEGIN;
 					}
@@ -307,9 +352,9 @@ namespace course
 				case DONE:
 				{
 					return 0;
+					break;
 				}
 			}
-
 			return 1;
 		}
 

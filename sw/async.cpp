@@ -203,22 +203,28 @@ namespace async
 	{
 		switch (type)
 		{
-			case LEFT_ENC_GREATER_THAN:
-			case LEFT_ENC_LESS_THAN:
+			case L_ENC_GT:
+			case L_ENC_LT:
 				motion::update_enc();
 				motion::left_theta = 0;
 				break;
 
-			case RIGHT_ENC_GREATER_THAN:
-			case RIGHT_ENC_LESS_THAN:
+			case R_ENC_GT:
+			case R_ENC_LT:
 				motion::update_enc();
 				motion::right_theta = 0;
 				break;
 
-			case ARM_ENC_GREATER_THAN:
-			case ARM_ENC_LESS_THAN:
+			case A_ENC_GT:
+			case A_ENC_LT:
 				motion::update_enc();
 				motion::arm_theta = 0;
+				break;
+
+			case L_MINUS_R_ENC_GT:
+				motion::update_enc();
+				motion::left_theta = 0;
+				motion::right_theta = 0;
 				break;
 		}
 	}
@@ -231,26 +237,26 @@ namespace async
 				return 1;
 			case FALSE:
 				return 0;
-			case ARM_DEPRESSED:
-				return !io::Digital::switch_lower.read();
-			case EITHER_SIDE_QRD_GREATER_THAN:
+			case EITHER_SIDE_QRD_GT:
 				return io::Analog::qrd_side_left.read() > arg || io::Analog::qrd_side_right.read() > arg;
-			case FRONT_LEFT_QRD_GREATER_THAN:
+			case FRONT_LEFT_QRD_GT:
 				return io::Analog::qrd_tape_left.read() > arg;
-			case FRONT_RIGHT_QRD_GREATER_THAN:
+			case FRONT_RIGHT_QRD_GT:
 				return io::Analog::qrd_tape_right.read() > arg;
-			case LEFT_ENC_GREATER_THAN:
+			case L_ENC_GT:
 				return motion::left_theta > arg;
-			case LEFT_ENC_LESS_THAN:
+			case L_ENC_LT:
 				return motion::left_theta < arg;
-			case RIGHT_ENC_GREATER_THAN:
+			case R_ENC_GT:
 				return motion::right_theta > arg;
-			case RIGHT_ENC_LESS_THAN:
+			case R_ENC_LT:
 				return motion::right_theta < arg;
-			case ARM_ENC_GREATER_THAN:
+			case A_ENC_GT:
 				return motion::arm_theta > arg;
-			case ARM_ENC_LESS_THAN:
+			case A_ENC_LT:
 				return motion::arm_theta < arg;
+			case L_MINUS_R_ENC_GT:
+				return motion::left_theta - motion::right_theta > arg;
 		}
 	}
 

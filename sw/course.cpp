@@ -56,7 +56,6 @@ namespace course
 		{
 			DELAY_MASK = 0x0FFF,
 			FOLLOW_IGNORE_SIDES = 1U << 15,
-			FOLLOW_USE_DEAD_ZONE = 1U << 14
 		};
 
 		uint8_t increment_pet(uint8_t, uint16_t);
@@ -76,30 +75,28 @@ namespace course
 
 			begin();
 
-			branch(26, If(TRUE));
-
 			// PET 0
 			exec(&follow, Until(FALSE), 0U);
 			exec(&square, Until(FALSE));
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
-			fork(&motor, Until(TRUE),                    MOTOR_REVERSE | MOTOR_RIGHT | 140U);
-			exec(&motor, Until(LEFT_ENC_LESS_THAN, -45), MOTOR_REVERSE | MOTOR_LEFT | 140U);
+			fork(&motor, Until(TRUE),          MOTOR_REVERSE | MOTOR_RIGHT | 140U);
+			exec(&motor, Until(L_ENC_LT, -45), MOTOR_REVERSE | MOTOR_LEFT | 140U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
-			fork(&motor, Until(TRUE),                      MOTOR_REVERSE | MOTOR_RIGHT | 160U);
-			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 27), MOTOR_LEFT | 160U);
+			fork(&motor, Until(TRUE),         MOTOR_REVERSE | MOTOR_RIGHT | 160U);
+			exec(&motor, Until(L_ENC_GT, 27), MOTOR_LEFT | 160U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
-			fork(&motor, Until(TRUE),                      MOTOR_RIGHT | 180U);
-			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 70), MOTOR_LEFT | 180U);
+			fork(&motor, Until(TRUE),         MOTOR_RIGHT | 180U);
+			exec(&motor, Until(L_ENC_GT, 70), MOTOR_LEFT | 180U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 			exec(&increment_pet, Until(TRUE));
 
-			exec(&motor, Until(FRONT_LEFT_QRD_GREATER_THAN, left_thresh), MOTOR_RIGHT | 180U);
+			exec(&motor, Until(FRONT_LEFT_QRD_GT, left_thresh), MOTOR_RIGHT | 180U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 300U);
 
@@ -109,15 +106,15 @@ namespace course
 			exec(&square, Until(FALSE));
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 300U);
 
-			fork(&motor, Until(TRUE),                      MOTOR_RIGHT | 160U);
-			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 27), MOTOR_LEFT | 160U);
+			fork(&motor, Until(TRUE),         MOTOR_RIGHT | 160U);
+			exec(&motor, Until(L_ENC_GT, 27), MOTOR_LEFT | 160U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			exec(&retrieve, Until(FALSE));
 			exec(&increment_pet, Until(TRUE));
 
-			exec(&motor, Until(FRONT_LEFT_QRD_GREATER_THAN, left_thresh), MOTOR_REVERSE | MOTOR_LEFT | 180U);
+			exec(&motor, Until(FRONT_LEFT_QRD_GT, left_thresh), MOTOR_REVERSE | MOTOR_LEFT | 180U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 300U);
 
@@ -127,29 +124,39 @@ namespace course
 			exec(&square, Until(FALSE));
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 300U);
 
-			fork(&motor, Until(TRUE),                   MOTOR_REVERSE | MOTOR_RIGHT | 160U);
-			exec(&motor, Until(LEFT_ENC_LESS_THAN, -4), MOTOR_REVERSE | MOTOR_LEFT | 160U);
+			fork(&motor, Until(TRUE),         MOTOR_REVERSE | MOTOR_RIGHT | 160U);
+			exec(&motor, Until(L_ENC_LT, -7), MOTOR_REVERSE | MOTOR_LEFT | 160U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			exec(&retrieve, Until(FALSE));
 			exec(&increment_pet, Until(TRUE));
 
-			exec(&motor, Until(FRONT_LEFT_QRD_GREATER_THAN, left_thresh), MOTOR_LEFT | 180U);
+			exec(&motor, Until(FRONT_LEFT_QRD_GT, left_thresh), MOTOR_LEFT | 180U);
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 300U);
 
 			// PET 3
 
-			exec(&follow, Until(FALSE), FOLLOW_USE_DEAD_ZONE | 5000U);
-			exec(&square, Until(FALSE));
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 300U);
+			exec(&follow, Until(L_MINUS_R_ENC_GT, 100), FOLLOW_IGNORE_SIDES | 0U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
-			fork(&motor, Until(TRUE),                      MOTOR_RIGHT | 150U);
-			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 20), MOTOR_LEFT | 150U);
+			fork(&motor, Until(TRUE),         MOTOR_RIGHT | 120U);
+			exec(&motor, Until(L_ENC_GT, 50), MOTOR_LEFT | 170U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
-			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 20), MOTOR_LEFT | 180U);
+			exec(&motor, Until(FRONT_RIGHT_QRD_GT, right_thresh), MOTOR_LEFT | 180U);
+
+			exec(&follow, Until(FALSE), 500U);
+			exec(&square, Until(FALSE));
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 300U);
+
+			fork(&motor, Until(TRUE),         MOTOR_RIGHT | 150U);
+			exec(&motor, Until(L_ENC_GT, 20), MOTOR_LEFT | 150U);
+
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
+
+			exec(&motor, Until(L_ENC_GT, 20), MOTOR_LEFT | 180U);
 
 			end();
 
@@ -172,18 +179,6 @@ namespace course
 				dcontroller.gain_i = menu::flw_gain_i.value();
 				dcontroller.gain_d = menu::flw_gain_d.value();
 			}
-
-			if ((meta & FOLLOW_USE_DEAD_ZONE) && 
-			    io::Timer::time() > menu::rev_dead_begin.value() * 10 && io::Timer::time() < menu::rev_dead_end.value() * 10)
-
-				// in dead zone, ignore the QRD and drive straight forward, force a left turn by setting the PID controller's
-				// recovery value to the negative value
-			{
-				motion::dir(0);
-				pid::digital_recovery = ((int8_t) menu::flw_drecover.value());
-				return 1;
-			}
-          
 
 			int8_t in = pid::follow_value_digital();
 

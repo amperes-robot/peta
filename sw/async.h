@@ -31,13 +31,13 @@ namespace async
 	struct If
 	{
 		inline If() : type(TRUE), arg(0) { }
-		inline If(Condition type, uint16_t arg = 0) : type(type), arg(arg) { }
+		inline If(Condition type, int16_t arg = 0) : type(type), arg(arg) { }
 
 		uint8_t eval() const;
 		void init() const;
 
 		Condition type;
-		uint16_t arg;
+		int16_t arg;
 	};
 	typedef If Until;
 

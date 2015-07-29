@@ -19,8 +19,11 @@ namespace course
 		{
 			ARM_LO_THRESH = -28,
 			ARM_HI_THRESH = -5,
-			ARM_MID_THRESH = -15
+			ARM_MID_THRESH = -15,
+			SQUARE_FWD_MAX = 50,
+			SQUARE_BACK_MAX = -50
 		};
+
 		enum Speeds
 		{
 			SLOW_SPEED = 120,
@@ -52,6 +55,52 @@ namespace course
 		{
 			DELAY_MASK = 0x0FFF
 		};
+
+		uint8_t increment_pet(uint8_t, uint16_t);
+		uint8_t follow(uint8_t, uint16_t);
+		uint8_t square(uint8_t, uint16_t);
+		uint8_t halt(uint8_t, uint16_t);
+		uint8_t motor(uint8_t, uint16_t);
+		uint8_t retrieve(uint8_t, uint16_t);
+
+		void begin_tick()
+		{
+			begin();
+
+			// PET 0
+			exec(&follow, Until(EITHER_SIDE_QRD_GREATER_THAN, menu::flw_thresh_side.value()));
+			exec(&square, Until(FALSE));
+
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 1000U);
+
+			fork(&motor, Until(TRUE),                    MOTOR_REVERSE | MOTOR_RIGHT | 100U);
+			exec(&motor, Until(LEFT_ENC_LESS_THAN, -45), MOTOR_REVERSE | MOTOR_LEFT | 100U);
+
+			fork(&motor, Until(TRUE),                      MOTOR_REVERSE | MOTOR_RIGHT | 100U);
+			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 27), MOTOR_LEFT | 100U);
+
+			fork(&motor, Until(TRUE),                      MOTOR_RIGHT | 100U);
+			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 70), MOTOR_LEFT | 100U);
+
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT);
+
+			exec(&increment_pet, Until(TRUE));
+
+			exec(&motor, Until(FRONT_LEFT_QRD_GREATER_THAN, menu::flw_thresh_left.value()), MOTOR_LEFT | 100U);
+
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 1000U);
+
+			// PET 1
+
+			exec(&follow, Until(EITHER_SIDE_QRD_GREATER_THAN, menu::flw_thresh_side.value()));
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 1000U);
+
+			exec(&square, Until(FALSE));
+
+			end();
+
+			control::set_mode(&async::async_mode);
+		}
 		
 		uint8_t increment_pet(uint8_t first, uint16_t)
 		{
@@ -239,29 +288,97 @@ namespace course
 			return io::Timer::time() < (meta & DELAY_MASK);
 		}
 
-		void begin_tick()
+		uint8_t square(uint8_t first, uint16_t)
 		{
-			begin();
+			if (first)
+			{
+				motion::left.halt();
+				motion::right.halt();
 
-			// PET 0
-			exec(&follow, Until(EITHER_SIDE_QRD_GREATER_THAN, menu::flw_thresh_side.value()));
+				io::lcd.clear();
+				io::lcd.home();
+				io::lcd.print("square");
 
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 1000U);
+				state = 0;
+			}
 
-			fork(&motor, Until(FALSE), MOTOR_REVERSE | MOTOR_RIGHT | 100U);
-			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 50), MOTOR_LEFT | 100U);
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT);
+			enum
+			{
+				BEGIN = 0,
+				LEFT_FORWARD_BEGIN,
+				LEFT_FORWARD,
+				LEFT_BACKWARD_BEGIN,
+				LEFT_BACKWARD,
+				RIGHT_FORWARD_BEGIN,
+				RIGHT_FORWARD,
+				RIGHT_BACKWARD_BEGIN,
+				RIGHT_BACKWARD
+			};
 
-			exec(&retrieve, Until(FALSE));
-			exec(&increment_pet, Until(TRUE));
+			bool qrd_left = io::Analog::qrd_side_left.read() > menu::flw_thresh_side.value();
+			bool qrd_right = io::Analog::qrd_side_right.read() > menu::flw_thresh_side.value();
 
-			// PET 1
-			exec(&motor, Until(FRONT_LEFT_QRD_GREATER_THAN, menu::flw_thresh_left.value()));
-			exec(&follow, Until(EITHER_SIDE_QRD_GREATER_THAN, menu::flw_thresh_side.value()));
+			switch (state)
+			{
+				case BEGIN:
+				{
+					if (!qrd_left) state = LEFT_FORWARD_BEGIN;
+					else if (!qrd_right) state = RIGHT_FORWARD_BEGIN;
+					else return 0;
 
-			end();
+					break;
+				}
+				case LEFT_FORWARD_BEGIN:
+				{
+					state++;
+					motion::left.speed(MEDIUM_SPEED);
+					motion::left_theta = 0;
+				}
+				case LEFT_FORWARD:
+				{
+					if (qrd_left) return 0;
+					if (motion::left_theta > SQUARE_FWD_MAX) state++;
 
-			control::set_mode(&async::async_mode);
+					break;
+				}
+				case LEFT_BACKWARD_BEGIN: 
+				{
+					state++;
+					motion::left.speed(-MEDIUM_SPEED);
+					motion::left_theta = 0;
+				}
+				case LEFT_BACKWARD:
+				{
+					if (qrd_left || motion::left_theta < SQUARE_BACK_MAX) return 0;
+
+					break;
+				}
+				case RIGHT_FORWARD_BEGIN: 
+				{
+					state++;
+					motion::right.speed(MEDIUM_SPEED);
+					motion::right_theta = 0;
+				}
+				case RIGHT_FORWARD:
+				{
+					if (qrd_right) return 0;
+					if (motion::right_theta > SQUARE_FWD_MAX) state++;
+
+					break;
+				}
+				case RIGHT_BACKWARD_BEGIN: 
+				{
+					state++;
+					motion::right.speed(-MEDIUM_SPEED);
+					motion::right_theta = 0;
+				}
+				case RIGHT_BACKWARD:
+				{
+					if (qrd_right || motion::right_theta < SQUARE_BACK_MAX) return 0;
+					break;
+				}
+			}
+			return 1;
 		}
 	}
 

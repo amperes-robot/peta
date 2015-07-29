@@ -32,10 +32,10 @@ namespace course
 
 		enum MotorMasks : uint16_t
 		{
-			MOTOR_LEFT_BIT = 1 << 0,
-			MOTOR_RIGHT_BIT = 1 << 1,
-			MOTOR_ARM_BIT = 1 << 2,
-			MOTOR_EXCAVATOR_BIT = 1 << 3,
+			MOTOR_LEFT_BIT = 1U << 12,
+			MOTOR_RIGHT_BIT = 1U << 13,
+			MOTOR_ARM_BIT = 1U << 14,
+			MOTOR_EXCAVATOR_BIT = 1U << 15,
 
 			MOTOR_LEFT = 0x000,
 			MOTOR_RIGHT = 0x100,
@@ -46,6 +46,11 @@ namespace course
 			MOTOR_REVERSE = 0x800,
 
 			SPEED_MASK = 0xFF,
+		};
+		
+		enum MiscMasks : uint16_t
+		{
+			DELAY_MASK = 0x0FFF
 		};
 		
 		uint8_t increment_pet(uint8_t first, uint16_t)
@@ -215,17 +220,23 @@ namespace course
 			return 1;
 		}
 
-		uint8_t halt(uint8_t, uint16_t meta)
+		// should only be called from main thread
+		uint8_t halt(uint8_t first, uint16_t meta)
 		{
-			for (uint8_t i = 0; i < 4; i++)
+			if (first)
 			{
-				if (meta & (1 << i))
+				io::Timer::start();
+			}
+
+			for (uint8_t i = 12; i < 16; i++)
+			{
+				if (meta & (1U << i))
 				{
-					motion::motors[i]->halt();
+					motion::motors[i - 12]->halt();
 				}
 			}
 
-			return 0;
+			return io::Timer::time() < (meta & DELAY_MASK);
 		}
 
 		void begin_tick()
@@ -235,11 +246,11 @@ namespace course
 			// PET 0
 			exec(&follow, Until(EITHER_SIDE_QRD_GREATER_THAN, menu::flw_thresh_side.value()));
 
-			exec(&halt, Until(TRUE));
-			//fork(&motor, Until(TRUE), MOTOR_REVERSE | MOTOR_RIGHT | 100U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 1000U);
+
+			fork(&motor, Until(FALSE), MOTOR_REVERSE | MOTOR_RIGHT | 100U);
 			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 50), MOTOR_LEFT | 100U);
-			exec(&halt, Until(TRUE));
-			exec(&motor, Until(FALSE), MOTOR_REVERSE | MOTOR_RIGHT | 100U);
+			exec(&halt, Until(FALSE));
 
 			exec(&retrieve, Until(FALSE));
 			exec(&increment_pet, Until(TRUE));

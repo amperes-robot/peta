@@ -156,7 +156,7 @@ namespace course
 
 			control::set_mode(&async::async_mode);
 		}
-		
+
 		uint8_t increment_pet(uint8_t first, uint16_t)
 		{
 			pet_id++;
@@ -195,7 +195,7 @@ namespace course
 			}
 		}
 
-		uint8_t retrieve_tick(uint8_t first, uint16_t)
+		uint8_t retrieve(uint8_t first, uint16_t)
 		{
 			static uint8_t retry_count;
 

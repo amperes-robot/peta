@@ -224,15 +224,19 @@ namespace course
 		{
 			begin();
 
+			// PET 0
 			exec(&follow, Until(EITHER_SIDE_QRD_GREATER_THAN, menu::flw_thresh_side.value()));
 
 			fork(&motor, Until(TRUE), MOTOR_REVERSE | MOTOR_RIGHT | 100);
 			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 50), MOTOR_LEFT | 100);
-
 			exec(&halt, Until(TRUE));
-			exec(&retrieve, Until(FALSE));
 
+			exec(&retrieve, Until(FALSE));
+			exec(&increment_pet, Until(TRUE));
+
+			// PET 1
 			exec(&motor, Until(FRONT_LEFT_QRD_GREATER_THAN, menu::flw_thresh_left.value()));
+			exec(&follow, Until(EITHER_SIDE_QRD_GREATER_THAN, menu::flw_thresh_side.value()));
 
 			end();
 

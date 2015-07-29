@@ -57,7 +57,9 @@ namespace course
 		{
 			DELAY_MASK = 0x0FFF,
 			FOLLOW_IGNORE_SIDES = 1U << 15,
-			BEACON_REVERSE = 1U << 15
+			BEACON_REVERSE = 1U << 15,
+			ELEVATED_PET = 1U << 0,
+			NONE = 0U
 		};
 
 		uint8_t increment_pet(uint8_t, uint16_t);
@@ -157,11 +159,14 @@ namespace course
 			fork(&motor, Until(TRUE),         MOTOR_RIGHT | 150U);
 			exec(&motor, Until(L_ENC_GT, 20), MOTOR_LEFT | 150U);
 
+			// PET 4
+
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			exec(&motor, Until(L_ENC_GT, 20), MOTOR_LEFT | 180U);
 
-			exec(&beacon, Until(L_PLUS_R_ENC_GT, 150));
+			exec(&beacon, Until(L_PLUS_R_ENC_GT, 300));
+			exec(&retrieve, Until(FALSE), ELEVATED_PET);
 
 			end();
 
@@ -243,7 +248,7 @@ namespace course
 			}
 		}
 
-		uint8_t retrieve(uint8_t first, uint16_t)
+		uint8_t retrieve(uint8_t first, uint16_t meta)
 		{
 			static uint8_t retry_count;
 
@@ -259,7 +264,7 @@ namespace course
 				state = 0;
 			}
 
-			int8_t drop_thresh = pet_id < 4 ? ARM_LO_THRESH : ARM_MID_THRESH;
+			int8_t drop_thresh = (meta & ELEVATED_PET) ? ARM_MID_THRESH : ARM_LO_THRESH;
 
 			enum { N_RETRIES = 1 };
 			enum
@@ -283,23 +288,23 @@ namespace course
 			switch (state) // dropping arm
 			{
 				case DROPPING_BEGIN: // drop the arm
-					{
-						motion::arm.speed(-MEDIUM_SPEED);
-						motion::left.halt();
-						motion::right.halt();
-						io::Timer::start();
-						state++;
-						// fall through
-					}
+				{
+					motion::arm.speed(-MEDIUM_SPEED);
+					motion::left.halt();
+					motion::right.halt();
+					io::Timer::start();
+					state++;
+					// fall through
+				}
 				case DROPPING:
+				{
+					if (motion::arm_theta < drop_thresh || io::Timer::time() > 1000)
+						// the arm is down or timeout
 					{
-						if (motion::arm_theta < drop_thresh || io::Timer::time() > 1000)
-							// the arm is down or timeout
-						{
-							state = BRAKE_BEGIN;
-						}
-						break;
+						state = BRAKE_BEGIN;
 					}
+					break;
+				}
 				case BRAKE_BEGIN: // brake
 					{
 						motion::arm.halt();
@@ -308,20 +313,20 @@ namespace course
 						// fall through
 					}
 				case BRAKE: // wait for arm to slow to halt
+				{
+					if (io::Timer::time() > 400)
 					{
-						if (io::Timer::time() > 400)
-						{
-							state = LIFTING_BEGIN;
-						}
-						break;
+						state = LIFTING_BEGIN;
 					}
+					break;
+				}
 				case LIFTING_BEGIN: // lift
-					{
-						motion::arm.speed(MEDIUM_SPEED);
-						state++;
-						io::Timer::start();
-						// fall through
-					}
+				{
+					motion::arm.speed(MEDIUM_SPEED);
+					state++;
+					io::Timer::start();
+					// fall through
+				}
 				case LIFTING:
 				{
 					if (motion::arm_theta >= ARM_HI_THRESH )
@@ -343,7 +348,7 @@ namespace course
 					retry_count++;
 
 					state = RETRY_SHIFT;
-					if (pet_id == 4)
+					if (meta & ELEVATED_PET)
 					{
 						motion::right.speed(-MEDIUM_SPEED);
 						motion::left.speed(-MEDIUM_SPEED);
@@ -393,15 +398,15 @@ namespace course
 				{
 					retry_count++;
 
-					if (pet_id != 4)
+					if (meta & ELEVATED_PET)
+					{
+						state = DONE_BEGIN;
+					}
+					else
 					{
 						state++;
 						motion::left.speed(MEDIUM_SPEED);
 						motion::left_theta = 0;
-					}
-					else
-					{
-						state = DONE_BEGIN;
 					}
 
 					// fall through

@@ -65,34 +65,37 @@ namespace course
 
 		void begin_tick()
 		{
+			uint16_t side_thresh = menu::flw_thresh_side.value();
+			uint16_t left_thresh = menu::flw_thresh_left.value();
+			uint16_t right_thresh = menu::flw_thresh_right.value();
+
 			begin();
 
 			// PET 0
-			exec(&follow, Until(EITHER_SIDE_QRD_GREATER_THAN, menu::flw_thresh_side.value()));
+			exec(&follow, Until(EITHER_SIDE_QRD_GREATER_THAN, side_thresh));
 			exec(&square, Until(FALSE));
 
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 1000U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 300U);
 
-			fork(&motor, Until(TRUE),                    MOTOR_REVERSE | MOTOR_RIGHT | 100U);
-			exec(&motor, Until(LEFT_ENC_LESS_THAN, -45), MOTOR_REVERSE | MOTOR_LEFT | 100U);
+			fork(&motor, Until(TRUE),                    MOTOR_REVERSE | MOTOR_RIGHT | 120U);
+			exec(&motor, Until(LEFT_ENC_LESS_THAN, -45), MOTOR_REVERSE | MOTOR_LEFT | 120U);
 
-			fork(&motor, Until(TRUE),                      MOTOR_REVERSE | MOTOR_RIGHT | 100U);
-			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 27), MOTOR_LEFT | 100U);
+			fork(&motor, Until(TRUE),                      MOTOR_REVERSE | MOTOR_RIGHT | 160U);
+			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 27), MOTOR_LEFT | 160U);
 
-			fork(&motor, Until(TRUE),                      MOTOR_RIGHT | 100U);
-			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 70), MOTOR_LEFT | 100U);
+			fork(&motor, Until(TRUE),                      MOTOR_RIGHT | 180U);
+			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 70), MOTOR_LEFT | 180U);
 
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT);
-
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 300U);
 			exec(&increment_pet, Until(TRUE));
 
-			exec(&motor, Until(FRONT_LEFT_QRD_GREATER_THAN, menu::flw_thresh_left.value()), MOTOR_LEFT | 100U);
+			exec(&motor, Until(FRONT_LEFT_QRD_GREATER_THAN, left_thresh), MOTOR_LEFT | 100U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 1000U);
 
 			// PET 1
 
-			exec(&follow, Until(EITHER_SIDE_QRD_GREATER_THAN, menu::flw_thresh_side.value()));
+			exec(&follow, Until(EITHER_SIDE_QRD_GREATER_THAN, side_thresh));
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 1000U);
 
 			exec(&square, Until(FALSE));

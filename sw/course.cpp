@@ -53,7 +53,8 @@ namespace course
 		
 		enum MiscMasks : uint16_t
 		{
-			DELAY_MASK = 0x0FFF
+			DELAY_MASK = 0x0FFF,
+			FOLLOW_IGNORE_SIDES = 1 << 15;
 		};
 
 		uint8_t increment_pet(uint8_t, uint16_t);
@@ -72,33 +73,76 @@ namespace course
 			begin();
 
 			// PET 0
-			exec(&follow, Until(EITHER_SIDE_QRD_GREATER_THAN, side_thresh));
+			exec(&follow, Until(FALSE), 0U);
 			exec(&square, Until(FALSE));
-
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 300U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			fork(&motor, Until(TRUE),                    MOTOR_REVERSE | MOTOR_RIGHT | 120U);
 			exec(&motor, Until(LEFT_ENC_LESS_THAN, -45), MOTOR_REVERSE | MOTOR_LEFT | 120U);
 
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
+
 			fork(&motor, Until(TRUE),                      MOTOR_REVERSE | MOTOR_RIGHT | 160U);
 			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 27), MOTOR_LEFT | 160U);
+
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			fork(&motor, Until(TRUE),                      MOTOR_RIGHT | 180U);
 			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 70), MOTOR_LEFT | 180U);
 
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 300U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 			exec(&increment_pet, Until(TRUE));
 
 			exec(&motor, Until(FRONT_LEFT_QRD_GREATER_THAN, left_thresh), MOTOR_LEFT | 100U);
 
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 1000U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 500U);
 
 			// PET 1
 
-			exec(&follow, Until(EITHER_SIDE_QRD_GREATER_THAN, side_thresh));
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 1000U);
-
+			exec(&follow, Until(FALSE), 1000U);
 			exec(&square, Until(FALSE));
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 500U);
+
+			fork(&motor, Until(TRUE),                     MOTOR_REVERSE | MOTOR_RIGHT | 160U);
+			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 4), MOTOR_LEFT | 160U);
+
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
+
+			fork(&motor, Until(TRUE),                      MOTOR_RIGHT | 160U);
+			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 27), MOTOR_LEFT | 160U);
+
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
+
+			exec(&retrieve, Until(FALSE));
+			exec(&increment_pet, Until(TRUE));
+
+			exec(&motor, Until(FRONT_LEFT_QRD_GREATER_THAN, left_thresh), MOTOR_REVERSE | MOTOR_LEFT | 100U);
+
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 500U);
+
+			// PET 2
+
+			exec(&follow, Until(FALSE), 2000U);
+			exec(&square, Until(FALSE));
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 500U);
+
+			exec(&motor, Until(LEFT_ENC_GREATER_THAN, 10), MOTOR_REVERSE | MOTOR_LEFT | 140U);
+
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
+
+			fork(&motor, Until(TRUE),                   MOTOR_REVERSE | MOTOR_RIGHT | 160U);
+			exec(&motor, Until(LEFT_ENC_LESS_THAN, -4), MOTOR_REVERSE | MOTOR_LEFT | 160U);
+
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
+
+			exec(&retrieve, Until(FALSE));
+			exec(&increment_pet, Until(TRUE));
+
+			// PET 3
+
+			exec(&follow, Until(FALSE), 5000U);
+			exec(&square, Until(FALSE));
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 500U);
 
 			end();
 
@@ -111,10 +155,11 @@ namespace course
 			return 0;
 		}
 
-		uint8_t follow(uint8_t first, uint16_t)
+		uint8_t follow(uint8_t first, uint16_t meta)
 		{
 			if (first)
 			{
+				io::Timer::start();
 				dcontroller.reset();
 				dcontroller.gain_p = menu::flw_gain_p.value();
 				dcontroller.gain_i = menu::flw_gain_i.value();
@@ -129,7 +174,17 @@ namespace course
 			motion::vel(menu::flw_vel.value());
 			motion::dir(out);
 
-			return 1;
+			uint16_t thresh = menu::flw_thresh_side.value();
+
+			if (meta & FOLLOW_IGNORE_SIDES)
+			{
+				return io::Timer::time < meta;
+			}
+			else
+			{
+				return io::Timer::time < meta &&
+					io::Analog::qrd_side_left.read() < thresh && io::Analog::qrd_side_right.read() < thresh;
+			}
 		}
 
 		uint8_t retrieve(uint8_t first, uint16_t)
@@ -297,10 +352,6 @@ namespace course
 			{
 				motion::left.halt();
 				motion::right.halt();
-
-				io::lcd.clear();
-				io::lcd.home();
-				io::lcd.print("square");
 
 				state = 0;
 			}

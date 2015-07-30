@@ -276,6 +276,12 @@ namespace menu
 				control::set_mode(&menu::main_mode);
 				return;
 			}
+
+			motion::update_enc();
+			io::lcd.clear();
+			io::lcd.home();
+			io::lcd.print(motion::excavator_theta);
+			io::delay_ms(20);
 		}
 	}
 

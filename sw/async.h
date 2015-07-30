@@ -30,7 +30,8 @@ namespace async
 
 		L_MINUS_R_ENC_GT,
 		L_PLUS_R_ENC_GT,
-		FRONT_SWITCH_TRIGGER
+		FRONT_SWITCH_TRIGGER,
+		TIMER_GT
 	};
 
 	struct If

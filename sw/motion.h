@@ -14,7 +14,7 @@ namespace motion
 			}
 			inline int8_t dir() const
 			{
-				return _speed > 0 ? 1 : (_speed < 0 ? -1 : 0);
+				return _speed > 0 ? 1 : -1;
 			}
 			void halt();
 		private:

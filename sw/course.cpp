@@ -111,7 +111,7 @@ namespace course
 			exec(&square, Until(FALSE));
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
-			fork(&motor, Until(TRUE),         MOTOR_RIGHT | 120U);
+			fork(&motor, Until(TRUE),         MOTOR_RIGHT | 100U);
 			exec(&motor, Until(L_ENC_GT, 10), MOTOR_LEFT | 160U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
@@ -163,7 +163,7 @@ namespace course
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
-			exec(&motor, Until(L_ENC_GT, 20), MOTOR_LEFT | 180U);
+			exec(&motor, Until(L_ENC_GT, 20), MOTOR_LEFT | 120U);
 
 			exec(&beacon, Until(L_PLUS_R_ENC_GT, 300));
 			exec(&retrieve, Until(FALSE), ELEVATED_PET);
@@ -231,7 +231,7 @@ namespace course
 			uint16_t left = io::Analog::pd_left.read();
 			uint16_t right = io::Analog::pd_right.read();
 
-			int16_t in = ((int32_t) right - left) * 50 / (left + right);
+			int16_t in = ((int32_t) right - left) * 80 / (left + right);
 
 			acontroller.in(in);
 			int16_t out = acontroller.out();

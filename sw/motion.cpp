@@ -5,12 +5,13 @@
 
 namespace motion
 {
-	volatile uint8_t enc0_counts;
-	volatile uint8_t enc1_counts;
-	volatile uint8_t enc2_counts;
-		
 	namespace
 	{
+		volatile uint8_t enc0_counts;
+		volatile uint8_t enc1_counts;
+		volatile uint8_t enc2_counts;
+		volatile uint8_t enc3_counts;
+		
 		DIGITAL_OUTPUT(dir_0, B, 0);
 		DIGITAL_OUTPUT(dir_1, B, 1);
 		DIGITAL_OUTPUT(dir_2, E, 6);
@@ -33,6 +34,7 @@ namespace motion
 	volatile int16_t left_theta;
 	volatile int16_t right_theta;
 	volatile int16_t arm_theta;
+	volatile int16_t excavator_theta;
 
 	Motor left(0, 0);
 	Motor right(1, 1);
@@ -81,16 +83,12 @@ namespace motion
 		analogWrite(digital_enables[_id], 0);
 	}
 
-	volatile uint32_t x;
-	volatile uint32_t y;
-	volatile uint16_t theta;
-	volatile int32_t raw_theta;
-
 	void init()
 	{
 		isr::attach_pin(0, RISING);
 		isr::attach_pin(1, RISING);
 		isr::attach_pin(2, RISING);
+		isr::attach_pin(3, RISING);
 	}
 
 	void halt()
@@ -115,27 +113,15 @@ namespace motion
 
 	void update_enc()
 	{
-		int16_t left_ticks = enc0_counts * left.dir();
-		int16_t right_ticks = enc1_counts * right.dir();
-		left_theta += left_ticks;
-		right_theta += right_ticks;
+		left_theta += enc0_counts * left.dir();
+		right_theta += enc1_counts * right.dir();
 		arm_theta += enc2_counts * arm.dir();
-
-		// int8_t enc0 = enc0_counts * left.dir();
-		// int8_t enc1 = enc1_counts * right.dir();
-
-		// uint16_t vv = (enc0 + enc1) / 2 * menu::dr_vscl.value(); // velocity
-		// uint16_t dth = (enc1 - enc0) * menu::dr_wheel_d.value(); // angular velocity
-
-		// theta += dth;
-		// x += math::cos(theta) * vv / math::full;
-		// y += math::sin(theta) * vv / math::full;
-
-		raw_theta += right_ticks - left_ticks;
+		excavator_theta += enc3_counts * excavator.dir();
 
 		enc0_counts = 0;
 		enc1_counts = 0;
 		enc2_counts = 0;
+		enc3_counts = 0;
 	}
 }
 
@@ -149,10 +135,9 @@ ISR(INT1_vect)
 }
 ISR(INT2_vect)
 {
-	/*
-	io::lcd.clear();
-	io::lcd.home();
-	io::lcd.print(motion::enc2_counts);
-	*/
 	motion::enc2_counts++;
+}
+ISR(INT3_vect)
+{
+	motion::enc3_counts++;
 }

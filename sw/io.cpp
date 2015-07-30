@@ -80,13 +80,10 @@ namespace io
 		DIGITAL_INPUT(enc_left, D, 0);
 		DIGITAL_INPUT(enc_right, D, 1);
 		DIGITAL_INPUT(enc_arm, D, 2);
+		DIGITAL_INPUT(enc_excavator, D, 3);
 
-		DIGITAL_INPUT(switch_upper, G, 2);
-		DIGITAL_INPUT(switch_lower, D, 5);
-		DIGITAL_INPUT(switch_front, D, 3);
-    DIGITAL_INPUT(switch_arm, D, 7);
-
-		DIGITAL_OUTPUT(zipline_enable, E, 3);
+		DIGITAL_INPUT(switch_front, D, 4);
+		DIGITAL_INPUT(switch_arm, D, 7);
 	}
 	namespace Analog
 	{

@@ -17,7 +17,6 @@ namespace menu
 		FSTR main_names[] =
 		{
 			TO_FSTR(strings::course),
-			TO_FSTR(strings::select),
 			TO_FSTR(strings::opt),
 			TO_FSTR(strings::opt_restore),
 			TO_FSTR(strings::follow),
@@ -73,20 +72,18 @@ namespace menu
 						control::set_mode(&course::begin_mode);
 						break;
 					case 1:
-						break;
-					case 2:
 						control::set_mode(&opt_mode);
 						break;
-					case 3:
+					case 2:
 						control::set_mode(&opt_restore_mode);
 						break;
-					case 4:
+					case 3:
 						control::set_mode(&pid::follow_mode);
 						break;
-					case 5:
+					case 4:
 						control::set_mode(&dbg_mode);
 						break;
-					case 6:
+					case 5:
 						control::set_mode(&view_mode);
 						break;
 				}

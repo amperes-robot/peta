@@ -143,15 +143,12 @@ namespace io
 		const extern In start;
 		const extern In stop;
 
-		const extern In switch_upper;
-		const extern In switch_lower;
 		const extern In enc_left;
 		const extern In enc_right;
 		const extern In enc_arm;
+		const extern In enc_excavator;
 
 		const extern In switch_front;
-    const extern In switch_arm;
-
-		const extern Out zipline_enable;
+		const extern In switch_arm;
 	}
 }

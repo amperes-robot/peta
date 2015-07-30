@@ -165,14 +165,14 @@ namespace course
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			fork(&motor, Until(TRUE),         MOTOR_RIGHT | 150U);
-			exec(&motor, Until(L_ENC_GT, 20), MOTOR_LEFT | 150U);
+			exec(&motor, Until(L_ENC_GT, 35), MOTOR_LEFT | 150U);
 
 			exec(&increment_pet, Until(TRUE));
 
 			// PET 4
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT);
-			exec(&motor, Until(X_ENC_LT, -15), MOTOR_REVERSE | MOTOR_EXCAVATOR | 100U); // bring x down below the zipline
+			exec(&motor, Until(X_ENC_LT, -18), MOTOR_REVERSE | MOTOR_EXCAVATOR | 100U); // bring x down below the zipline
 			exec(&halt, Until(FALSE), MOTOR_EXCAVATOR_BIT);
 
 			exec(&motor, Until(L_ENC_GT, 20), MOTOR_LEFT | 120U); // turn to face beacon
@@ -187,7 +187,7 @@ namespace course
 			exec(&beacon, Until(FRONT_SWITCH_TRIGGER)); // follow beacon again
 
 			fork(&motor, Until(TRUE),          MOTOR_REVERSE | MOTOR_RIGHT | 150U); // back up a bit
-			exec(&motor, Until(L_ENC_LT, -20), MOTOR_REVERSE | MOTOR_LEFT | 150U);
+			exec(&motor, Until(L_ENC_LT, -10), MOTOR_REVERSE | MOTOR_LEFT | 150U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
@@ -195,8 +195,16 @@ namespace course
 
 			// ???
 
-			exec(&motor, Until(X_ENC_GT, 10), MOTOR_EXCAVATOR | 140U); // bring up
-			exec(&beacon, Until(FALSE), BEACON_REVERSE); // follow beacon again
+			exec(&motor, Until(X_ENC_GT, 10), MOTOR_EXCAVATOR | 100U); // bring up
+			exec(&halt, Until(FALSE), MOTOR_EXCAVATOR_BIT);
+
+			fork(&motor, Until(TRUE),          MOTOR_REVERSE | MOTOR_RIGHT | 150U); // back up a bit
+			exec(&motor, Until(L_ENC_LT, -10), MOTOR_REVERSE | MOTOR_LEFT | 150U);
+
+			fork(&motor, Until(TRUE),          MOTOR_RIGHT | 150U); // back up a bit
+			exec(&motor, Until(R_ENC_GT, 180), MOTOR_REVERSE | MOTOR_LEFT | 150U);
+
+			exec(&beacon, Until(FALSE)); // follow beacon again
 
 			end();
 
@@ -381,8 +389,8 @@ namespace course
 
 					if (meta & ELEVATED_PET)
 					{
-						motion::right.speed(-MEDIUM_SPEED);
-						motion::left.speed(-MEDIUM_SPEED);
+						motion::right.speed(MEDIUM_SPEED);
+						motion::left.speed(MEDIUM_SPEED);
 					}
 					else
 					{
@@ -394,7 +402,7 @@ namespace course
 				}
 				case RETRY_SHIFT:
 				{
-					if (motion::left_theta <= -RETRY_SHIFT_THETA)
+					if ((meta & ELEVATED_PET) ? motion::left_theta > RETRY_SHIFT_THETA : motion::left_theta <= -RETRY_SHIFT_THETA)
 					{
 						state = DROPPING_BEGIN;
 					}

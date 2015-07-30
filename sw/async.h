@@ -25,9 +25,12 @@ namespace async
 		R_ENC_LT,
 		A_ENC_GT,
 		A_ENC_LT,
+		X_ENC_GT,
+		X_ENC_LT,
 
 		L_MINUS_R_ENC_GT,
-		L_PLUS_R_ENC_GT
+		L_PLUS_R_ENC_GT,
+		FRONT_SWITCH_TRIGGER
 	};
 
 	struct If

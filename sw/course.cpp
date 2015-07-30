@@ -72,6 +72,11 @@ namespace course
 
 		void begin_tick()
 		{
+			motion::update_enc();
+			motion::left_theta = 0;
+			motion::right_theta = 0;
+			motion::excavator_theta = 0;
+			motion::arm_theta = 0;
 			pet_id = 0;
 
 			uint16_t side_thresh = menu::flw_thresh_side.value();
@@ -159,14 +164,36 @@ namespace course
 			fork(&motor, Until(TRUE),         MOTOR_RIGHT | 150U);
 			exec(&motor, Until(L_ENC_GT, 20), MOTOR_LEFT | 150U);
 
+			exec(&increment_pet, Until(TRUE));
+
 			// PET 4
+
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT);
+			exec(&motor, Until(X_ENC_LT, -70), MOTOR_REVERSE | MOTOR_EXCAVATOR | 120U); // bring x down below the zipline
+			exec(&halt, Until(FALSE), MOTOR_EXCAVATOR_BIT);
+
+			exec(&motor, Until(L_ENC_GT, 20), MOTOR_LEFT | 120U); // turn to face beacon
+
+			exec(&beacon, Until(L_PLUS_R_ENC_GT, 300)); // follow beacon for 150 ticks avg
+			exec(&retrieve, Until(FALSE), ELEVATED_PET); // pick up
+
+			exec(&increment_pet, Until(TRUE));
+
+			// PET 5
+
+			exec(&beacon, Until(FRONT_SWITCH_TRIGGER)); // follow beacon again
+
+			fork(&motor, Until(TRUE),          MOTOR_REVERSE | MOTOR_RIGHT | 150U); // back up a bit
+			exec(&motor, Until(L_ENC_LT, -20), MOTOR_REVERSE | MOTOR_LEFT | 150U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
-			exec(&motor, Until(L_ENC_GT, 20), MOTOR_LEFT | 120U);
+			exec(&motor, Until(X_ENC_LT, -90), MOTOR_REVERSE | MOTOR_EXCAVATOR | 120U); // bring down into the box
 
-			exec(&beacon, Until(L_PLUS_R_ENC_GT, 300));
-			exec(&retrieve, Until(FALSE), ELEVATED_PET);
+			// ???
+
+			exec(&motor, Until(X_ENC_GT, -70), MOTOR_EXCAVATOR | 140U); // bring up
+			exec(&beacon, Until(FALSE), BEACON_REVERSE); // follow beacon again
 
 			end();
 
@@ -239,7 +266,7 @@ namespace course
 			if (meta & BEACON_REVERSE)
 			{
 				motion::vel(-((int16_t) menu::home_vel.value()));
-				motion::dir(out);
+				motion::dir(-out);
 			}
 			else
 			{

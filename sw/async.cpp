@@ -215,11 +215,7 @@ namespace async
 				motion::right_theta = 0;
 				break;
 
-			case A_ENC_GT:
-			case A_ENC_LT:
-				motion::update_enc();
-				motion::arm_theta = 0;
-				break;
+			// don't reset the theta counts for the arm and excavator
 
 			case L_MINUS_R_ENC_GT:
 			case L_PLUS_R_ENC_GT:
@@ -256,16 +252,16 @@ namespace async
 				return motion::arm_theta > arg;
 			case A_ENC_LT:
 				return motion::arm_theta < arg;
+			case X_ENC_GT:
+				return motion::excavator_theta > arg;
+			case X_ENC_LT:
+				return motion::excavator_theta < arg;
 			case L_MINUS_R_ENC_GT:
-				/*
-				io::lcd.clear();
-				io::lcd.home();
-				io::lcd.print(motion::left_theta - motion::right_theta);
-				io::delay_ms(20);
-				*/
 				return motion::left_theta - motion::right_theta > arg;
 			case L_PLUS_R_ENC_GT:
 				return motion::left_theta + motion::right_theta > arg;
+			case FRONT_SWITCH_TRIGGER:
+				return io::Digital::switch_front.read();
 		}
 	}
 

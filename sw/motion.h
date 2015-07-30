@@ -54,4 +54,5 @@ namespace motion
 	extern volatile int16_t left_theta;
 	extern volatile int16_t right_theta;
 	extern volatile int16_t arm_theta;
+	extern volatile int16_t excavator_theta;
 }

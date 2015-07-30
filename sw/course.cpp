@@ -306,12 +306,12 @@ namespace course
 					break;
 				}
 				case BRAKE_BEGIN: // brake
-					{
-						motion::arm.halt();
-						state++;
-						io::Timer::start();
-						// fall through
-					}
+				{
+					motion::arm.halt();
+					io::Timer::start();
+					state++;
+					// fall through
+				}
 				case BRAKE: // wait for arm to slow to halt
 				{
 					if (io::Timer::time() > 400)
@@ -329,7 +329,7 @@ namespace course
 				}
 				case LIFTING:
 				{
-					if (motion::arm_theta >= ARM_HI_THRESH )
+					if (motion::arm_theta >= ARM_HI_THRESH)
 						// wait until the arm is up
 					{
 						if (!io::Digital::switch_arm.read() && retry_count < N_RETRIES) // pet is off
@@ -348,6 +348,7 @@ namespace course
 					retry_count++;
 
 					state = RETRY_SHIFT;
+
 					if (meta & ELEVATED_PET)
 					{
 						motion::right.speed(-MEDIUM_SPEED);
@@ -358,9 +359,9 @@ namespace course
 						motion::left.speed(-MEDIUM_SPEED);
 					}
 					motion::left_theta = 0;
+
 					// fall through
 				}
-
 				case RETRY_SHIFT:
 				{
 					if (motion::left_theta <= -RETRY_SHIFT_THETA)
@@ -369,7 +370,6 @@ namespace course
 					}
 					break;
 				}
-
 				case ZERO_BEGIN: // zero the arm by ramming it into the hardstop
 				{
 					motion::arm.speed(MEDIUM_SPEED);
@@ -377,23 +377,14 @@ namespace course
 					state++;
 					// fall through
 				}
-
 				case ZERO:
 				{
 					if (io::Timer::time() > 500)
 					{
-						if (retry_count > 0)
-						{
-							state = SHIFT_BACK_BEGIN;
-						}
-						else
-						{
-							state = DONE_BEGIN;
-						}
+						state = retry_count > 0 ? SHIFT_BACK_BEGIN : DONE_BEGIN;
 					}
 					break;
 				}
-
 				case SHIFT_BACK_BEGIN: // move down and try again
 				{
 					retry_count++;

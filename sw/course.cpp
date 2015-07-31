@@ -203,7 +203,7 @@ namespace course
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
-			exec(&motor, Until(X_ENC_GT, 10), MOTOR_EXCAVATOR | 100U); // bring up
+			exec(&motor, Until(TIMER_GT, 1000), MOTOR_EXCAVATOR | 100U); // bring up
 			exec(&halt, Until(FALSE), MOTOR_EXCAVATOR_BIT);
 
 			fork(&motor, Until(TRUE),          MOTOR_REVERSE | MOTOR_RIGHT | 150U); // back up a bit
@@ -215,7 +215,7 @@ namespace course
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			exec(&beacon, Until(EITHER_SIDE_QRD_GT, side_thresh)); // follow beacon again
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 100U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 255U);
 			exec(&follow, Until(FALSE), FOLLOW_IGNORE_SIDES);
 
 			end();

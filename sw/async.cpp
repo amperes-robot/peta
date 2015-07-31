@@ -245,6 +245,8 @@ namespace async
 				return 1;
 			case FALSE:
 				return 0;
+			case L_PLUS_R_IR_GT:
+				return io::Analog::pd_left.read() + io::Analog::pd_right.read() > arg;
 			case EITHER_SIDE_QRD_GT:
 				return io::Analog::qrd_side_left.read() > arg || io::Analog::qrd_side_right.read() > arg;
 			case FRONT_LEFT_QRD_GT:

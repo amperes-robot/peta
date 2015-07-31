@@ -57,6 +57,9 @@ namespace course
 		{
 			DELAY_MASK = 0x0FFF,
 			FOLLOW_IGNORE_SIDES = 1U << 15,
+			FOLLOW_DISABLE_LEFT = 1U << 14,
+			FOLLOW_DISABLE_RIGHT = 1U << 13,
+
 			BEACON_REVERSE = 1U << 15,
 			ELEVATED_PET = 1U << 0,
 			NONE = 0U,
@@ -122,8 +125,8 @@ namespace course
 			exec(&square, Until(FALSE));
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
-			fork(&motor, Until(TRUE),         MOTOR_RIGHT | 100U);
-			exec(&motor, Until(L_ENC_GT, 10), MOTOR_LEFT | 160U);
+			fork(&motor, Until(TRUE),         MOTOR_RIGHT | 70U);
+			exec(&motor, Until(L_ENC_GT, 15), MOTOR_LEFT | 160U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
@@ -153,18 +156,9 @@ namespace course
 
 			// PET 3
 
-			exec(&follow, Until(L_MINUS_R_ENC_GT, 75), FOLLOW_IGNORE_SIDES | 0U);
+			exec(&follow, Until(TIMER_GT, 3000), FOLLOW_IGNORE_SIDES);
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
-
-			fork(&motor, Until(TRUE),         MOTOR_RIGHT | 120U);
-			exec(&motor, Until(L_ENC_GT, 80), MOTOR_LEFT | 180U);
-
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
-
-			exec(&motor, Until(FRONT_RIGHT_QRD_GT, right_thresh), MOTOR_LEFT | 180U);
-
-			exec(&follow, Until(FALSE), 500U);
-			//exec(&square, Until(FALSE));
+			exec(&follow, Until(FALSE), FOLLOW_DISABLE_LEFT | 2000U);
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			fork(&motor, Until(TRUE),         MOTOR_RIGHT | 150U);
@@ -178,7 +172,7 @@ namespace course
 			exec(&motor, Until(X_ENC_LT, -20), MOTOR_REVERSE | MOTOR_EXCAVATOR | 255U); // bring x down below the zipline
 			exec(&halt, Until(FALSE), MOTOR_EXCAVATOR_BIT);
 
-			exec(&motor, Until(L_ENC_GT, 18), MOTOR_LEFT | 120U); // turn to face beacon
+			exec(&motor, Until(L_ENC_GT, 28), MOTOR_LEFT | 120U); // turn to face beacon
 
 			exec(&beacon, Until(L_PLUS_R_ENC_GT, 300)); // follow beacon for 150 ticks avg
 			exec(&retrieve, Until(FALSE), ELEVATED_PET); // pick up
@@ -190,7 +184,7 @@ namespace course
 			exec(&beacon, Until(FRONT_SWITCH_TRIGGER)); // follow beacon again
 
 			fork(&motor, Until(TRUE),          MOTOR_REVERSE | MOTOR_RIGHT | 150U); // back up a bit
-			exec(&motor, Until(L_ENC_LT, -10), MOTOR_REVERSE | MOTOR_LEFT | 150U);
+			exec(&motor, Until(L_ENC_LT, -8), MOTOR_REVERSE | MOTOR_LEFT | 150U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
@@ -213,8 +207,9 @@ namespace course
 			fork(&motor, Until(TRUE),          MOTOR_REVERSE | MOTOR_RIGHT | 150U); // back up a bit
 			exec(&motor, Until(L_ENC_LT, -10), MOTOR_REVERSE | MOTOR_LEFT | 150U);
 
-			fork(&motor, Until(TRUE),          MOTOR_RIGHT | 150U); // turn around
-			exec(&motor, Until(R_ENC_GT, 160), MOTOR_REVERSE | MOTOR_LEFT | 150U);
+			fork(&motor, Until(TRUE),                MOTOR_RIGHT | 150U); // turn around
+			exec(&motor, Until(R_ENC_GT, 40),        MOTOR_REVERSE | MOTOR_LEFT | 150U); // dead
+			exec(&motor, Until(L_PLUS_R_IR_GT, 20),  MOTOR_REVERSE | MOTOR_LEFT | 150U); // look for IR
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
@@ -270,6 +265,15 @@ namespace course
 
 			dcontroller.in(in);
 			int16_t out = dcontroller.out();
+
+			if (meta & FOLLOW_DISABLE_LEFT && out > 0)
+			{
+				out = 0;
+			}
+			if (meta & FOLLOW_DISABLE_RIGHT && out < 0)
+			{
+				out = 0;
+			}
 
 			motion::vel(menu::flw_vel.value());
 			motion::dir(out);

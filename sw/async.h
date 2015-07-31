@@ -18,6 +18,7 @@ namespace async
 		EITHER_SIDE_QRD_GT,
 		FRONT_LEFT_QRD_GT,
 		FRONT_RIGHT_QRD_GT,
+		L_PLUS_R_IR_GT,
 
 		L_ENC_GT,
 		L_ENC_LT,

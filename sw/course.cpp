@@ -193,7 +193,15 @@ namespace course
 
 			exec(&motor, Until(TIMER_GT, 500), MOTOR_REVERSE | MOTOR_EXCAVATOR | 100U); // bring down into the box
 
-			// ???
+			fork(&motor, Until(TRUE),         MOTOR_REVERSE | MOTOR_RIGHT | 150U); // turn right
+			exec(&motor, Until(L_ENC_GT, 15), MOTOR_LEFT | 150U);
+
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
+
+			fork(&motor, Until(TRUE),          MOTOR_RIGHT | 150U); // turn left
+			exec(&motor, Until(L_ENC_LT, -15), MOTOR_REVERSE | MOTOR_LEFT | 150U);
+
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			exec(&motor, Until(X_ENC_GT, 10), MOTOR_EXCAVATOR | 100U); // bring up
 			exec(&halt, Until(FALSE), MOTOR_EXCAVATOR_BIT);
@@ -202,9 +210,13 @@ namespace course
 			exec(&motor, Until(L_ENC_LT, -10), MOTOR_REVERSE | MOTOR_LEFT | 150U);
 
 			fork(&motor, Until(TRUE),          MOTOR_RIGHT | 150U); // back up a bit
-			exec(&motor, Until(R_ENC_GT, 180), MOTOR_REVERSE | MOTOR_LEFT | 150U);
+			exec(&motor, Until(R_ENC_GT, 160), MOTOR_REVERSE | MOTOR_LEFT | 150U);
 
-			exec(&beacon, Until(FALSE)); // follow beacon again
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
+
+			exec(&beacon, Until(EITHER_SIDE_QRD_GT, side_thresh)); // follow beacon again
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 100U);
+			exec(&follow, Until(FALSE), FOLLOW_IGNORE_SIDES);
 
 			end();
 
@@ -378,6 +390,10 @@ namespace course
 						{
 							state = ZERO_BEGIN;
 						}
+					}
+					else if (io::Timer::time() > 1000)
+					{
+						state = ZERO_BEGIN;
 					}
 					break;
 				}

@@ -90,7 +90,7 @@ namespace course
 
 			// PET 0
 
-			branch(42, If(TRUE));
+			if (0) branch(42, If(TRUE));
 
 			exec(&follow, Until(FALSE), 0U);
 			exec(&square, Until(FALSE));
@@ -178,7 +178,7 @@ namespace course
 			exec(&motor, Until(X_ENC_LT, -20), MOTOR_REVERSE | MOTOR_EXCAVATOR | 255U); // bring x down below the zipline
 			exec(&halt, Until(FALSE), MOTOR_EXCAVATOR_BIT);
 
-			exec(&motor, Until(L_ENC_GT, 20), MOTOR_LEFT | 120U); // turn to face beacon
+			exec(&motor, Until(L_ENC_GT, 18), MOTOR_LEFT | 120U); // turn to face beacon
 
 			exec(&beacon, Until(L_PLUS_R_ENC_GT, 300)); // follow beacon for 150 ticks avg
 			exec(&retrieve, Until(FALSE), ELEVATED_PET); // pick up
@@ -213,12 +213,12 @@ namespace course
 			fork(&motor, Until(TRUE),          MOTOR_REVERSE | MOTOR_RIGHT | 150U); // back up a bit
 			exec(&motor, Until(L_ENC_LT, -10), MOTOR_REVERSE | MOTOR_LEFT | 150U);
 
-			fork(&motor, Until(TRUE),          MOTOR_RIGHT | 150U); // back up a bit
+			fork(&motor, Until(TRUE),          MOTOR_RIGHT | 150U); // turn around
 			exec(&motor, Until(R_ENC_GT, 160), MOTOR_REVERSE | MOTOR_LEFT | 150U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
-			fork(&excavator, Until(FALSE), EXCAVATOR_REVERSE | 200U); // move down more
+			fork(&excavator, Until(FALSE), 2500U); // move all the way up
 
 			exec(&beacon, Until(EITHER_SIDE_QRD_GT, side_thresh)); // follow beacon again
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 255U);

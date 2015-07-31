@@ -413,5 +413,5 @@ namespace menu
 		reset_begin,
 		reset_tick,
 		control::nop
-	}
+	};
 }

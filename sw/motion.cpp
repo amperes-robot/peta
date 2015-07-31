@@ -39,7 +39,7 @@ namespace motion
 	Motor left(0, 0);
 	Motor right(1, 1);
 	Motor arm(2, 0);
-	Motor excavator(3, 0);
+	Motor excavator(3, 1);
 
 	Motor* const motors[4] = { &left, &right, &arm, &excavator };
 

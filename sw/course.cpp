@@ -94,7 +94,6 @@ namespace course
 
 			// PET 0
 
-			/*
 			exec(&follow, Until(FALSE), 0U);
 			exec(&square, Until(FALSE));
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
@@ -224,12 +223,11 @@ namespace course
 
 			exec(&motor, Until(TIMER_GT, 800), MOTOR_EXCAVATOR | 255U); // bring up
 			exec(&halt, Until(FALSE), MOTOR_EXCAVATOR_BIT);
-			*/
 
 			fork(&motor, Until(TRUE),          MOTOR_REVERSE | MOTOR_RIGHT | 150U); // back up a bit
 			exec(&motor, Until(L_ENC_LT, -140), MOTOR_REVERSE | MOTOR_LEFT | 150U);
 
-			// fork(&excavator, Until(FALSE), 1500U); // move all the way up
+			fork(&excavator, Until(FALSE), 1500U); // move all the way up
 			fork(&motor, Until(TRUE),                MOTOR_RIGHT | 170U); // turn around
 			exec(&motor, Until(R_ENC_GT, 120),       MOTOR_REVERSE | MOTOR_LEFT | 170U); // dead
 
@@ -298,6 +296,8 @@ namespace course
 
 			if (meta & FOLLOW_DISABLE_LEFT)
 			{
+				pid::digital_recovery = ((int8_t) menu::flw_drecover.value());
+
 				if (out > 0)
 				{
 					out = 0;
@@ -305,6 +305,8 @@ namespace course
 			}
 			if (meta & FOLLOW_DISABLE_RIGHT)
 			{
+				pid::digital_recovery = -((int8_t) menu::flw_drecover.value());
+
 				if (out < 0)
 				{
 					out = 0;

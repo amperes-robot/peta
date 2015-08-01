@@ -252,10 +252,6 @@ namespace async
 				return 0;
 			case IR_HYSTERESIS_GT:
 				ir_hysteresis_prev = (ir_hysteresis_prev * 3 + io::Analog::pd_left.read() + io::Analog::pd_right.read()) / 4;
-				io::delay_ms(100);
-				io::lcd.clear();
-				io::lcd.home();
-				io::lcd.print(ir_hysteresis_prev);
 				return ir_hysteresis_prev > arg;
 			case EITHER_SIDE_QRD_GT:
 				return io::Analog::qrd_side_left.read() > arg || io::Analog::qrd_side_right.read() > arg;

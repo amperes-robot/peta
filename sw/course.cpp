@@ -94,6 +94,7 @@ namespace course
 
 			// PET 0
 
+			/*
 			exec(&follow, Until(FALSE), 0U);
 			exec(&square, Until(FALSE));
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
@@ -186,7 +187,7 @@ namespace course
 
 			// PET 5
 
-			exec(&beacon, Until(FRONT_SWITCH_TRIGGER)); // follow beacon again 49
+			exec(&beacon, Until(FRONT_SWITCH_TRIGGER_OR_TIMER_GT, 4500)); // follow beacon again 49
 
 			fork(&motor, Until(TRUE),         MOTOR_REVERSE | MOTOR_RIGHT | 150U); // back up a bit
 			exec(&motor, Until(L_ENC_LT, -2), MOTOR_REVERSE | MOTOR_LEFT | 150U);
@@ -196,13 +197,13 @@ namespace course
 			exec(&motor, Until(TIMER_GT, 700), MOTOR_REVERSE | MOTOR_EXCAVATOR | 255U); // bring down into the box
 			exec(&halt, Until(FALSE), MOTOR_EXCAVATOR_BIT);
 
-			fork(&motor, Until(TRUE),         MOTOR_REVERSE | MOTOR_RIGHT | 190U); // turn right
-			exec(&motor, Until(L_ENC_GT, 15), MOTOR_LEFT | 190U);
+			fork(&motor, Until(TRUE),         MOTOR_REVERSE | MOTOR_RIGHT | 2200U); // turn right
+			exec(&motor, Until(L_ENC_GT, 15), MOTOR_LEFT | 220U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
-			fork(&motor, Until(TRUE),          MOTOR_RIGHT | 190U); // turn left
-			exec(&motor, Until(L_ENC_LT, -15), MOTOR_REVERSE | MOTOR_LEFT | 190U);
+			fork(&motor, Until(TRUE),          MOTOR_RIGHT | 220U); // turn left
+			exec(&motor, Until(L_ENC_LT, -15), MOTOR_REVERSE | MOTOR_LEFT | 220U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
@@ -211,30 +212,31 @@ namespace course
 
 			exec(&halt, Until(FALSE), MOTOR_EXCAVATOR_BIT);
 
-			fork(&motor, Until(TRUE),         MOTOR_REVERSE | MOTOR_RIGHT | 190U); // turn right
-			exec(&motor, Until(L_ENC_GT, 15), MOTOR_LEFT | 190U);
+			fork(&motor, Until(TRUE),         MOTOR_REVERSE | MOTOR_RIGHT | 220U); // turn right
+			exec(&motor, Until(L_ENC_GT, 15), MOTOR_LEFT | 220U);
 
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 190U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 220U);
 
-			fork(&motor, Until(TRUE),          MOTOR_RIGHT | 190U); // turn left
-			exec(&motor, Until(L_ENC_LT, -15), MOTOR_REVERSE | MOTOR_LEFT | 190U);
+			fork(&motor, Until(TRUE),          MOTOR_RIGHT | 220U); // turn left
+			exec(&motor, Until(L_ENC_LT, -15), MOTOR_REVERSE | MOTOR_LEFT | 220U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			exec(&motor, Until(TIMER_GT, 800), MOTOR_EXCAVATOR | 255U); // bring up
 			exec(&halt, Until(FALSE), MOTOR_EXCAVATOR_BIT);
+			*/
 
 			fork(&motor, Until(TRUE),          MOTOR_REVERSE | MOTOR_RIGHT | 150U); // back up a bit
-			exec(&motor, Until(L_ENC_LT, -120), MOTOR_REVERSE | MOTOR_LEFT | 150U);
+			exec(&motor, Until(L_ENC_LT, -140), MOTOR_REVERSE | MOTOR_LEFT | 150U);
 
-			fork(&excavator, Until(FALSE), 1500U); // move all the way up
-			fork(&motor, Until(TRUE),                MOTOR_RIGHT | 150U); // turn around 65
-			exec(&motor, Until(R_ENC_GT, 150),       MOTOR_REVERSE | MOTOR_LEFT | 170U); // dead
+			// fork(&excavator, Until(FALSE), 1500U); // move all the way up
+			fork(&motor, Until(TRUE),                MOTOR_RIGHT | 170U); // turn around
+			exec(&motor, Until(R_ENC_GT, 120),       MOTOR_REVERSE | MOTOR_LEFT | 170U); // dead
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 70U);
 
-			//fork(&motor, Until(TRUE),                  MOTOR_RIGHT | 150U);
-			//exec(&motor, Until(IR_HYSTERESIS_GT, 50),  MOTOR_REVERSE | MOTOR_LEFT | 120U); // look for IR
+			fork(&motor, Until(TRUE),                  MOTOR_RIGHT | 120U);
+			exec(&motor, Until(IR_HYSTERESIS_GT, 45),  MOTOR_REVERSE | MOTOR_LEFT | 120U); // look for IR
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
@@ -244,7 +246,7 @@ namespace course
 			exec(&motor, Until(FRONT_LEFT_QRD_GT, left_thresh), MOTOR_RIGHT | 180U);
 			exec(&halt, Until(FALSE), MOTOR_RIGHT_BIT | 100U);
 
-			exec(&follow, Until(TIMER_GT, 2000), FOLLOW_IGNORE_SIDES | FOLLOW_DISABLE_RIGHT);
+			// exec(&follow, Until(TIMER_GT, 2000), FOLLOW_IGNORE_SIDES | FOLLOW_DISABLE_RIGHT);
 			exec(&follow, Until(FALSE), FOLLOW_IGNORE_SIDES);
 
 			end();

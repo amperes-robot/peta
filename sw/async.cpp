@@ -234,6 +234,7 @@ namespace async
 				break;
 
 			case TIMER_GT:
+			case FRONT_SWITCH_TRIGGER_OR_TIMER_GT:
 				io::Timer::start();
 				break;
 
@@ -252,6 +253,10 @@ namespace async
 				return 0;
 			case IR_HYSTERESIS_GT:
 				ir_hysteresis_prev = (ir_hysteresis_prev * 3 + io::Analog::pd_left.read() + io::Analog::pd_right.read()) / 4;
+				io::lcd.clear();
+				io::lcd.home();
+				io::lcd.print(ir_hysteresis_prev);
+				io::delay_ms(10);
 				return ir_hysteresis_prev > arg;
 			case EITHER_SIDE_QRD_GT:
 				return io::Analog::qrd_side_left.read() > arg || io::Analog::qrd_side_right.read() > arg;
@@ -279,8 +284,8 @@ namespace async
 				return motion::left_theta - motion::right_theta > arg;
 			case L_PLUS_R_ENC_GT:
 				return motion::left_theta + motion::right_theta > arg;
-			case FRONT_SWITCH_TRIGGER:
-				return io::Digital::switch_front.read();
+			case FRONT_SWITCH_TRIGGER_OR_TIMER_GT:
+				return io::Digital::switch_front.read() || (io::Timer::time() > arg);
 			case TIMER_GT:
 				return io::Timer::time() > arg;
 		}

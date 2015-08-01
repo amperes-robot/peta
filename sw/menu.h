@@ -78,6 +78,7 @@ namespace menu
 	 * Menu modes.
 	 */
 	extern const control::Mode main_mode;
+	extern const control::Mode reset_mode;
 	extern const control::Mode dbg_mode;
 	extern const control::Mode opt_restore_mode;
 	extern const control::Mode opt_mode;

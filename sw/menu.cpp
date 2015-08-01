@@ -17,6 +17,7 @@ namespace menu
 		FSTR main_names[] =
 		{
 			TO_FSTR(strings::course),
+			TO_FSTR(strings::reset),
 			TO_FSTR(strings::opt),
 			TO_FSTR(strings::opt_restore),
 			TO_FSTR(strings::follow),
@@ -72,18 +73,21 @@ namespace menu
 						control::set_mode(&course::begin_mode);
 						break;
 					case 1:
-						control::set_mode(&opt_mode);
+						control::set_mode(&reset_mode);
 						break;
 					case 2:
-						control::set_mode(&opt_restore_mode);
+						control::set_mode(&opt_mode);
 						break;
 					case 3:
-						control::set_mode(&pid::follow_mode);
+						control::set_mode(&opt_restore_mode);
 						break;
 					case 4:
-						control::set_mode(&dbg_mode);
+						control::set_mode(&pid::follow_mode);
 						break;
 					case 5:
+						control::set_mode(&dbg_mode);
+						break;
+					case 6:
 						control::set_mode(&view_mode);
 						break;
 				}
@@ -267,6 +271,8 @@ namespace menu
 		
 		void dbg_mode_begin()
 		{
+			motion::left_theta = 0;
+			io::lcd.clear();
 		}
 
 		void dbg_mode_tick()
@@ -277,11 +283,27 @@ namespace menu
 				return;
 			}
 
-			motion::update_enc();
-			io::lcd.clear();
-			io::lcd.home();
-			io::lcd.print(motion::excavator_theta);
-			io::delay_ms(20);
+			motion::vel(120);
+
+			if (io::Analog::pd_left.read() + io::Analog::pd_right.read() > 70)
+			{
+				io::lcd.print("1");
+			}
+		}
+
+		void reset_begin()
+		{
+		}
+
+		void reset_tick()
+		{
+			if (menu::stop_falling())
+			{
+				control::set_mode(&menu::main_mode);
+				return;
+			}
+
+			motion::excavator.speed(255);
 		}
 	}
 
@@ -386,6 +408,13 @@ namespace menu
 	{
 		control::nop,
 		view_mode_tick,
+		control::nop
+	};
+
+	const control::Mode reset_mode
+	{
+		reset_begin,
+		reset_tick,
 		control::nop
 	};
 }

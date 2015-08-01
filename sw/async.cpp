@@ -14,19 +14,17 @@ namespace async
 			END = 3
 		};
 
-		enum MASKS : uint8_t
+		enum MASKS : uint16_t
 		{
-			N_FORKS = 8,
-			FORK_ACTIVE_MASK = 1 << 7,
-			FIRST_CALL_MASK = 1 << 6,
-			ADDRESS_MASK = 0xFFU >> 2
+			N_FORKS = 4U,
+			FORK_ACTIVE_MASK = 1U << 15,
+			FIRST_CALL_MASK = 1U << 14,
+			ADDRESS_MASK = 0x3FFFU
 		};
 
-		// forked commands, MSB is whether forks
-		// 2nd MSB is whether first call
-		uint8_t forks[N_FORKS];
+		uint16_t forks[N_FORKS];
+		uint16_t IP; // 2nd high byte is whether is first call on current cmd
 
-		uint8_t IP; // 2nd high byte is whether is first call on current cmd
 		CMD_TYPE program[256]; // determines type of call and other stuff
 
 		Target targets[256];
@@ -36,7 +34,7 @@ namespace async
 		void async_begin()
 		{
 			IP = FIRST_CALL_MASK;
-			memset(forks, 0, sizeof(uint8_t) * N_FORKS);
+			memset(forks, 0, sizeof(uint16_t) * N_FORKS);
 		}
 
 		void async_tick()
@@ -52,14 +50,15 @@ namespace async
 				if (forks[i] & FORK_ACTIVE_MASK) // enumerate active forks
 				{
 					// index is 6 lowest bits
-					uint8_t ptr = forks[i] & ADDRESS_MASK;
+					uint16_t ptr = forks[i] & ADDRESS_MASK;
+					uint8_t first_call = (forks[i] & 16384U) == 16384U;
 
-					if (forks[i] & FIRST_CALL_MASK)
+					if (first_call)
 					{
 						ifs[ptr].init();
 					}
 
-					if (!targets[ptr].func(forks[i] & FIRST_CALL_MASK, metadata[ptr]))
+					if (!targets[ptr].func(first_call, metadata[ptr]))
 					{
 						// returned false -> disable fork
 						forks[i] = 0;
@@ -77,8 +76,8 @@ namespace async
 				}
 			}
 
-			uint8_t addr = IP & ADDRESS_MASK; // low 6 bits
-			uint8_t type = program[addr]; // high 2 bits
+			uint16_t addr = IP & ADDRESS_MASK; // low 14 bits
+			CMD_TYPE type = program[addr];
 
 			uint8_t inc = 0; // whether to increment IP
 
@@ -107,12 +106,14 @@ namespace async
 				}
 				case EXEC:
 				{
-					if (IP & FIRST_CALL_MASK)
+					uint8_t first_call = (IP & 16384U) == 16384U;
+
+					if (first_call)
 					{
 						ifs[addr].init();
 					}
 
-					if (!targets[addr].func(IP & FIRST_CALL_MASK, metadata[addr]))
+					if (!targets[addr].func(first_call, metadata[addr]))
 					{
 						inc = 1;
 					}
@@ -199,6 +200,8 @@ namespace async
 		IP++;
 	}
 
+	namespace { uint16_t ir_hysteresis_prev; }
+
 	void If::init() const
 	{
 		switch (type)
@@ -233,6 +236,9 @@ namespace async
 			case TIMER_GT:
 				io::Timer::start();
 				break;
+
+			case IR_HYSTERESIS_GT:
+				ir_hysteresis_prev = 0;
 		}
 	}
 
@@ -244,6 +250,13 @@ namespace async
 				return 1;
 			case FALSE:
 				return 0;
+			case IR_HYSTERESIS_GT:
+				ir_hysteresis_prev = (ir_hysteresis_prev * 3 + io::Analog::pd_left.read() + io::Analog::pd_right.read()) / 4;
+				io::delay_ms(100);
+				io::lcd.clear();
+				io::lcd.home();
+				io::lcd.print(ir_hysteresis_prev);
+				return ir_hysteresis_prev > arg;
 			case EITHER_SIDE_QRD_GT:
 				return io::Analog::qrd_side_left.read() > arg || io::Analog::qrd_side_right.read() > arg;
 			case FRONT_LEFT_QRD_GT:

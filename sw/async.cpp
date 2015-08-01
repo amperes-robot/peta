@@ -200,6 +200,8 @@ namespace async
 		IP++;
 	}
 
+	namespace { uint16_t ir_hysteresis_prev; }
+
 	void If::init() const
 	{
 		switch (type)
@@ -234,6 +236,9 @@ namespace async
 			case TIMER_GT:
 				io::Timer::start();
 				break;
+
+			case IR_HYSTERESIS_GT:
+				ir_hysteresis_prev = 0;
 		}
 	}
 
@@ -245,8 +250,13 @@ namespace async
 				return 1;
 			case FALSE:
 				return 0;
-			case L_PLUS_R_IR_GT:
-				return io::Analog::pd_left.read() + io::Analog::pd_right.read() > arg;
+			case IR_HYSTERESIS_GT:
+				ir_hysteresis_prev = (ir_hysteresis_prev * 3 + io::Analog::pd_left.read() + io::Analog::pd_right.read()) / 4;
+				io::delay_ms(100);
+				io::lcd.clear();
+				io::lcd.home();
+				io::lcd.print(ir_hysteresis_prev);
+				return ir_hysteresis_prev > arg;
 			case EITHER_SIDE_QRD_GT:
 				return io::Analog::qrd_side_left.read() > arg || io::Analog::qrd_side_right.read() > arg;
 			case FRONT_LEFT_QRD_GT:

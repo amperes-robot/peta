@@ -271,6 +271,8 @@ namespace menu
 		
 		void dbg_mode_begin()
 		{
+			motion::left_theta = 0;
+			io::lcd.clear();
 		}
 
 		void dbg_mode_tick()
@@ -281,11 +283,12 @@ namespace menu
 				return;
 			}
 
-			motion::update_enc();
-			io::lcd.clear();
-			io::lcd.home();
-			io::lcd.print(motion::excavator_theta);
-			io::delay_ms(20);
+			motion::vel(120);
+
+			if (io::Analog::pd_left.read() + io::Analog::pd_right.read() > 70)
+			{
+				io::lcd.print("1");
+			}
 		}
 
 		void reset_begin()

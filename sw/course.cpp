@@ -18,9 +18,9 @@ namespace course
 
 		enum Constants
 		{
-			ARM_LO_THRESH = -28,
+			ARM_LO_THRESH = -31,
 			ARM_HI_THRESH = -5,
-			ARM_MID_THRESH = -15,
+			ARM_MID_THRESH = -18,
 			SQUARE_FWD_MAX = 50,
 			SQUARE_BACK_MAX = -50,
 			RETRY_SHIFT_THETA = 8
@@ -90,27 +90,26 @@ namespace course
 			uint16_t right_thresh = menu::flw_thresh_right.value();
 
 			begin();
+			// branch(63, If(TRUE));
 
 			// PET 0
-
-			if (0) branch(42, If(TRUE));
 
 			exec(&follow, Until(FALSE), 0U);
 			exec(&square, Until(FALSE));
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			fork(&motor, Until(TRUE),          MOTOR_REVERSE | MOTOR_RIGHT | 140U);
-			exec(&motor, Until(L_ENC_LT, -45), MOTOR_REVERSE | MOTOR_LEFT | 140U);
+			exec(&motor, Until(L_ENC_LT, -30), MOTOR_REVERSE | MOTOR_LEFT | 140U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			fork(&motor, Until(TRUE),         MOTOR_REVERSE | MOTOR_RIGHT | 160U);
-			exec(&motor, Until(L_ENC_GT, 27), MOTOR_LEFT | 160U);
+			exec(&motor, Until(L_ENC_GT, 17), MOTOR_LEFT | 160U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			fork(&motor, Until(TRUE),         MOTOR_RIGHT | 180U);
-			exec(&motor, Until(L_ENC_GT, 70), MOTOR_LEFT | 180U);
+			exec(&motor, Until(L_ENC_GT, 45), MOTOR_LEFT | 180U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 			exec(&increment_pet, Until(TRUE));
@@ -121,12 +120,18 @@ namespace course
 
 			// PET 1
 
-			exec(&follow, Until(FALSE), 500U);
+			exec(&follow, Until(FALSE), 500U); // 16
 			exec(&square, Until(FALSE));
+
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
-			fork(&motor, Until(TRUE),         MOTOR_RIGHT | 70U);
-			exec(&motor, Until(L_ENC_GT, 15), MOTOR_LEFT | 160U);
+			fork(&motor, Until(TRUE),        MOTOR_REVERSE | MOTOR_RIGHT | 160U);
+			exec(&motor, Until(L_ENC_GT, 8), MOTOR_LEFT | 160U);
+
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
+
+			fork(&motor, Until(TRUE),        MOTOR_RIGHT | 160U);
+			exec(&motor, Until(L_ENC_GT, 8), MOTOR_LEFT | 160U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
@@ -139,7 +144,7 @@ namespace course
 
 			// PET 2
 
-			exec(&follow, Until(FALSE), 2000U);
+			exec(&follow, Until(FALSE), 2000U); // 25
 			exec(&square, Until(FALSE));
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
@@ -156,7 +161,7 @@ namespace course
 
 			// PET 3
 
-			exec(&follow, Until(TIMER_GT, 3000), FOLLOW_IGNORE_SIDES);
+			exec(&follow, Until(TIMER_GT, 3000), FOLLOW_IGNORE_SIDES); // 35
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 			exec(&follow, Until(FALSE), FOLLOW_DISABLE_LEFT | 2000U);
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
@@ -174,24 +179,24 @@ namespace course
 
 			exec(&motor, Until(L_ENC_GT, 28), MOTOR_LEFT | 120U); // turn to face beacon
 
-			exec(&beacon, Until(L_PLUS_R_ENC_GT, 300)); // follow beacon for 150 ticks avg
+			exec(&beacon, Until(L_PLUS_R_ENC_GT, 180)); // follow beacon for 90 ticks avg
 			exec(&retrieve, Until(FALSE), ELEVATED_PET); // pick up
 
 			exec(&increment_pet, Until(TRUE));
 
 			// PET 5
 
-			exec(&beacon, Until(FRONT_SWITCH_TRIGGER)); // follow beacon again
+			exec(&beacon, Until(FRONT_SWITCH_TRIGGER)); // follow beacon again 49
 
-			fork(&motor, Until(TRUE),          MOTOR_REVERSE | MOTOR_RIGHT | 150U); // back up a bit
-			exec(&motor, Until(L_ENC_LT, -8), MOTOR_REVERSE | MOTOR_LEFT | 150U);
+			fork(&motor, Until(TRUE),         MOTOR_REVERSE | MOTOR_RIGHT | 150U); // back up a bit
+			exec(&motor, Until(L_ENC_LT, -2), MOTOR_REVERSE | MOTOR_LEFT | 150U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			exec(&motor, Until(TIMER_GT, 600), MOTOR_REVERSE | MOTOR_EXCAVATOR | 255U); // bring down into the box
 			exec(&halt, Until(FALSE), MOTOR_EXCAVATOR_BIT);
 
-			fork(&motor, Until(TRUE),        MOTOR_REVERSE | MOTOR_RIGHT | 150U); // turn right
+			fork(&motor, Until(TRUE),         MOTOR_REVERSE | MOTOR_RIGHT | 150U); // turn right
 			exec(&motor, Until(L_ENC_GT, 15), MOTOR_LEFT | 150U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
@@ -205,15 +210,19 @@ namespace course
 			exec(&halt, Until(FALSE), MOTOR_EXCAVATOR_BIT);
 
 			fork(&motor, Until(TRUE),          MOTOR_REVERSE | MOTOR_RIGHT | 150U); // back up a bit
-			exec(&motor, Until(L_ENC_LT, -10), MOTOR_REVERSE | MOTOR_LEFT | 150U);
+			exec(&motor, Until(L_ENC_LT, -70), MOTOR_REVERSE | MOTOR_LEFT | 150U);
 
-			fork(&motor, Until(TRUE),                MOTOR_RIGHT | 150U); // turn around
-			exec(&motor, Until(R_ENC_GT, 40),        MOTOR_REVERSE | MOTOR_LEFT | 150U); // dead
-			exec(&motor, Until(L_PLUS_R_IR_GT, 20),  MOTOR_REVERSE | MOTOR_LEFT | 150U); // look for IR
+			fork(&motor, Until(TRUE),                MOTOR_RIGHT | 150U); // turn around 65
+			exec(&motor, Until(R_ENC_GT, 100),       MOTOR_REVERSE | MOTOR_LEFT | 170U); // dead
+
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 70U);
+
+			fork(&motor, Until(TRUE),                  MOTOR_RIGHT | 150U);
+			exec(&motor, Until(IR_HYSTERESIS_GT, 75),  MOTOR_REVERSE | MOTOR_LEFT | 120U); // look for IR
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
-			fork(&excavator, Until(FALSE), 2500U); // move all the way up
+			fork(&excavator, Until(FALSE), 2000U); // move all the way up
 
 			exec(&beacon, Until(EITHER_SIDE_QRD_GT, side_thresh)); // follow beacon again
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 255U);

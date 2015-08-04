@@ -59,6 +59,7 @@ namespace course
 			FOLLOW_IGNORE_SIDES = 1U << 15U,
 			FOLLOW_DISABLE_LEFT = 1U << 14U,
 			FOLLOW_DISABLE_RIGHT = 1U << 13U,
+			FOLLOW_IGNORE_LEFT = 1U << 12U,
 
 			BEACON_REVERSE = 1U << 15,
 			ELEVATED_PET = 1U << 0,
@@ -71,6 +72,7 @@ namespace course
 		uint8_t increment_pet(uint8_t, uint16_t);
 		uint8_t follow(uint8_t, uint16_t);
 		uint8_t square(uint8_t, uint16_t);
+		uint8_t square_hard_ccw(uint8_t, uint16_t);
 		uint8_t halt(uint8_t, uint16_t);
 		uint8_t motor(uint8_t, uint16_t);
 		uint8_t retrieve(uint8_t, uint16_t);
@@ -95,7 +97,7 @@ namespace course
 			// PET 0
 
 			exec(&follow, Until(FALSE), 0U);
-			exec(&square, Until(FALSE));
+			exec(&square_hard_ccw, Until(FALSE));
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			fork(&motor, Until(TRUE),          MOTOR_REVERSE | MOTOR_RIGHT | 140U);
@@ -121,17 +123,17 @@ namespace course
 			// PET 1
 
 			exec(&follow, Until(FALSE), 500U); // 16
-			exec(&square, Until(FALSE));
+			exec(&square_hard_ccw, Until(FALSE));
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			fork(&motor, Until(TRUE),        MOTOR_REVERSE | MOTOR_RIGHT | 160U);
-			exec(&motor, Until(L_ENC_GT, 3), MOTOR_LEFT | 160U);
+			exec(&motor, Until(L_ENC_GT, 6), MOTOR_LEFT | 160U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			fork(&motor, Until(TRUE),        MOTOR_RIGHT | 160U);
-			exec(&motor, Until(L_ENC_GT, 8), MOTOR_LEFT | 160U);
+			exec(&motor, Until(L_ENC_GT, 25), MOTOR_LEFT | 160U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
@@ -321,6 +323,13 @@ namespace course
 			if (meta & FOLLOW_IGNORE_SIDES)
 			{
 				return 1;
+			}
+			else if (meta & FOLLOW_IGNORE_LEFT)
+			{
+				uint8_t timer_elapsed = io::Timer::time() > (meta & DELAY_MASK);
+				uint8_t side_detected = io::Analog::qrd_side_right.read() > thresh;
+
+				return !(side_detected && timer_elapsed);
 			}
 			else
 			{
@@ -580,13 +589,62 @@ namespace course
 			return io::Timer::time() < (meta & DELAY_MASK);
 		}
 
+		uint8_t square_hard_ccw(uint8_t first, uint16_t)
+		{
+			if (first)
+			{
+				motion::left.halt();
+				motion::right.halt();
+				state = 0;
+			}
+
+			enum
+			{
+				RIGHT_FORWARD_BEGIN = 0,
+				RIGHT_FORWARD,
+				LEFT_BACKWARD_BEGIN,
+				LEFT_BACKWARD
+			};
+
+			bool qrd_left = io::Analog::qrd_side_left.read() > menu::flw_thresh_side.value();
+			bool qrd_right = io::Analog::qrd_side_right.read() > menu::flw_thresh_side.value();
+
+			switch (state)
+			{
+				case RIGHT_FORWARD_BEGIN: 
+				{
+					state++;
+					motion::left.speed(100);
+					motion::right.speed(MEDIUM_SPEED);
+					motion::right_theta = 0;
+				}
+				case RIGHT_FORWARD:
+				{
+					if (qrd_right || motion::right_theta > SQUARE_FWD_MAX) state = LEFT_BACKWARD_BEGIN;
+					break;
+				}
+				case LEFT_BACKWARD_BEGIN: 
+				{
+					state++;
+					motion::right.speed(-100);
+					motion::left.speed(-MEDIUM_SPEED);
+					motion::left_theta = 0;
+				}
+				case LEFT_BACKWARD:
+				{
+					if (qrd_left || motion::left_theta < SQUARE_BACK_MAX) return 0;
+					break;
+				}
+			}
+			return 1;
+		}
+
 		uint8_t square(uint8_t first, uint16_t)
 		{
 			if (first)
 			{
 				motion::left.halt();
 				motion::right.halt();
-
 				state = 0;
 			}
 

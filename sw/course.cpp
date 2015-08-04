@@ -63,6 +63,7 @@ namespace course
 
 			BEACON_REVERSE = 1U << 15,
 			ELEVATED_PET = 1U << 0,
+			FAR_PET = 1U << 1,
 			NONE = 0U,
 
 			EXCAVATOR_REVERSE = 1U << 15,
@@ -105,17 +106,18 @@ namespace course
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
-			fork(&motor, Until(TRUE),         MOTOR_REVERSE | MOTOR_RIGHT | 160U);
-			exec(&motor, Until(L_ENC_GT, 19), MOTOR_LEFT | 160U);
+			fork(&motor, Until(TRUE),         MOTOR_REVERSE | MOTOR_RIGHT | 100U);
+			exec(&motor, Until(L_ENC_GT, 19), MOTOR_LEFT | 100U);
 
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 50U);
 
 			fork(&motor, Until(TRUE),         MOTOR_RIGHT | 180U);
 			exec(&motor, Until(L_ENC_GT, 45), MOTOR_LEFT | 180U);
 
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 50U);
 			exec(&increment_pet, Until(TRUE));
 
+			exec(&motor, Until(R_ENC_GT, 50), MOTOR_RIGHT | 180U);
 			exec(&motor, Until(FRONT_LEFT_QRD_GT, left_thresh), MOTOR_RIGHT | 180U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
@@ -128,12 +130,12 @@ namespace course
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			fork(&motor, Until(TRUE),        MOTOR_REVERSE | MOTOR_RIGHT | 160U);
-			exec(&motor, Until(L_ENC_GT, 6), MOTOR_LEFT | 160U);
+			exec(&motor, Until(L_ENC_GT, 3), MOTOR_LEFT | 160U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			fork(&motor, Until(TRUE),        MOTOR_RIGHT | 160U);
-			exec(&motor, Until(L_ENC_GT, 25), MOTOR_LEFT | 160U);
+			exec(&motor, Until(L_ENC_GT, 28), MOTOR_LEFT | 160U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
@@ -155,7 +157,7 @@ namespace course
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
-			exec(&retrieve, Until(FALSE));
+			exec(&retrieve, Until(FALSE), FAR_PET);
 			exec(&increment_pet, Until(TRUE));
 
 			exec(&motor, Until(FRONT_LEFT_QRD_GT, left_thresh), MOTOR_LEFT | 180U);
@@ -485,6 +487,11 @@ namespace course
 						motion::right.speed(MEDIUM_SPEED);
 						motion::left.speed(MEDIUM_SPEED);
 					}
+					else if (meta & FAR_PET)
+					{
+						motion::right.speed(-MEDIUM_SPEED);
+						motion::left.speed(MEDIUM_SPEED);
+					}
 					else
 					{
 						motion::left.speed(-MEDIUM_SPEED);
@@ -495,9 +502,17 @@ namespace course
 				}
 				case RETRY_SHIFT:
 				{
-					if ((meta & ELEVATED_PET) ? motion::left_theta > RETRY_SHIFT_THETA : motion::left_theta <= -RETRY_SHIFT_THETA)
+					if (meta & ELEVATED_PET)
 					{
-						state = DROPPING_BEGIN;
+						if (motion::left_theta > RETRY_SHIFT_THETA) state = DROPPING_BEGIN;
+					}
+					else if (meta & FAR_PET)
+					{
+						if (motion::left_theta > RETRY_SHIFT_THETA / 2) state = DROPPING_BEGIN;
+					}
+					else
+					{
+						if (motion::left_theta < -RETRY_SHIFT_THETA) state = DROPPING_BEGIN;
 					}
 					break;
 				}

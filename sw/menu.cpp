@@ -354,27 +354,22 @@ namespace menu
 	Opt dr_vscl(TO_FSTR(strings::dr_vscl), 3, 10); // velocity scale factor
 	*/
 
-	Opt flw_gain_p(TO_FSTR(strings::flw_p), 900, 1);
+	Opt flw_gain_p(TO_FSTR(strings::flw_p), 1020, 1);
 	Opt flw_gain_i(TO_FSTR(strings::flw_i), 0, 5);
 	Opt flw_gain_d(TO_FSTR(strings::flw_d), 20, 2);
-	Opt flw_vel(TO_FSTR(strings::flw_vel), 180, 4);
-	Opt flw_thresh_left(TO_FSTR(strings::flw_thresh_left), 165);
-	Opt flw_thresh_right(TO_FSTR(strings::flw_thresh_right), 165);
-	Opt flw_thresh_side(TO_FSTR(strings::flw_thresh_side), 280);
+	Opt flw_vel(TO_FSTR(strings::flw_vel), 181, 4);
+	Opt flw_thresh_left(TO_FSTR(strings::flw_thresh_left), 360);
+	Opt flw_thresh_right(TO_FSTR(strings::flw_thresh_right), 200);
+	Opt flw_thresh_side(TO_FSTR(strings::flw_thresh_side), 320);
 	Opt flw_recover(TO_FSTR(strings::flw_recover), 130);
-	Opt flw_drecover(TO_FSTR(strings::flw_drecover), 5, 10);
+	Opt flw_drecover(TO_FSTR(strings::flw_drecover), 4, 10);
 
-	Opt beacon_theta(TO_FSTR(strings::beacon_theta), 125, 3);
-
-	Opt home_gain_p(TO_FSTR(strings::home_p), 400);
+	Opt home_gain_p(TO_FSTR(strings::home_p), 333);
 	Opt home_gain_i(TO_FSTR(strings::home_i), 0);
 	Opt home_gain_d(TO_FSTR(strings::home_d), 10);
-	Opt home_vel(TO_FSTR(strings::home_vel), 100);
+	Opt home_vel(TO_FSTR(strings::home_vel), 166);
 
-	Opt rev_dead_begin(TO_FSTR(strings::rev_dbegin), 110);
-	Opt rev_dead_end(TO_FSTR(strings::rev_dend), 130);
-
-	Opt rev_enable(TO_FSTR(strings::rev_enable), 0, 512);
+	Opt courseid(TO_FSTR(strings::courseid), 0, 512);
 
 	const control::Mode main_mode
 	{

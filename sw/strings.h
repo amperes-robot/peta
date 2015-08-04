@@ -41,7 +41,5 @@ namespace strings
 	DECL_FSTR(view);
 	DECL_FSTR(ppark);
 
-	DECL_FSTR(rev_dbegin);
-	DECL_FSTR(rev_dend);
-	DECL_FSTR(rev_enable);
+	DECL_FSTR(courseid);
 }

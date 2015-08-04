@@ -167,7 +167,7 @@ namespace course
 
 			exec(&follow, Until(TIMER_GT, 3000), FOLLOW_IGNORE_SIDES); // 35
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
-			exec(&follow, Until(FALSE), FOLLOW_DISABLE_LEFT | 2700U);
+			exec(&follow, Until(FALSE), FOLLOW_DISABLE_LEFT | 1700U);
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			fork(&motor, Until(TRUE),         MOTOR_RIGHT | 150U);

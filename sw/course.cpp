@@ -197,7 +197,7 @@ namespace course
 
 				exec(&motor, Until(L_ENC_GT, 25), MOTOR_LEFT | 120U); // turn to face beacon
 
-				exec(&beacon, Until(L_PLUS_R_ENC_GT, 230)); // follow beacon for 115 ticks avg
+				exec(&beacon, Until(L_PLUS_R_ENC_GT, 200)); // follow beacon for 100 ticks avg
 				exec(&retrieve, Until(FALSE), ELEVATED_PET); // pick up
 
 				exec(&increment_pet, Until(TRUE));
@@ -265,6 +265,11 @@ namespace course
 				exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 100U);
 
 				exec(&follow, Until(TIMER_GT, 2000), FOLLOW_IGNORE_SIDES | FOLLOW_DISABLE_RIGHT);
+				// exec(&halt, Until(FALSE), 100U);
+				exec(&follow, Until(FALSE), 1000U);
+				exec(&follow, Until(FALSE), 1000U);
+				// exec(&halt, Until(FALSE), 100U);
+				exec(&follow, Until(FALSE), FOLLOW_DISABLE_LEFT | 500U);
 				exec(&follow, Until(FALSE), FOLLOW_IGNORE_SIDES);
 			}
 

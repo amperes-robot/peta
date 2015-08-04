@@ -41,6 +41,19 @@ namespace io
 			return millis() - _start;
 		}
 	}
+	namespace Timer2
+	{
+		extern uint32_t _start;
+
+		inline void start()
+		{
+			_start = millis();
+		}
+		inline uint16_t time()
+		{
+			return millis() - _start;
+		}
+	}
 
 	namespace Analog
 	{

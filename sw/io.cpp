@@ -98,10 +98,8 @@ namespace io
 		ANALOG_INPUT(select, 7);
 	}
 
-	namespace Timer
-	{
-		uint32_t _start;
-	}
+	namespace Timer { uint32_t _start; }
+	namespace Timer2 { uint32_t _start; }
 }
 
 ISR(ADC_vect)

@@ -136,14 +136,14 @@ namespace course
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			fork(&motor, Until(TRUE),        MOTOR_RIGHT | 160U);
-			exec(&motor, Until(L_ENC_GT, 28), MOTOR_LEFT | 160U);
+			exec(&motor, Until(L_ENC_GT, 23), MOTOR_LEFT | 160U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			exec(&retrieve, Until(FALSE));
 			exec(&increment_pet, Until(TRUE));
 
-			exec(&motor, Until(FRONT_RIGHT_QRD_GT, right_thresh), MOTOR_REVERSE | MOTOR_LEFT | 180U);
+			exec(&motor, Until(FRONT_LEFT_QRD_GT, left_thresh), MOTOR_REVERSE | MOTOR_LEFT | 180U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
@@ -161,7 +161,8 @@ namespace course
 			exec(&retrieve, Until(FALSE), FAR_PET);
 			exec(&increment_pet, Until(TRUE));
 
-			exec(&motor, Until(FRONT_LEFT_QRD_GT, left_thresh), MOTOR_RIGHT | 180U);
+			exec(&motor, Until(L_ENC_GT, 20), MOTOR_LEFT | 160U);
+			exec(&motor, Until(FRONT_LEFT_QRD_GT, left_thresh), MOTOR_REVERSE | MOTOR_LEFT | 180U);
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			// PET 3
@@ -178,9 +179,9 @@ namespace course
 			}
 			else
 			{
-				exec(&follow, Until(TIMER_GT, 3000), FOLLOW_IGNORE_SIDES); // 35
+				exec(&follow, Until(TIMER_GT, 3300), FOLLOW_IGNORE_SIDES); // 35
 				exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
-				exec(&follow, Until(FALSE), FOLLOW_DISABLE_LEFT | 1700U);
+				exec(&follow, Until(FALSE), FOLLOW_DISABLE_LEFT | 2000U);
 				exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 				fork(&motor, Until(TRUE),         MOTOR_RIGHT | 150U);
@@ -238,13 +239,14 @@ namespace course
 
 				exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
-				exec(&motor, Until(TIMER_GT, 800), MOTOR_EXCAVATOR | 255U); // bring up
+				exec(&motor, Until(TIMER_GT, 700), MOTOR_EXCAVATOR | 255U); // bring up
 				exec(&halt, Until(FALSE), MOTOR_EXCAVATOR_BIT);
 
 				fork(&motor, Until(TRUE),          MOTOR_REVERSE | MOTOR_RIGHT | 150U); // back up a bit
 				exec(&motor, Until(L_ENC_LT, -140), MOTOR_REVERSE | MOTOR_LEFT | 150U);
 
 				fork(&excavator, Until(FALSE), 1500U); // move all the way up
+
 				fork(&motor, Until(TRUE),                MOTOR_RIGHT | 170U); // turn around
 				exec(&motor, Until(R_ENC_GT, 120),       MOTOR_REVERSE | MOTOR_LEFT | 170U); // dead
 
@@ -256,10 +258,11 @@ namespace course
 				exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 				exec(&beacon, Until(EITHER_SIDE_QRD_GT, side_thresh)); // follow beacon again
-				exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 100U);
+				exec(&beacon, Until(L_ENC_GT, 40)); // forward a bit more
 
+				fork(&motor, Until(TRUE),                           MOTOR_REVERSE | MOTOR_LEFT | 180U);
 				exec(&motor, Until(FRONT_LEFT_QRD_GT, left_thresh), MOTOR_RIGHT | 180U);
-				exec(&halt, Until(FALSE), MOTOR_RIGHT_BIT | 100U);
+				exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 100U);
 
 				exec(&follow, Until(TIMER_GT, 2000), FOLLOW_IGNORE_SIDES | FOLLOW_DISABLE_RIGHT);
 				exec(&follow, Until(FALSE), FOLLOW_IGNORE_SIDES);
@@ -274,11 +277,11 @@ namespace course
 		{
 			if (first)
 			{
-				io::Timer::start();
+				io::Timer2::start();
 				motion::excavator.speed(meta & EXCAVATOR_REVERSE ? -255 : 255);
 			}
 
-			if (io::Timer::time() > (meta & DELAY_MASK))
+			if (io::Timer2::time() > (meta & DELAY_MASK))
 			{
 				motion::excavator.halt();
 				return 0;
@@ -553,6 +556,12 @@ namespace course
 					{
 						state = DONE_BEGIN;
 					}
+					else if (meta & FAR_PET)
+					{
+						state++;
+						motion::left.speed(-MEDIUM_SPEED);
+						motion::left_theta = 0;
+					}
 					else
 					{
 						state++;
@@ -564,9 +573,13 @@ namespace course
 				}
 				case SHIFT_BACK:
 				{
-					if (motion::left_theta >= retry_count * RETRY_SHIFT_THETA)
+					if (meta & FAR_PET)
 					{
-						state = DONE_BEGIN;
+						if (motion::left_theta < retry_count * -RETRY_SHIFT_THETA) state = DONE_BEGIN;
+					}
+					else
+					{
+						if (motion::left_theta > retry_count * RETRY_SHIFT_THETA) state = DONE_BEGIN;
 					}
 					break;
 				}

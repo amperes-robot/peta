@@ -11,6 +11,7 @@ typedef __FlashStringHelper* FSTR;
 namespace strings
 {
 	DECL_FSTR(course);
+	DECL_FSTR(course_short);
 	DECL_FSTR(reset);
 	DECL_FSTR(opt);
 	DECL_FSTR(opt_restore);

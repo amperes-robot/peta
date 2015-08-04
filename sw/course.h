@@ -5,7 +5,12 @@
 
 namespace course
 {
-	extern uint8_t pet_id;
+	enum BeginFlags : uint8_t
+	{
+		BEGIN_SHORTENED = 1U << 0
+	};
+
+	extern uint8_t begin_flags;
 
 	extern const control::Mode begin_mode;
 }

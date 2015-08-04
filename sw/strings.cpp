@@ -3,6 +3,7 @@
 namespace strings
 {
 	DEFN_FSTR(course);
+	DEFN_FSTR(course_short);
 	DEFN_FSTR(reset);
 	DEFN_FSTR(opt);
 	DEFN_FSTR(opt_restore);

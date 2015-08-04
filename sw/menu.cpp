@@ -17,6 +17,7 @@ namespace menu
 		FSTR main_names[] =
 		{
 			TO_FSTR(strings::course),
+			TO_FSTR(strings::course_short),
 			TO_FSTR(strings::reset),
 			TO_FSTR(strings::opt),
 			TO_FSTR(strings::opt_restore),
@@ -70,24 +71,29 @@ namespace menu
 				switch (index)
 				{
 					case 0:
+						course::begin_flags = 0;
 						control::set_mode(&course::begin_mode);
 						break;
 					case 1:
-						control::set_mode(&reset_mode);
+						course::begin_flags = course::BEGIN_SHORTENED;
+						control::set_mode(&course::begin_mode);
 						break;
 					case 2:
-						control::set_mode(&opt_mode);
+						control::set_mode(&reset_mode);
 						break;
 					case 3:
-						control::set_mode(&opt_restore_mode);
+						control::set_mode(&opt_mode);
 						break;
 					case 4:
-						control::set_mode(&pid::follow_mode);
+						control::set_mode(&opt_restore_mode);
 						break;
 					case 5:
-						control::set_mode(&dbg_mode);
+						control::set_mode(&pid::follow_mode);
 						break;
 					case 6:
+						control::set_mode(&dbg_mode);
+						break;
+					case 7:
 						control::set_mode(&view_mode);
 						break;
 				}

@@ -68,6 +68,7 @@ namespace course
 			NONE = 0U,
 
 			EXCAVATOR_REVERSE = 1U << 15,
+			EXCAVATOR_ENCODING_REVERSE = 1U << 14,
 		};
 
 		uint8_t excavator(uint8_t, uint16_t);
@@ -153,8 +154,7 @@ namespace course
 			exec(&square, Until(FALSE));
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
-			fork(&motor, Until(TRUE),         MOTOR_REVERSE | MOTOR_RIGHT | 160U);
-			exec(&motor, Until(L_ENC_LT, -1), MOTOR_REVERSE | MOTOR_LEFT | 160U);
+			exec(&motor, Until(L_ENC_GT, 10), MOTOR_LEFT | 160U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
@@ -185,19 +185,18 @@ namespace course
 				exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 				fork(&motor, Until(TRUE),         MOTOR_RIGHT | 150U);
-				exec(&motor, Until(L_ENC_GT, 38), MOTOR_LEFT | 150U);
+				exec(&motor, Until(L_ENC_GT, 32), MOTOR_LEFT | 150U);
 
 				exec(&increment_pet, Until(TRUE));
 
 				// PET 4
 
 				exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT);
-				exec(&motor, Until(X_ENC_LT, -20), MOTOR_REVERSE | MOTOR_EXCAVATOR | 255U); // bring x down below the zipline
-				exec(&halt, Until(FALSE), MOTOR_EXCAVATOR_BIT);
+				fork(&excavator, Until(FALSE), EXCAVATOR_ENCODING_REVERSE | EXCAVATOR_REVERSE | 20U); // bring x down below the zipline
 
 				exec(&motor, Until(L_ENC_GT, 25), MOTOR_LEFT | 120U); // turn to face beacon
 
-				exec(&beacon, Until(L_PLUS_R_ENC_GT, 200)); // follow beacon for 100 ticks avg
+				exec(&beacon, Until(L_PLUS_R_ENC_GT, 218)); // follow beacon for 109 ticks avg
 				exec(&retrieve, Until(FALSE), ELEVATED_PET); // pick up
 
 				exec(&increment_pet, Until(TRUE));
@@ -265,10 +264,8 @@ namespace course
 				exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 100U);
 
 				exec(&follow, Until(TIMER_GT, 2000), FOLLOW_IGNORE_SIDES | FOLLOW_DISABLE_RIGHT);
-				// exec(&halt, Until(FALSE), 100U);
 				exec(&follow, Until(FALSE), 1000U);
 				exec(&follow, Until(FALSE), 1000U);
-				// exec(&halt, Until(FALSE), 100U);
 				exec(&follow, Until(FALSE), FOLLOW_DISABLE_LEFT | 500U);
 				exec(&follow, Until(FALSE), FOLLOW_IGNORE_SIDES);
 			}
@@ -282,11 +279,24 @@ namespace course
 		{
 			if (first)
 			{
+				if (meta & EXCAVATOR_ENCODING_REVERSE)
+				{
+					motion::excavator_theta = 0;
+				}
+
 				io::Timer2::start();
 				motion::excavator.speed(meta & EXCAVATOR_REVERSE ? -255 : 255);
 			}
 
-			if (io::Timer2::time() > (meta & DELAY_MASK))
+			if (meta & EXCAVATOR_ENCODING_REVERSE)
+			{
+				if (motion::excavator_theta < -((int8_t) (meta & DELAY_MASK)))
+				{
+					motion::excavator.halt();
+					return 0;
+				}
+			}
+			else if (io::Timer2::time() > (meta & DELAY_MASK))
 			{
 				motion::excavator.halt();
 				return 0;
@@ -511,7 +521,6 @@ namespace course
 					}
 					else if (meta & FAR_PET)
 					{
-						motion::right.speed(-MEDIUM_SPEED);
 						motion::left.speed(MEDIUM_SPEED);
 					}
 					else
@@ -530,7 +539,7 @@ namespace course
 					}
 					else if (meta & FAR_PET)
 					{
-						if (motion::left_theta > RETRY_SHIFT_THETA / 2) state = DROPPING_BEGIN;
+						if (motion::left_theta > RETRY_SHIFT_THETA) state = DROPPING_BEGIN;
 					}
 					else
 					{

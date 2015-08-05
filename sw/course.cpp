@@ -112,13 +112,10 @@ namespace course
 			uint16_t right_thresh = menu::flw_thresh_right.value();
 
 			begin();
-			// branch(63, If(TRUE));
 
 			// PET 0
 
 			exec(&follow, Until(FALSE), 0U);
-			// exec(&square_hard_ccw, Until(FALSE));
-			// square_hard();
 			exec(&square, Until(FALSE));
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 100U);
 
@@ -141,13 +138,12 @@ namespace course
 			exec(&motor, Until(R_ENC_GT, 50), MOTOR_RIGHT | 180U);
 			exec(&motor, Until(FRONT_LEFT_QRD_GT, left_thresh), MOTOR_RIGHT | 180U);
 
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 100U);
 
 			// PET 1
 
 			exec(&follow, Until(FALSE), 500U); // 16
 			exec(&square, Until(FALSE));
-			// square_hard();
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 100U);
 
@@ -279,13 +275,13 @@ namespace course
 
 				exec(&beacon, Until(ANY_QRD_TRIG_OR_TIMER_GT, 2500U)); // follow beacon again
 				exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 100U);
-				exec(&beacon, Until(L_ENC_GT, 40)); // forward a bit more
+				exec(&beacon, Until(TIMER_GT, 1000)); // forward a bit more
 
-				fork(&halt, Until(TRUE), MOTOR_RIGHT_BIT);
+				exec(&halt, Until(TRUE), MOTOR_RIGHT_BIT | MOTOR_LEFT_BIT);
 				exec(&motor, Until(FRONT_LEFT_QRD_GT, left_thresh), MOTOR_RIGHT | 180U);
 				exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 100U);
 
-				exec(&follow, Until(TIMER_GT, 2000), FOLLOW_IGNORE_SIDES | FOLLOW_DISABLE_RIGHT);
+				exec(&follow, Until(TIMER_GT, 1000), FOLLOW_IGNORE_SIDES | FOLLOW_DISABLE_RIGHT);
 				exec(&follow, Until(FALSE), 1000U);
 				exec(&follow, Until(FALSE), 1000U);
 				exec(&follow, Until(FALSE), FOLLOW_DISABLE_LEFT | 500U);

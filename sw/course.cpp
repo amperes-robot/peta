@@ -186,9 +186,12 @@ namespace course
 			{
 				exec(&follow, Until(TIMER_GT, 1000), FOLLOW_IGNORE_SIDES);
 
+				exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 100U);
+
 				fork(&motor, Until(TRUE),         MOTOR_REVERSE | MOTOR_LEFT | 150U); // turn around
-				exec(&motor, Until(L_ENC_GT, 50), MOTOR_LEFT | 150U);
-				exec(&motor, Until(FRONT_RIGHT_QRD_GT, right_thresh), MOTOR_LEFT | 150U);
+				exec(&motor, Until(R_ENC_GT, 50), MOTOR_RIGHT | 150U);
+
+				exec(&motor, Until(FRONT_LEFT_QRD_GT, right_thresh), MOTOR_RIGHT | 150U);
 
 				exec(&follow, Until(FALSE), FOLLOW_IGNORE_SIDES);
 			}

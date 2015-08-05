@@ -235,6 +235,7 @@ namespace async
 
 			case TIMER_GT:
 			case FRONT_SWITCH_TRIGGER_OR_TIMER_GT:
+			case ANY_QRD_TRIG_OR_TIMER_GT:
 				io::Timer::start();
 				break;
 
@@ -260,12 +261,12 @@ namespace async
 				return ir_hysteresis_prev > arg;
 			case EITHER_SIDE_QRD_GT:
 				return io::Analog::qrd_side_left.read() > arg || io::Analog::qrd_side_right.read() > arg;
-			case ANY_QRD_TRIG:
+			case ANY_QRD_TRIG_OR_TIMER_GT:
 				{
 					uint16_t side = menu::flw_thresh_side.value();
 					uint16_t left = menu::flw_thresh_left.value();
 					uint16_t right = menu::flw_thresh_right.value();
-					return io::Analog::qrd_side_left.read() > side || io::Analog::qrd_side_right.read() > side ||
+					return io::Timer::time() > arg || io::Analog::qrd_side_left.read() > side || io::Analog::qrd_side_right.read() > side ||
 						io::Analog::qrd_tape_left.read() > left || io::Analog::qrd_tape_right.read() > right;
 				}
 			case SIDE_RIGHT_QRD_GT:

@@ -81,6 +81,23 @@ namespace course
 		uint8_t retrieve(uint8_t, uint16_t);
 		uint8_t beacon(uint8_t, uint16_t);
 
+		void square_hard()
+		{
+			exec(&halt, Until(FALSE), MOTOR_RIGHT_BIT | MOTOR_LEFT_BIT | 100U);
+
+			fork(&motor, Until(TRUE),                                             MOTOR_LEFT | 80U);
+			exec(&motor, Until(SIDE_RIGHT_QRD_GT, menu::flw_thresh_side.value()), MOTOR_RIGHT | 140U);
+			exec(&halt, Until(FALSE), MOTOR_RIGHT_BIT | MOTOR_LEFT_BIT | 200U);
+
+			//fork(&motor, Until(TRUE),       MOTOR_REVERSE | MOTOR_LEFT | 140U);
+			exec(&motor, Until(R_ENC_GT, 28), MOTOR_RIGHT | 120U);
+
+			exec(&halt, Until(FALSE), MOTOR_RIGHT_BIT | MOTOR_LEFT_BIT | 50U);
+
+			fork(&motor, Until(TRUE),                                            MOTOR_REVERSE | MOTOR_LEFT | 180U);
+			exec(&motor, Until(SIDE_LEFT_QRD_GT, menu::flw_thresh_side.value()), MOTOR_REVERSE | MOTOR_RIGHT | 180U);
+		}
+
 		void begin_tick()
 		{
 			motion::update_enc();
@@ -100,8 +117,10 @@ namespace course
 			// PET 0
 
 			exec(&follow, Until(FALSE), 0U);
-			exec(&square_hard_ccw, Until(FALSE));
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
+			// exec(&square_hard_ccw, Until(FALSE));
+			// square_hard();
+			exec(&square, Until(FALSE));
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 100U);
 
 			fork(&motor, Until(TRUE),          MOTOR_REVERSE | MOTOR_RIGHT | 140U);
 			exec(&motor, Until(L_ENC_LT, -30), MOTOR_REVERSE | MOTOR_LEFT | 140U);
@@ -127,9 +146,10 @@ namespace course
 			// PET 1
 
 			exec(&follow, Until(FALSE), 500U); // 16
-			exec(&square_hard_ccw, Until(FALSE));
+			exec(&square, Until(FALSE));
+			// square_hard();
 
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 100U);
 
 			fork(&motor, Until(TRUE),        MOTOR_REVERSE | MOTOR_RIGHT | 160U);
 			exec(&motor, Until(L_ENC_GT, 3), MOTOR_LEFT | 160U);
@@ -137,24 +157,25 @@ namespace course
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			fork(&motor, Until(TRUE),        MOTOR_RIGHT | 160U);
-			exec(&motor, Until(L_ENC_GT, 23), MOTOR_LEFT | 160U);
+			exec(&motor, Until(L_ENC_GT, 21), MOTOR_LEFT | 160U);
 
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 100U);
 
 			exec(&retrieve, Until(FALSE));
 			exec(&increment_pet, Until(TRUE));
 
-			exec(&motor, Until(FRONT_LEFT_QRD_GT, left_thresh), MOTOR_REVERSE | MOTOR_LEFT | 180U);
+			exec(&motor, Until(FRONT_LEFT_QRD_GT, left_thresh), MOTOR_REVERSE | MOTOR_LEFT | 130U);
 
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 100U);
 
 			// PET 2
 
-			exec(&follow, Until(FALSE), 2000U); // 25
+			exec(&follow, Until(TIMER_GT, 500U), FOLLOW_IGNORE_SIDES | FOLLOW_DISABLE_RIGHT);
+			exec(&follow, Until(FALSE), 1500U);
 			exec(&square, Until(FALSE));
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 100U);
 
-			exec(&motor, Until(L_ENC_GT, 10), MOTOR_LEFT | 160U);
+			exec(&motor, Until(L_ENC_GT, 5), MOTOR_LEFT | 160U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
@@ -163,9 +184,7 @@ namespace course
 
 			exec(&motor, Until(L_ENC_GT, 20), MOTOR_LEFT | 160U);
 			exec(&motor, Until(FRONT_LEFT_QRD_GT, left_thresh), MOTOR_REVERSE | MOTOR_LEFT | 180U);
-			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
-
-			// PET 3
+			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 100U);
 
 			if (begin_flags & BEGIN_SHORTENED)
 			{
@@ -179,6 +198,8 @@ namespace course
 			}
 			else
 			{
+				// PET 3
+
 				exec(&follow, Until(TIMER_GT, 3300), FOLLOW_IGNORE_SIDES); // 35
 				exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 				exec(&follow, Until(FALSE), FOLLOW_DISABLE_LEFT | 2000U);
@@ -194,7 +215,7 @@ namespace course
 				exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT);
 				fork(&excavator, Until(FALSE), EXCAVATOR_ENCODING_REVERSE | EXCAVATOR_REVERSE | 20U); // bring x down below the zipline
 
-				exec(&motor, Until(L_ENC_GT, 25), MOTOR_LEFT | 120U); // turn to face beacon
+				exec(&motor, Until(L_ENC_GT, 24), MOTOR_LEFT | 120U); // turn to face beacon
 
 				exec(&beacon, Until(L_PLUS_R_ENC_GT, 218)); // follow beacon for 109 ticks avg
 				exec(&retrieve, Until(FALSE), ELEVATED_PET); // pick up
@@ -256,7 +277,7 @@ namespace course
 
 				exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
-				exec(&beacon, Until(EITHER_SIDE_QRD_GT, side_thresh)); // follow beacon again
+				exec(&beacon, Until(ANY_QRD_TRIG)); // follow beacon again
 				exec(&beacon, Until(L_ENC_GT, 40)); // forward a bit more
 
 				fork(&motor, Until(TRUE),                           MOTOR_REVERSE | MOTOR_LEFT | 180U);
@@ -483,7 +504,7 @@ namespace course
 				}
 				case LIFTING_BEGIN: // lift
 				{
-					motion::arm.speed(MEDIUM_SPEED);
+					motion::arm.speed(MEDIUM_SPEED + 25);
 					state++;
 					io::Timer::start();
 					// fall through
@@ -658,6 +679,10 @@ namespace course
 			{
 				RIGHT_FORWARD_BEGIN = 0,
 				RIGHT_FORWARD,
+				RIGHT_FORWARD_B_BEGIN,
+				RIGHT_FORWARD_B,
+				PIVOT_BEGIN,
+				PIVOT,
 				LEFT_BACKWARD_BEGIN,
 				LEFT_BACKWARD
 			};
@@ -670,25 +695,46 @@ namespace course
 				case RIGHT_FORWARD_BEGIN: 
 				{
 					state++;
-					motion::left.speed(100);
 					motion::right.speed(MEDIUM_SPEED);
 					motion::right_theta = 0;
 				}
 				case RIGHT_FORWARD:
 				{
-					if (qrd_right || motion::right_theta > SQUARE_FWD_MAX) state = LEFT_BACKWARD_BEGIN;
+					if (qrd_right || motion::right_theta > SQUARE_FWD_MAX) state = RIGHT_FORWARD_B_BEGIN;
+					break;
+				}
+				case RIGHT_FORWARD_B_BEGIN:
+				{
+					state++;
+					motion::right_theta = 0;
+				}
+				case RIGHT_FORWARD_B:
+				{
+					if (motion::right_theta > 10) state = PIVOT_BEGIN;
+					break;
+				}
+				case PIVOT_BEGIN:
+				{
+					state++;
+					motion::left.speed(-MEDIUM_SPEED);
+					motion::right.speed(MEDIUM_SPEED);
+					motion::right_theta = 0;
+				}
+				case PIVOT:
+				{
+					if (motion::right_theta > 12) state = LEFT_BACKWARD_BEGIN;
 					break;
 				}
 				case LEFT_BACKWARD_BEGIN: 
 				{
 					state++;
-					motion::right.speed(-100);
+					motion::right.speed(-MEDIUM_SPEED / 2);
 					motion::left.speed(-MEDIUM_SPEED);
 					motion::left_theta = 0;
 				}
 				case LEFT_BACKWARD:
 				{
-					if (qrd_left || motion::left_theta < SQUARE_BACK_MAX) return 0;
+					if ((qrd_left && motion::left_theta < -10) || motion::left_theta < SQUARE_BACK_MAX) return 0;
 					break;
 				}
 			}
@@ -733,6 +779,7 @@ namespace course
 				case LEFT_FORWARD_BEGIN:
 				{
 					state++;
+					motion::right.speed(100);
 					motion::left.speed(MEDIUM_SPEED);
 					motion::left_theta = 0;
 				}
@@ -746,6 +793,7 @@ namespace course
 				case LEFT_BACKWARD_BEGIN: 
 				{
 					state++;
+					motion::right.halt();
 					motion::left.speed(-MEDIUM_SPEED);
 					motion::left_theta = 0;
 				}
@@ -758,6 +806,7 @@ namespace course
 				case RIGHT_FORWARD_BEGIN: 
 				{
 					state++;
+					motion::left.speed(100);
 					motion::right.speed(MEDIUM_SPEED);
 					motion::right_theta = 0;
 				}
@@ -771,6 +820,7 @@ namespace course
 				case RIGHT_BACKWARD_BEGIN: 
 				{
 					state++;
+					motion::left.halt();
 					motion::right.speed(-MEDIUM_SPEED);
 					motion::right_theta = 0;
 				}

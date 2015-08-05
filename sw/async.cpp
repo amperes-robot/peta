@@ -260,8 +260,18 @@ namespace async
 				return ir_hysteresis_prev > arg;
 			case EITHER_SIDE_QRD_GT:
 				return io::Analog::qrd_side_left.read() > arg || io::Analog::qrd_side_right.read() > arg;
+			case ANY_QRD_TRIG:
+				{
+					uint16_t side = menu::flw_thresh_side.value();
+					uint16_t left = menu::flw_thresh_left.value();
+					uint16_t right = menu::flw_thresh_right.value();
+					return io::Analog::qrd_side_left.read() > side || io::Analog::qrd_side_right.read() > side ||
+						io::Analog::qrd_tape_left.read() > left || io::Analog::qrd_tape_right.read() > right;
+				}
 			case SIDE_RIGHT_QRD_GT:
 				return io::Analog::qrd_side_right.read() > arg;
+			case SIDE_LEFT_QRD_GT:
+				return io::Analog::qrd_side_left.read() > arg;
 			case FRONT_LEFT_QRD_GT:
 				return io::Analog::qrd_tape_left.read() > arg;
 			case FRONT_RIGHT_QRD_GT:

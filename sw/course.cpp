@@ -231,7 +231,7 @@ namespace course
 
 				exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
-				exec(&motor, Until(TIMER_GT, 700), MOTOR_REVERSE | MOTOR_EXCAVATOR | 255U); // bring down into the box
+				exec(&motor, Until(TIMER_GT, 600), MOTOR_REVERSE | MOTOR_EXCAVATOR | 255U); // bring down into the box
 				exec(&halt, Until(FALSE), MOTOR_EXCAVATOR_BIT);
 
 				fork(&motor, Until(TRUE),         MOTOR_REVERSE | MOTOR_RIGHT | 2200U); // turn right

@@ -125,7 +125,7 @@ namespace course
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
 			fork(&motor, Until(TRUE),         MOTOR_REVERSE | MOTOR_RIGHT | 100U);
-			exec(&motor, Until(L_ENC_GT, 19), MOTOR_LEFT | 100U);
+			exec(&motor, Until(L_ENC_GT, 21), MOTOR_LEFT | 100U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 50U);
 
@@ -171,7 +171,7 @@ namespace course
 			exec(&square, Until(FALSE));
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 100U);
 
-			exec(&motor, Until(L_ENC_GT, 5), MOTOR_LEFT | 160U);
+			exec(&motor, Until(L_ENC_GT, 4), MOTOR_LEFT | 160U);
 
 			exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 150U);
 
@@ -281,7 +281,7 @@ namespace course
 				exec(&motor, Until(FRONT_LEFT_QRD_GT, left_thresh), MOTOR_RIGHT | 180U);
 				exec(&halt, Until(FALSE), MOTOR_LEFT_BIT | MOTOR_RIGHT_BIT | 100U);
 
-				exec(&follow, Until(TIMER_GT, 1000), FOLLOW_IGNORE_SIDES | FOLLOW_DISABLE_RIGHT);
+				exec(&follow, Until(TIMER_GT, 1700), FOLLOW_IGNORE_SIDES | FOLLOW_DISABLE_RIGHT);
 				exec(&follow, Until(FALSE), 1000U);
 				exec(&follow, Until(FALSE), 1000U);
 				exec(&follow, Until(FALSE), FOLLOW_DISABLE_LEFT | 500U);

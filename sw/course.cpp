@@ -261,7 +261,7 @@ namespace course
 				fork(&motor, Until(TRUE),           MOTOR_REVERSE | MOTOR_RIGHT | 150U); // back up a bit
 				exec(&motor, Until(L_ENC_LT, -140), MOTOR_REVERSE | MOTOR_LEFT | 150U);
 
-				fork(&excavator, Until(FALSE), 1500U); // move all the way up
+				fork(&excavator, Until(FALSE), 2200U); // move all the way up
 
 				fork(&motor, Until(TRUE),                MOTOR_RIGHT | 170U); // turn around
 				exec(&motor, Until(R_ENC_GT, 120),       MOTOR_REVERSE | MOTOR_LEFT | 170U); // dead zone

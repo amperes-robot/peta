@@ -216,7 +216,7 @@ namespace course
 
 				exec(&motor, Until(L_ENC_GT, 24), MOTOR_LEFT | 120U); // turn to face beacon
 
-				exec(&beacon, Until(L_PLUS_R_ENC_GT, 204)); // follow beacon
+				exec(&beacon, Until(L_PLUS_R_ENC_GT, menu::el_theta.value())); // follow beacon
 				exec(&retrieve, Until(FALSE), ELEVATED_PET); // pick up
 
 				exec(&increment_pet, Until(TRUE));
@@ -556,7 +556,7 @@ namespace course
 				{
 					if (meta & ELEVATED_PET)
 					{
-						if (motion::left_theta > RETRY_SHIFT_THETA) state = DROPPING_BEGIN;
+						if (motion::left_theta > RETRY_SHIFT_THETA + 2) state = DROPPING_BEGIN;
 					}
 					else if (meta & FAR_PET)
 					{

@@ -371,6 +371,7 @@ namespace menu
 	Opt home_vel(TO_FSTR(strings::home_vel), 166);
 
 	Opt courseid(TO_FSTR(strings::courseid), 0, 512);
+	Opt el_theta(TO_FSTR(strings::el_theta), 204, 4);
 
 	const control::Mode main_mode
 	{

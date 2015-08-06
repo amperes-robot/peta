@@ -43,4 +43,5 @@ namespace strings
 	DECL_FSTR(ppark);
 
 	DECL_FSTR(courseid);
+	DECL_FSTR(el_theta);
 }

@@ -35,4 +35,5 @@ namespace strings
 	DEFN_FSTR(ppark);
 
 	DEFN_FSTR(courseid);
+	DEFN_FSTR(el_theta);
 }

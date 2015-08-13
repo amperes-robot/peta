@@ -6,6 +6,14 @@ namespace async
 {
 	namespace
 	{
+		struct Command
+		{
+			CMD_TYPE cmd_type;
+			Target target;
+			If if_;
+			uint16_t metadata;
+		}
+		
 		enum CMD_TYPE : uint8_t
 		{
 			FORK = 0,
@@ -25,11 +33,7 @@ namespace async
 		uint16_t forks[N_FORKS];
 		uint16_t IP; // 2nd high byte is whether is first call on current cmd
 
-		CMD_TYPE program[256]; // determines type of call and other stuff
-
-		Target targets[256];
-		If ifs[256];
-		uint16_t metadata[256];
+		Command program[256];
 
 		void async_begin()
 		{
@@ -55,10 +59,10 @@ namespace async
 
 					if (first_call)
 					{
-						ifs[ptr].init();
+						program[ptr].if_.init();
 					}
 
-					if (!targets[ptr].func(first_call, metadata[ptr]))
+					if (!program[ptr].target.func(first_call, program[ptr].metadata))
 					{
 						// returned false -> disable fork
 						forks[i] = 0;
@@ -67,7 +71,7 @@ namespace async
 					{
 						forks[i] &= ~FIRST_CALL_MASK; // clear first call bit
 
-						if (ifs[ptr].eval())
+						if (program[ptr].if_.eval())
 						{
 							// returned true -> disable fork
 							forks[i] = 0;
@@ -77,7 +81,7 @@ namespace async
 			}
 
 			uint16_t addr = IP & ADDRESS_MASK; // low 14 bits
-			CMD_TYPE type = program[addr];
+			CMD_TYPE type = program[addr].cmd_type;
 
 			uint8_t inc = 0; // whether to increment IP
 
@@ -110,10 +114,10 @@ namespace async
 
 					if (first_call)
 					{
-						ifs[addr].init();
+						program[addr].if_.init();
 					}
 
-					if (!targets[addr].func(first_call, metadata[addr]))
+					if (!program[addr].target.func(first_call, program[addr].metadata))
 					{
 						inc = 1;
 					}
@@ -121,7 +125,7 @@ namespace async
 					{
 						IP &= ~FIRST_CALL_MASK; // clear first call bit
 
-						if (ifs[addr].eval()) // condition met
+						if (program[addr].if_.eval()) // condition met
 						{
 							inc = 1;
 						}
@@ -130,9 +134,9 @@ namespace async
 				}
 				case BRANCH:
 				{
-					if (ifs[addr].eval()) // true
+					if (program[addr].if_.eval()) // true
 					{
-						IP += targets[addr].addr; // branch off
+						IP += program[addr].target.addr; // branch off
 						IP |= FIRST_CALL_MASK;
 					}
 					break;
@@ -174,29 +178,29 @@ namespace async
 	}
 	void end()
 	{
-		program[IP] = END;
+		program[IP].cmd_type = END;
 	}
 	void fork(Action action, Until until, uint16_t meta)
 	{
-		program[IP] = FORK;
-		targets[IP].func = action;
-		ifs[IP] = until;
-		metadata[IP] = meta;
+		program[IP].cmd_type = FORK;
+		program[IP].target.func = action;
+		program[IP].if_ = until;
+		program[IP].metadata = meta;
 		IP++;
 	}
 	void exec(Action action, Until until, uint16_t meta)
 	{
-		program[IP] = EXEC;
-		targets[IP].func = action;
-		ifs[IP] = until;
-		metadata[IP] = meta;
+		program[IP].cmd_type = EXEC;
+		program[IP].target.func = action;
+		program[IP].if_ = until;
+		program[IP].metadata = meta;
 		IP++;
 	}
 	void branch(int8_t loc, If if_)
 	{
-		program[IP] = BRANCH;
-		targets[IP].addr = loc;
-		ifs[IP] = if_;
+		program[IP].cmd_type = BRANCH;
+		program[IP].target.addr = loc;
+		program[IP].if_ = if_;
 		IP++;
 	}
 

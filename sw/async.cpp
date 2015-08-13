@@ -6,20 +6,20 @@ namespace async
 {
 	namespace
 	{
-		struct Command
-		{
-			CMD_TYPE cmd_type;
-			Target target;
-			If if_;
-			uint16_t metadata;
-		}
-		
 		enum CMD_TYPE : uint8_t
 		{
 			FORK = 0,
 			EXEC = 1,
 			BRANCH = 2,
 			END = 3
+		};
+		
+		struct Command
+		{
+			CMD_TYPE cmd_type;
+			Target target;
+			If if_;
+			uint16_t metadata;
 		};
 
 		enum MASKS : uint16_t
